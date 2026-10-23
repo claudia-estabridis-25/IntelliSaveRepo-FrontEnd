@@ -1,0 +1,26 @@
+<main class="contenedor">
+  <mat-card appearance="outlined" class="tarjeta">
+    <mat-card-header>
+      <mat-card-title>Bienvenido a IntelliSave</mat-card-title>
+      <mat-card-subtitle>{{ usuario }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p><strong>Roles:</strong> {{ roles.join(', ') }}</p>
+
+      @if (perfil(); as datos) {
+        <p><strong>Nombre:</strong> {{ datos.firstName }} {{ datos.paternalSurname }}</p>
+        <p><strong>Cargo:</strong> {{ datos.positionUser }}</p>
+        <p class="ok">Conexión con la API correcta: el token se envió en la petición.</p>
+      } @else if (errorPerfil()) {
+        <p class="error">{{ errorPerfil() }}</p>
+      } @else {
+        <p>Cargando perfil...</p>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-flat-button (click)="cerrarSesion()">Cerrar sesión</button>
+    </mat-card-actions>
+  </mat-card>
+</main>

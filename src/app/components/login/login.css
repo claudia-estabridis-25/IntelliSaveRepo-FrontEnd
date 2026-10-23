@@ -1,0 +1,268 @@
+.pagina {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(380px, 460px) 1fr;
+  background: #ffffff;
+}
+
+.panel-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 48px 56px 28px;
+  animation: aparecer 0.7s ease-out both;
+}
+
+.formulario {
+  width: 100%;
+  max-width: 360px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.logo-icono {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #0e2a2b;
+}
+
+.logo-icono svg {
+  width: 24px;
+  height: 24px;
+  fill: #f2b53c;
+}
+
+.logo-texto {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0e2a2b;
+}
+
+.logo-texto strong {
+  font-weight: 600;
+  color: #17705b;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+.subtitulo {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5f7a72;
+}
+
+.etiqueta {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #23403a;
+}
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #d5ded9;
+  border-radius: 10px;
+  background: #f8faf9;
+  color: #8aa39b;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.campo:focus-within {
+  border-color: #17705b;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(23, 112, 91, 0.12);
+  color: #17705b;
+}
+
+.campo.invalido {
+  border-color: #d9534f;
+}
+
+.campo input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #0e2a2b;
+  font: inherit;
+  font-size: 14px;
+}
+
+.campo input::placeholder {
+  color: #a3b7b0;
+}
+
+.icono {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ojo {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.error-campo {
+  font-size: 12px;
+  color: #d9534f;
+}
+
+.alerta {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  animation: aparecer 0.3s ease-out;
+}
+
+.alerta.error {
+  background: #fdecea;
+  color: #b3261e;
+}
+
+.alerta.info {
+  background: #fff4dc;
+  color: #8a5a00;
+}
+
+.recordar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 6px;
+  font-size: 13px;
+  color: #3d5a52;
+  cursor: pointer;
+}
+
+.recordar input {
+  width: 16px;
+  height: 16px;
+  accent-color: #17705b;
+}
+
+.boton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #17705b;
+  color: #ffffff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.boton:hover:not(:disabled) {
+  background: #125c4a;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(23, 112, 91, 0.3);
+}
+
+.boton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cargando {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+.pie {
+  text-align: center;
+  font-size: 12px;
+  color: #8aa39b;
+}
+
+.pie p {
+  margin: 2px 0;
+}
+
+.panel-escena {
+  display: block;
+  min-height: 100dvh;
+}
+
+.sacudir {
+  animation: sacudir 0.45s ease-in-out;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sacudir {
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+@media (max-width: 900px) {
+  .pagina {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-escena {
+    display: none;
+  }
+
+  .panel-form {
+    padding: 40px 24px 24px;
+    background: linear-gradient(180deg, #e3f2ec 0, #ffffff 240px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

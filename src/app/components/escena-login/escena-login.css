@@ -1,0 +1,189 @@
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: #0e2a2b;
+}
+
+.escena {
+  position: absolute;
+  inset: 0;
+}
+
+.escena > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.estrella {
+  fill: #e8f3ee;
+  animation: titilar 3s ease-in-out infinite;
+}
+
+.fugaz {
+  opacity: 0;
+  animation: fugaz 8s ease-in infinite;
+}
+
+.resplandor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: latir 5s ease-in-out infinite;
+}
+
+.nube {
+  fill: #cfe9df;
+  opacity: 0.85;
+  animation: flotar 70s linear infinite;
+}
+
+.nube-tenue {
+  opacity: 0.5;
+}
+
+.rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: girar 4s linear infinite;
+}
+
+.rotor-grande {
+  animation-duration: 7s;
+}
+
+.ventana {
+  fill: #f2b53c;
+  animation: parpadear 4s ease-in-out infinite;
+}
+
+.luz {
+  fill: #f2b53c;
+  animation: parpadear 1.6s ease-in-out infinite;
+}
+
+.panel {
+  fill: #1f4e5f;
+  stroke: #8fd3c0;
+  stroke-width: 0.8;
+  animation: reflejo 3s ease-in-out infinite;
+}
+
+.energia,
+.energia-halo {
+  fill: none;
+  stroke: #f2b53c;
+  stroke-linecap: round;
+}
+
+.energia {
+  stroke-width: 3;
+  stroke-dasharray: 6 12;
+  animation: fluir 1.2s linear infinite;
+}
+
+.energia-halo {
+  stroke-width: 10;
+  opacity: 0.15;
+}
+
+.chispa {
+  fill: #f7cf7d;
+  animation: subir 6s ease-out infinite;
+}
+
+.mensaje {
+  position: absolute;
+  left: 48px;
+  bottom: 44px;
+  max-width: 400px;
+  color: #f4fbf8;
+  animation: aparecer 1s ease-out 0.3s both;
+}
+
+.mensaje h2 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.mensaje p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #b9d6cc;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  color: #f7cf7d;
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2bb38c;
+  animation: parpadear 1.6s ease-in-out infinite;
+}
+
+@keyframes titilar {
+  50% { opacity: 0.2; }
+}
+
+@keyframes fugaz {
+  0% { opacity: 0; transform: translate(0, 0); }
+  3% { opacity: 1; }
+  12% { opacity: 0; transform: translate(-260px, 160px); }
+  100% { opacity: 0; transform: translate(-260px, 160px); }
+}
+
+@keyframes latir {
+  50% { transform: scale(1.1); opacity: 0.75; }
+}
+
+@keyframes flotar {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(1200px); }
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes parpadear {
+  50% { opacity: 0.3; }
+}
+
+@keyframes reflejo {
+  50% { fill: #2a6a7d; }
+}
+
+@keyframes fluir {
+  to { stroke-dashoffset: -36; }
+}
+
+@keyframes subir {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-160px); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+  }
+}
