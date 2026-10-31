@@ -1,0 +1,19 @@
+.aviso {
+  max-width: 520px;
+  padding: 20px 0;
+  border-top: 1px solid #0e2a2b;
+  border-bottom: 1px solid #ddd6c7;
+}
+
+h2 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
