@@ -1,0 +1,55 @@
+<mat-sidenav-container class="contenedor">
+  <mat-sidenav #menuLateral class="lateral" [mode]="esMovil() ? 'over' : 'side'" [opened]="!esMovil()">
+    <div class="panel">
+      <div class="marca">
+        <span class="material-symbols-outlined">bolt</span>
+        IntelliSave
+      </div>
+
+      <nav class="menu" aria-label="Menú principal">
+        @for (seccion of secciones(); track seccion.titulo) {
+          @if (seccion.titulo) {
+            <p class="seccion">{{ seccion.titulo }}</p>
+          }
+          @for (opcion of seccion.opciones; track opcion.ruta) {
+            <a class="opcion" [routerLink]="opcion.ruta" routerLinkActive="activa" (click)="esMovil() && menuLateral.close()">
+              <span class="material-symbols-outlined">{{ opcion.icono }}</span>
+              {{ opcion.texto }}
+            </a>
+          }
+        }
+      </nav>
+
+      <div class="usuario">
+        <p class="correo">{{ usuario() }}</p>
+        <p class="rol">{{ rolPrincipal() }}</p>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="contenido">
+    <header class="barra">
+      @if (esMovil()) {
+        <button type="button" class="boton-menu" (click)="menuLateral.toggle()" aria-label="Abrir menú">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      }
+      <h1 class="titulo">{{ titulo() }}</h1>
+      <span class="espacio"></span>
+      <p class="ubicacion">
+        <strong>{{ empresa() }}</strong>
+        @if (sede()) {
+          <span> · {{ sede() }}</span>
+        }
+      </p>
+      <button type="button" class="salir" (click)="cerrarSesion()">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="texto-salir">Cerrar sesión</span>
+      </button>
+    </header>
+
+    <main class="pagina">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
