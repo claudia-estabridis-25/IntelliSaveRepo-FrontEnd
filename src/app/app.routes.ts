@@ -5,6 +5,7 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { PaginaPendiente } from './components/pagina-pendiente/pagina-pendiente';
 import { authGuard } from './guards/auth.guard';
 import { rolGuard } from './guards/rol.guard';
+import { EmpresaListar } from './components/empresa-listar/empresa-listar';
 
 const TODOS = ['ADMIN', 'SUPERVISOR', 'EMPLOYEE'];
 const GESTION = ['ADMIN', 'SUPERVISOR'];
@@ -19,7 +20,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard, data: { titulo: 'Dashboard', roles: TODOS } },
-      { path: 'empresas', component: PaginaPendiente, data: { titulo: 'Empresas', historia: 'HU092', roles: ['ADMIN'] } },
+      { path: 'empresas', component: EmpresaListar, data: { titulo: 'Empresas', roles: ['ADMIN'] } },
+      { path: 'empresas/nueva', component: PaginaPendiente, data: { titulo: 'Registrar empresa', historia: 'HU092', roles: ['ADMIN'] } },
       { path: 'sedes', component: PaginaPendiente, data: { titulo: 'Sedes', historia: 'HU093', roles: ['ADMIN'] } },
       { path: 'areas', component: PaginaPendiente, data: { titulo: 'Áreas', historia: 'HU094', roles: ['ADMIN'] } },
       { path: 'usuarios', component: PaginaPendiente, data: { titulo: 'Usuarios', historia: 'HU095', roles: ['ADMIN'] } },

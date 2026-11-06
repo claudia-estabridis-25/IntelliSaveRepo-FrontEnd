@@ -1,0 +1,61 @@
+<section class="listado">
+  <div class="encabezado">
+    <p class="resumen">
+      {{ empresas().length }} {{ empresas().length === 1 ? 'empresa registrada' : 'empresas registradas' }}
+    </p>
+    @if (esAdmin) {
+      <a mat-flat-button class="registrar" routerLink="/empresas/nueva">
+        <span class="material-symbols-outlined">add</span>
+        Registrar empresa
+      </a>
+    }
+  </div>
+
+  @if (mensaje()) {
+    <p class="aviso ok">{{ mensaje() }}</p>
+  }
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando empresas...</p>
+  } @else if (empresas().length === 0 && !error()) {
+    <p class="estado">No hay empresas registradas.</p>
+  } @else if (empresas().length > 0) {
+    <table mat-table [dataSource]="empresas()" class="tabla">
+      <ng-container matColumnDef="ruc">
+        <th mat-header-cell *matHeaderCellDef>RUC</th>
+        <td mat-cell *matCellDef="let empresa" class="cifra">{{ empresa.rucCompany }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre comercial</th>
+        <td mat-cell *matCellDef="let empresa" class="nombre">{{ empresa.comercialNamecompany }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="direccion">
+        <th mat-header-cell *matHeaderCellDef>Dirección</th>
+        <td mat-cell *matCellDef="let empresa">{{ empresa.addressCompany }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="correo">
+        <th mat-header-cell *matHeaderCellDef>Correo</th>
+        <td mat-cell *matCellDef="let empresa">{{ empresa.emailCompany }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let empresa" class="acciones">
+          <button mat-button type="button" class="eliminar" (click)="eliminar(empresa)">
+            <span class="material-symbols-outlined">delete</span>
+            Eliminar
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+    </table>
+  }
+</section>
