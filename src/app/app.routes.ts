@@ -6,6 +6,7 @@ import { PaginaPendiente } from './components/pagina-pendiente/pagina-pendiente'
 import { authGuard } from './guards/auth.guard';
 import { rolGuard } from './guards/rol.guard';
 import { EmpresaListar } from './components/empresa-listar/empresa-listar';
+import { EquipoListar } from './components/equipo-listar/equipo-listar';
 
 const TODOS = ['ADMIN', 'SUPERVISOR', 'EMPLOYEE'];
 const GESTION = ['ADMIN', 'SUPERVISOR'];
@@ -25,7 +26,8 @@ export const routes: Routes = [
       { path: 'sedes', component: PaginaPendiente, data: { titulo: 'Sedes', historia: 'HU093', roles: ['ADMIN'] } },
       { path: 'areas', component: PaginaPendiente, data: { titulo: 'Áreas', historia: 'HU094', roles: ['ADMIN'] } },
       { path: 'usuarios', component: PaginaPendiente, data: { titulo: 'Usuarios', historia: 'HU095', roles: ['ADMIN'] } },
-      { path: 'equipos', component: PaginaPendiente, data: { titulo: 'Equipos', historia: 'HU096', roles: TODOS } },
+      { path: 'equipos', component: EquipoListar, data: { titulo: 'Equipos', roles: TODOS } },
+      { path: 'equipos/nuevo', component: PaginaPendiente, data: { titulo: 'Registrar equipo', historia: 'HU096', roles: GESTION } },
       { path: 'consumos', component: PaginaPendiente, data: { titulo: 'Consumos', historia: 'HU097', roles: TODOS } },
       { path: 'tarifas', component: PaginaPendiente, data: { titulo: 'Tarifas', historia: 'HU098', roles: GESTION } },
       { path: 'alertas', component: PaginaPendiente, data: { titulo: 'Alertas', historia: 'HU101', roles: TODOS } },
