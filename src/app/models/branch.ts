@@ -4,3 +4,9 @@ export interface Branch {
   addressBranch: string;
   idCompany: number;
 }
+
+export interface BranchInsert extends Branch {
+  descriptionBranch: string;
+  latitudeBranch: number;
+  longitudeBranch: number;
+}

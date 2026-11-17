@@ -1,0 +1,144 @@
+.listado {
+  max-width: 1280px;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.resumen {
+  margin: 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.registrar {
+  --mat-button-filled-container-color: #17705b;
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-container-shape: 6px;
+}
+
+.material-symbols-outlined {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso.ok {
+  color: #17705b;
+  border-color: #17705b;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.estado {
+  margin: 0;
+  padding: 20px 0;
+  font-size: 14px;
+  color: #4f6b63;
+  border-top: 1px solid #0e2a2b;
+}
+
+.tabla {
+  width: 100%;
+  border-top: 1px solid #0e2a2b;
+  --mat-table-background-color: transparent;
+  --mat-table-row-item-outline-color: #ddd6c7;
+  --mat-table-header-headline-color: #4f6b63;
+  --mat-table-row-item-label-text-color: #0e2a2b;
+}
+
+.tabla th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.nombre {
+  font-weight: 600;
+}
+
+.acciones {
+  text-align: right;
+}
+
+.eliminar {
+  --mat-button-text-label-text-color: #a1231b;
+  --mat-button-text-container-shape: 6px;
+}
+.descripcion {
+  max-width: 320px;
+  color: #4f6b63;
+}
+
+.acciones {
+  white-space: nowrap;
+}
+
+.editar {
+  --mat-button-text-label-text-color: #0e2a2b;
+  --mat-button-text-container-shape: 6px;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filtros mat-form-field {
+  width: 100%;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-outlined-focus-outline-color: #17705b;
+  --mat-form-field-outlined-focus-label-text-color: #17705b;
+}
+
+.secundario {
+  display: block;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.estado-usuario {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #17705b;
+  border: 1px solid #17705b;
+  border-radius: 6px;
+}
+
+.estado-usuario.inactivo {
+  color: #4f6b63;
+  border-color: #ddd6c7;
+}
+
+.fila-inactiva td {
+  opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+}

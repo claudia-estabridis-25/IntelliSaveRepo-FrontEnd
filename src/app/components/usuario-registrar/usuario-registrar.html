@@ -1,0 +1,154 @@
+<section class="formulario">
+  <a class="volver" routerLink="/usuarios">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Volver a usuarios
+  </a>
+
+  <p class="indicacion">
+    {{ esEdicion ? 'Modifica los datos del usuario. Deja la contraseña vacía para mantener la actual.' : 'Completa los datos del usuario nuevo. Con el correo y la contraseña podrá iniciar sesión.' }}
+  </p>
+
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando usuario...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <h2>Datos personales</h2>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Primer nombre</mat-label>
+          <input matInput formControlName="firstName" maxlength="20">
+          @if (form.get('firstName')?.hasError('required')) {
+            <mat-error>El primer nombre es obligatorio.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Segundo nombre (opcional)</mat-label>
+          <input matInput formControlName="secondName" maxlength="20">
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido paterno</mat-label>
+          <input matInput formControlName="paternalSurname" maxlength="25">
+          @if (form.get('paternalSurname')?.hasError('required')) {
+            <mat-error>El apellido paterno es obligatorio.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellido materno</mat-label>
+          <input matInput formControlName="maternalSurname" maxlength="25">
+          @if (form.get('maternalSurname')?.hasError('required')) {
+            <mat-error>El apellido materno es obligatorio.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>DNI</mat-label>
+          <input matInput class="cifra" formControlName="dniUser" inputmode="numeric" maxlength="8">
+          @if (form.get('dniUser')?.hasError('required')) {
+            <mat-error>El DNI es obligatorio.</mat-error>
+          } @else if (form.get('dniUser')?.hasError('pattern')) {
+            <mat-error>El DNI debe tener 8 dígitos.</mat-error>
+          }
+          <mat-hint align="end">{{ largo('dniUser') }}/8</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput class="cifra" formControlName="telephoneUser" inputmode="numeric" maxlength="9">
+          @if (form.get('telephoneUser')?.hasError('required')) {
+            <mat-error>El teléfono es obligatorio.</mat-error>
+          } @else if (form.get('telephoneUser')?.hasError('pattern')) {
+            <mat-error>El teléfono debe tener 9 dígitos.</mat-error>
+          }
+          <mat-hint align="end">{{ largo('telephoneUser') }}/9</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <h2>Cuenta y puesto</h2>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Correo</mat-label>
+          <input matInput type="email" formControlName="emailUser" maxlength="60" autocomplete="off">
+          @if (form.get('emailUser')?.hasError('required')) {
+            <mat-error>El correo es obligatorio.</mat-error>
+          } @else if (form.get('emailUser')?.hasError('email')) {
+            <mat-error>Ingresa un correo válido.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ esEdicion ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
+          <input matInput type="password" formControlName="passwordUser" maxlength="60" autocomplete="new-password">
+          @if (form.get('passwordUser')?.hasError('required')) {
+            <mat-error>La contraseña es obligatoria.</mat-error>
+          } @else if (form.get('passwordUser')?.hasError('minlength')) {
+            <mat-error>La contraseña debe tener al menos 6 caracteres.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Puesto</mat-label>
+          <input matInput formControlName="positionUser" maxlength="25" placeholder="Jefe de mantenimiento">
+          @if (form.get('positionUser')?.hasError('required')) {
+            <mat-error>El puesto es obligatorio.</mat-error>
+          }
+          <mat-hint align="end">{{ largo('positionUser') }}/25</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Rol</mat-label>
+          <mat-select formControlName="rol">
+            @for (opcion of opcionesRol(); track opcion.valor) {
+              <mat-option [value]="opcion.valor">{{ opcion.texto }}</mat-option>
+            }
+          </mat-select>
+          @if (form.get('rol')?.hasError('required')) {
+            <mat-error>Elige el rol del usuario.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Área</mat-label>
+        <mat-select formControlName="idDepartment">
+          @for (grupo of grupos(); track grupo.etiqueta) {
+            <mat-optgroup [label]="grupo.etiqueta">
+              @for (area of grupo.areas; track area.idDepartment) {
+                <mat-option [value]="area.idDepartment">{{ area.nameDepartment }}</mat-option>
+              }
+            </mat-optgroup>
+          }
+        </mat-select>
+        @if (form.get('idDepartment')?.hasError('required')) {
+          <mat-error>Elige el área del usuario.</mat-error>
+        }
+        @if (areas().length === 0) {
+          <mat-hint>No hay áreas registradas. Registra un área primero.</mat-hint>
+        } @else {
+          <mat-hint>De la sede del área sale la empresa del usuario.</mat-hint>
+        }
+      </mat-form-field>
+
+      <div class="botones">
+        <a mat-button class="cancelar" routerLink="/usuarios">Cancelar</a>
+        <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar usuario') }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
