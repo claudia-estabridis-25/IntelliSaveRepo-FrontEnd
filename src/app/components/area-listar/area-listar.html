@@ -1,0 +1,68 @@
+<section class="listado">
+  <div class="encabezado">
+    <p class="resumen">
+      {{ areas().length }} {{ areas().length === 1 ? 'área registrada' : 'áreas registradas' }}
+    </p>
+    <a mat-flat-button class="registrar" routerLink="/areas/nueva">
+      <span class="material-symbols-outlined">add</span>
+      Registrar área
+    </a>
+  </div>
+
+  @if (mensaje()) {
+    <p class="aviso ok">{{ mensaje() }}</p>
+  }
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando áreas...</p>
+  } @else if (areas().length === 0 && !error()) {
+    <p class="estado">No hay áreas registradas.</p>
+  } @else if (areas().length > 0) {
+    <table mat-table [dataSource]="areas()" class="tabla">
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Área</th>
+        <td mat-cell *matCellDef="let area" class="nombre">{{ area.nameDepartment }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="jefe">
+        <th mat-header-cell *matHeaderCellDef>Jefe</th>
+        <td mat-cell *matCellDef="let area">{{ area.nameBoss }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sede">
+        <th mat-header-cell *matHeaderCellDef>Sede</th>
+        <td mat-cell *matCellDef="let area">{{ nombreSede(area.idBranch) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="empresa">
+        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <td mat-cell *matCellDef="let area">{{ nombreEmpresa(area.idBranch) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef>Descripción</th>
+        <td mat-cell *matCellDef="let area" class="descripcion">{{ area.descriptionDepartment }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let area" class="acciones">
+          <a mat-button class="editar" [routerLink]="['/areas/editar', area.idDepartment]">
+            <span class="material-symbols-outlined">edit</span>
+            Editar
+          </a>
+          <button mat-button type="button" class="eliminar" (click)="eliminar(area)">
+            <span class="material-symbols-outlined">delete</span>
+            Eliminar
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas()"></tr>
+      <tr mat-row *matRowDef="let fila; columns: columnas()"></tr>
+    </table>
+  }
+</section>
