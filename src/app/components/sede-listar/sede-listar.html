@@ -1,0 +1,58 @@
+<section class="listado">
+  <div class="encabezado">
+    <p class="resumen">
+      {{ sedes().length }} {{ sedes().length === 1 ? 'sede registrada' : 'sedes registradas' }}
+    </p>
+    <a mat-flat-button class="registrar" routerLink="/sedes/nueva">
+      <span class="material-symbols-outlined">add</span>
+      Registrar sede
+    </a>
+  </div>
+
+  @if (mensaje()) {
+    <p class="aviso ok">{{ mensaje() }}</p>
+  }
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando sedes...</p>
+  } @else if (sedes().length === 0 && !error()) {
+    <p class="estado">No hay sedes registradas.</p>
+  } @else if (sedes().length > 0) {
+    <table mat-table [dataSource]="sedes()" class="tabla">
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Sede</th>
+        <td mat-cell *matCellDef="let sede" class="nombre">{{ sede.nameBranch }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="direccion">
+        <th mat-header-cell *matHeaderCellDef>Dirección</th>
+        <td mat-cell *matCellDef="let sede">{{ sede.addressBranch }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="empresa">
+        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <td mat-cell *matCellDef="let sede">{{ nombreEmpresa(sede.idCompany) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let sede" class="acciones">
+          <a mat-button class="editar" [routerLink]="['/sedes/editar', sede.idBranch]">
+            <span class="material-symbols-outlined">edit</span>
+            Editar
+          </a>
+          <button mat-button type="button" class="eliminar" (click)="eliminar(sede)">
+            <span class="material-symbols-outlined">delete</span>
+            Eliminar
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas()"></tr>
+      <tr mat-row *matRowDef="let fila; columns: columnas()"></tr>
+    </table>
+  }
+</section>
