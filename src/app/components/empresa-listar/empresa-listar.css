@@ -84,3 +84,11 @@
   --mat-button-text-label-text-color: #a1231b;
   --mat-button-text-container-shape: 6px;
 }
+.acciones {
+  white-space: nowrap;
+}
+
+.editar {
+  --mat-button-text-label-text-color: #0e2a2b;
+  --mat-button-text-container-shape: 6px;
+}

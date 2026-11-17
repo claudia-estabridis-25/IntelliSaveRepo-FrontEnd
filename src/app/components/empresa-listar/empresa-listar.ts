@@ -24,6 +24,7 @@ export class EmpresaListar implements OnInit {
   constructor(private companyService: CompanyService, private loginService: LoginService) {}
 
   ngOnInit(): void {
+    this.mensaje.set(history.state?.mensaje ?? '');
     this.esAdmin = this.loginService.tieneRol('ADMIN');
     if (this.esAdmin) {
       this.columnas = [...this.columnas, 'acciones'];
@@ -46,7 +47,7 @@ export class EmpresaListar implements OnInit {
   }
 
   eliminar(empresa: Company): void {
-    if (!confirm(`¿Eliminar la empresa ${empresa.comercialNamecompany}?`)) {
+    if (!confirm(`¿Eliminar la empresa ${empresa.comercialNamecompany}? También se eliminarán sus sedes, áreas, usuarios, equipos y consumos. Esta acción no se puede deshacer.`)) {
       return;
     }
     this.mensaje.set('');
@@ -60,7 +61,7 @@ export class EmpresaListar implements OnInit {
         this.error.set(
           err.status === 403
             ? 'No tienes acceso para eliminar esta empresa.'
-            : 'No se pudo eliminar la empresa. Revisa que no tenga sedes registradas.'
+            : 'No se pudo eliminar la empresa.'
         );
       }
     });

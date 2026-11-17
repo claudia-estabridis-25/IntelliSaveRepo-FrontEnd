@@ -5,6 +5,9 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { PaginaPendiente } from './components/pagina-pendiente/pagina-pendiente';
 import { authGuard } from './guards/auth.guard';
 import { rolGuard } from './guards/rol.guard';
+import { EmpresaRegistrar } from './components/empresa-registrar/empresa-registrar';
+import { AreaListar } from './components/area-listar/area-listar';
+import { AreaRegistrar } from './components/area-registrar/area-registrar';
 import { EmpresaListar } from './components/empresa-listar/empresa-listar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
 import { Landing } from './components/landing/landing';
@@ -24,9 +27,12 @@ export const routes: Routes = [
       //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard, data: { titulo: 'Dashboard', roles: TODOS } },
       { path: 'empresas', component: EmpresaListar, data: { titulo: 'Empresas', roles: ['ADMIN'] } },
-      { path: 'empresas/nueva', component: PaginaPendiente, data: { titulo: 'Registrar empresa', historia: 'HU092', roles: ['ADMIN'] } },
+      { path: 'empresas/nueva', component: EmpresaRegistrar, data: { titulo: 'Registrar empresa', roles: ['ADMIN'] } },
+      { path: 'empresas/editar/:id', component: EmpresaRegistrar, data: { titulo: 'Editar empresa', roles: ['ADMIN'] } },
       { path: 'sedes', component: PaginaPendiente, data: { titulo: 'Sedes', historia: 'HU093', roles: ['ADMIN'] } },
-      { path: 'areas', component: PaginaPendiente, data: { titulo: 'Áreas', historia: 'HU094', roles: ['ADMIN'] } },
+      { path: 'areas', component: AreaListar, data: { titulo: 'Áreas', roles: ['ADMIN'] } },
+      { path: 'areas/nueva', component: AreaRegistrar, data: { titulo: 'Registrar área', roles: ['ADMIN'] } },
+      { path: 'areas/editar/:id', component: AreaRegistrar, data: { titulo: 'Editar área', roles: ['ADMIN'] } },
       { path: 'usuarios', component: PaginaPendiente, data: { titulo: 'Usuarios', historia: 'HU095', roles: ['ADMIN'] } },
       { path: 'equipos', component: EquipoListar, data: { titulo: 'Equipos', roles: TODOS } },
       { path: 'equipos/nuevo', component: PaginaPendiente, data: { titulo: 'Registrar equipo', historia: 'HU096', roles: GESTION } },

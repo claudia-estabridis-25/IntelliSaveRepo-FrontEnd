@@ -15,4 +15,20 @@ export class DepartmentService {
   listar(): Observable<Department[]> {
     return this.http.get<Department[]>(this.url);
   }
+
+  listarPorId(id: number): Observable<Department> {
+    return this.http.get<Department>(`${this.url}/${id}`);
+  }
+
+  registrar(area: Department): Observable<Department> {
+    return this.http.post<Department>(this.url, area);
+  }
+
+  modificar(area: Department): Observable<Department> {
+    return this.http.put<Department>(this.url, area);
+  }
+
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
+  }
 }
