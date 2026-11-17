@@ -1,0 +1,243 @@
+<div class="landing">
+  <header class="encabezado">
+    <div class="contenedor barra">
+      <a class="marca" href="#inicio" (click)="irA($event, 'inicio')">
+        <span class="logo">
+          <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" fill="#f2b53c"></path>
+          </svg>
+        </span>
+        IntelliSave
+      </a>
+
+      <nav class="menu" [class.abierto]="menuAbierto()" [attr.aria-label]="t().nav.etiqueta">
+        <a href="#como" (click)="irA($event, 'como')">{{ t().nav.como }}</a>
+        <a href="#funciones" (click)="irA($event, 'funciones')">{{ t().nav.funciones }}</a>
+        <a href="#para-quien" (click)="irA($event, 'para-quien')">{{ t().nav.paraQuien }}</a>
+        <a href="#demo" (click)="irA($event, 'demo')">{{ t().nav.contacto }}</a>
+        @if (sesionActiva) {
+          <a class="solo-movil" routerLink="/dashboard">{{ t().irAlPanel }}</a>
+        } @else {
+          <a class="solo-movil" routerLink="/login">{{ t().iniciarSesion }}</a>
+        }
+      </nav>
+
+      <div class="acciones">
+        <div class="idiomas" role="group" [attr.aria-label]="t().idiomaGrupo">
+          <button type="button" [attr.aria-pressed]="idioma() === 'es'" [class.activo]="idioma() === 'es'" (click)="cambiarIdioma('es')">ES</button>
+          <button type="button" [attr.aria-pressed]="idioma() === 'en'" [class.activo]="idioma() === 'en'" (click)="cambiarIdioma('en')">EN</button>
+        </div>
+        <button type="button" class="idioma-movil" [attr.aria-label]="t().cambiarIdioma" (click)="alternarIdioma()">
+          {{ idioma() === 'es' ? 'EN' : 'ES' }}
+        </button>
+        @if (sesionActiva) {
+          <a class="boton secundario solo-escritorio" routerLink="/dashboard">{{ t().irAlPanel }}</a>
+        } @else {
+          <a class="boton secundario solo-escritorio" routerLink="/login">{{ t().iniciarSesion }}</a>
+        }
+        <button type="button" class="hamburguesa" [attr.aria-label]="t().abrirMenu" [attr.aria-expanded]="menuAbierto()" (click)="alternarMenu()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            @if (menuAbierto()) {
+              <path d="M6 6l12 12M18 6L6 18"></path>
+            } @else {
+              <path d="M4 7h16M4 12h16M4 17h16"></path>
+            }
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="inicio" class="contenedor hero" aria-labelledby="heroTitulo">
+      <div class="hero-texto">
+        <p class="etiqueta">{{ t().hero.etiqueta }}</p>
+        <h1 id="heroTitulo">{{ t().hero.titulo }}</h1>
+        <p class="descripcion">{{ t().hero.descripcion }}</p>
+        <div class="hero-botones">
+          <a class="boton primario" href="#demo" (click)="irA($event, 'demo')">{{ t().hero.solicitarDemo }}</a>
+          <a class="boton secundario" href="#como" (click)="irA($event, 'como')">{{ t().hero.verComo }}</a>
+        </div>
+        <p class="nota">{{ t().hero.nota }}</p>
+      </div>
+
+      <figure class="vista" [attr.aria-label]="t().vista.etiqueta">
+        <div class="vista-cabecera">
+          <span class="vista-sede">{{ t().vista.sede }}</span>
+          <span class="vista-periodo">{{ t().vista.periodo }}</span>
+        </div>
+        <p class="vista-cifra">276.4<span>kWh</span></p>
+        <p class="vista-costo"><span class="cifra">S/ 199.01</span> {{ t().vista.costo }}</p>
+        <svg class="vista-grafico" viewBox="0 0 400 120" width="100%" height="120" role="img" [attr.aria-label]="t().vista.graficoEtiqueta">
+          <line x1="0" y1="64" x2="400" y2="64" stroke="#5f7a72" stroke-dasharray="3 4"></line>
+          <g fill="#17705b">
+            <rect x="4" y="74" width="16" height="36"></rect>
+            <rect x="30" y="68" width="16" height="42"></rect>
+            <rect x="56" y="78" width="16" height="32"></rect>
+            <rect x="82" y="70" width="16" height="40"></rect>
+            <rect x="108" y="72" width="16" height="38"></rect>
+            <rect x="134" y="76" width="16" height="34"></rect>
+            <rect x="160" y="66" width="16" height="44"></rect>
+            <rect x="212" y="72" width="16" height="38"></rect>
+            <rect x="238" y="70" width="16" height="40"></rect>
+            <rect x="264" y="78" width="16" height="32"></rect>
+            <rect x="290" y="68" width="16" height="42"></rect>
+            <rect x="316" y="74" width="16" height="36"></rect>
+            <rect x="342" y="72" width="16" height="38"></rect>
+            <rect x="368" y="76" width="16" height="34"></rect>
+          </g>
+          <rect x="186" y="20" width="16" height="90" fill="#f2b53c"></rect>
+          <text x="208" y="16" font-size="11" fill="#0e2a2b" font-family="Poppins, sans-serif">{{ t().vista.pico }}</text>
+          <line x1="0" y1="110.5" x2="400" y2="110.5" stroke="#0e2a2b"></line>
+        </svg>
+        <div class="vista-alerta">
+          <span class="punto"></span>
+          <span><strong>{{ t().vista.revisar }}</strong> {{ t().vista.alerta }}</span>
+        </div>
+      </figure>
+    </section>
+
+    <section id="como" class="seccion clara" aria-labelledby="comoTitulo">
+      <div class="contenedor">
+        <h2 id="comoTitulo">{{ t().como.titulo }}</h2>
+        <p class="subtitulo">{{ t().como.subtitulo }}</p>
+        <ol class="pasos">
+          @for (paso of t().como.pasos; track $index) {
+            <li>
+              <span class="numero">0{{ $index + 1 }}</span>
+              <h3>{{ paso.titulo }}</h3>
+              <p>{{ paso.texto }}</p>
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section id="funciones" class="seccion" aria-labelledby="funcionesTitulo">
+      <div class="contenedor">
+        <h2 id="funcionesTitulo">{{ t().funciones.titulo }}</h2>
+        <ul class="funciones">
+          @for (funcion of t().funciones.items; track funcion.icono) {
+            <li>
+              <svg class="icono" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos[funcion.icono]; track $index) {
+                  <path [attr.d]="trazo"></path>
+                }
+              </svg>
+              <div>
+                <h3>{{ funcion.titulo }}</h3>
+                <p>{{ funcion.texto }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section id="para-quien" class="seccion clara" aria-labelledby="quienTitulo">
+      <div class="contenedor">
+        <h2 id="quienTitulo">{{ t().roles.titulo }}</h2>
+        <p class="subtitulo">{{ t().roles.subtitulo }}</p>
+        <div class="roles">
+          @for (rol of t().roles.items; track $index) {
+            <div>
+              <h3>{{ rol.titulo }}</h3>
+              <p>{{ rol.texto }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="demo" aria-labelledby="demoTitulo">
+      <div class="contenedor demo-contenido">
+        <div class="demo-texto">
+          <h2 id="demoTitulo">{{ t().demo.titulo }}</h2>
+          <p>{{ t().demo.texto }}</p>
+          <p class="escribenos">{{ t().demo.escribenos }} <a [href]="'mailto:' + correoContacto">{{ correoContacto }}</a></p>
+        </div>
+
+        <form class="formulario" [formGroup]="formulario" (ngSubmit)="solicitarDemo()" novalidate>
+          <div class="campo">
+            <label for="demoNombre">{{ t().demo.nombre }}</label>
+            <input id="demoNombre" type="text" autocomplete="name" formControlName="nombre" [attr.aria-invalid]="campoInvalido('nombre')">
+            @if (campoInvalido('nombre')) {
+              <small>{{ t().demo.requerido }}</small>
+            }
+          </div>
+          <div class="campo">
+            <label for="demoEmpresa">{{ t().demo.empresa }}</label>
+            <input id="demoEmpresa" type="text" autocomplete="organization" formControlName="empresa" [attr.aria-invalid]="campoInvalido('empresa')">
+            @if (campoInvalido('empresa')) {
+              <small>{{ t().demo.requerido }}</small>
+            }
+          </div>
+          <div class="campo">
+            <label for="demoCorreo">{{ t().demo.correo }}</label>
+            <input id="demoCorreo" type="email" autocomplete="email" [placeholder]="t().demo.correoEjemplo" formControlName="correo" [attr.aria-invalid]="campoInvalido('correo')">
+            @if (campoInvalido('correo')) {
+              <small>{{ formulario.controls.correo.hasError('required') ? t().demo.requerido : t().demo.correoInvalido }}</small>
+            }
+          </div>
+          <div class="campo">
+            <label for="demoSedes">{{ t().demo.sedes }}</label>
+            <select id="demoSedes" formControlName="sedes">
+              @for (opcion of t().demo.opcionesSedes; track $index) {
+                <option [ngValue]="$index">{{ opcion }}</option>
+              }
+            </select>
+          </div>
+          <div class="enviar">
+            <button type="submit" class="boton acento">{{ t().demo.enviar }}</button>
+            <span class="legal">{{ t().demo.aceptas }} <a href="#">{{ t().demo.terminos }}</a>.</span>
+          </div>
+          @if (enviado()) {
+            <p class="gracias" role="status">{{ t().demo.gracias }}</p>
+          }
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-columnas">
+      <div class="pie-marca">
+        <p class="pie-nombre">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" fill="#f2b53c"></path>
+          </svg>
+          IntelliSave
+        </p>
+        <p class="pie-descripcion">{{ t().pie.descripcion }}</p>
+      </div>
+      <nav [attr.aria-label]="t().pie.producto">
+        <span class="pie-titulo">{{ t().pie.producto }}</span>
+        <a href="#como" (click)="irA($event, 'como')">{{ t().nav.como }}</a>
+        <a href="#funciones" (click)="irA($event, 'funciones')">{{ t().nav.funciones }}</a>
+        <a routerLink="/login">{{ t().iniciarSesion }}</a>
+      </nav>
+      <nav aria-label="Lumen Save">
+        <span class="pie-titulo">Lumen Save</span>
+        <a href="#">{{ t().pie.nosotros }}</a>
+        <a [href]="'mailto:' + correoContacto">{{ t().pie.contacto }}</a>
+      </nav>
+      <nav [attr.aria-label]="t().pie.legal">
+        <span class="pie-titulo">{{ t().pie.legal }}</span>
+        <a href="#">{{ t().demo.terminos }}</a>
+        <a href="#">{{ t().pie.privacidad }}</a>
+      </nav>
+    </div>
+    <div class="contenedor pie-final">
+      <span>{{ t().pie.derechos }}</span>
+      <span>
+        <button type="button" class="enlace" [class.actual]="idioma() === 'es'" (click)="cambiarIdioma('es')">Español</button>
+        ·
+        <button type="button" class="enlace" [class.actual]="idioma() === 'en'" (click)="cambiarIdioma('en')">English</button>
+      </span>
+    </div>
+  </footer>
+</div>
+<!--
+- Falta implementar funcionalidad a: Nosotros, Términos y condiciones, Política de privacidad.
+- Mejorar las secciones de Cómo funciona y Funciones (se ve muy simple y feo actualmente).
+-->

@@ -1,13 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { EscenaLogin } from '../escena-login/escena-login';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, EscenaLogin],
+  imports: [ReactiveFormsModule, EscenaLogin, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })

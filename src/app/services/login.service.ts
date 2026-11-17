@@ -67,7 +67,7 @@ export class LoginService {
 
   cerrarSesion(): void {
     this.limpiarSesion();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']); //Para volver a la landing page después de cerrar sesión
   }
 
   private decodificarToken(): TokenPayload | null {

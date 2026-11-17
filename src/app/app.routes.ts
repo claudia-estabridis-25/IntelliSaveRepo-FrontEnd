@@ -7,11 +7,13 @@ import { authGuard } from './guards/auth.guard';
 import { rolGuard } from './guards/rol.guard';
 import { EmpresaListar } from './components/empresa-listar/empresa-listar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
+import { Landing } from './components/landing/landing';
 
 const TODOS = ['ADMIN', 'SUPERVISOR', 'EMPLOYEE'];
 const GESTION = ['ADMIN', 'SUPERVISOR'];
 
 export const routes: Routes = [
+  { path: '', component: Landing, pathMatch: 'full' },
   { path: 'login', component: Login },
   {
     path: '',
@@ -19,7 +21,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     canActivateChild: [rolGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard, data: { titulo: 'Dashboard', roles: TODOS } },
       { path: 'empresas', component: EmpresaListar, data: { titulo: 'Empresas', roles: ['ADMIN'] } },
       { path: 'empresas/nueva', component: PaginaPendiente, data: { titulo: 'Registrar empresa', historia: 'HU092', roles: ['ADMIN'] } },
@@ -38,5 +40,5 @@ export const routes: Routes = [
       { path: 'perfil', component: PaginaPendiente, data: { titulo: 'Mi perfil', historia: 'HU099', roles: TODOS } }
     ]
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '' }
 ];
