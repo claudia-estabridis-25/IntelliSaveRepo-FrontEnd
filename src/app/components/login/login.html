@@ -1,12 +1,12 @@
 <main class="pagina">
   <section class="panel-form">
     <form class="formulario" [class.sacudir]="sacudir()" [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
-      <div class="logo">
+      <a class="logo" routerLink="/" aria-label="Volver a la página de inicio de IntelliSave">
         <span class="logo-icono">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" /></svg>
         </span>
         <span class="logo-texto">Intelli<strong>Save</strong></span>
-      </div>
+      </a>
 
       <h1>Iniciar sesión</h1>
       <p class="subtitulo">Ingresa a tu cuenta para gestionar el consumo energético de tu empresa.</p>
