@@ -38,3 +38,10 @@ export const ROLES: Record<string, string> = {
   ROLE_SUPERVISOR: 'Supervisor energético',
   ROLE_EMPLOYEE: 'Empleado'
 };
+
+export interface PerfilUpdate {
+  secondName: string;
+  telephoneUser: string;
+  newPassword: string | null;
+  currentPassword: string | null;
+}

@@ -1,0 +1,183 @@
+.reportes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1280px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd6c7;
+}
+
+.filtros mat-form-field {
+  width: 180px;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-outlined-focus-outline-color: #17705b;
+  --mat-form-field-outlined-focus-label-text-color: #17705b;
+}
+
+.descargas {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.primario {
+  --mat-button-filled-container-color: #17705b;
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-container-shape: 6px;
+}
+
+.secundario-boton {
+  --mat-button-outlined-label-text-color: #0e2a2b;
+  --mat-button-outlined-outline-color: #0e2a2b;
+  --mat-button-outlined-container-shape: 6px;
+}
+
+.material-symbols-outlined {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.aviso {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.estado {
+  margin: 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 48px;
+}
+
+.etiqueta-dato {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.numero {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+  color: #0e2a2b;
+}
+
+.numero span {
+  margin-left: 6px;
+  font-size: 16px;
+}
+
+.periodo {
+  margin: 0 0 0 auto;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.bloques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.bloques .bloque {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+.tabla-reporte {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #0e2a2b;
+}
+
+.tabla-reporte th {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  color: #4f6b63;
+  border-bottom: 1px solid #0e2a2b;
+}
+
+.tabla-reporte td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e6dfcf;
+  vertical-align: top;
+}
+
+.tabla-reporte th:first-child,
+.tabla-reporte td:first-child {
+  padding-left: 0;
+}
+
+.derecha {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.barra-col {
+  width: 30%;
+}
+
+.barra {
+  display: block;
+  height: 8px;
+  margin-top: 6px;
+  background: #e6dfcf;
+}
+
+.barra span {
+  display: block;
+  height: 8px;
+  background: #17705b;
+}
+
+.secundario {
+  display: block;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+@media (max-width: 760px) {
+  .descargas {
+    margin-left: 0;
+  }
+
+  .barra-col {
+    display: none;
+  }
+}

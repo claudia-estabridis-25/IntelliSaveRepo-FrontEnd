@@ -1,0 +1,114 @@
+<section class="reportes">
+  <form [formGroup]="form" (ngSubmit)="ver()" class="filtros" novalidate>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Desde</mat-label>
+      <input matInput class="cifra" type="date" [max]="hoy" formControlName="desde">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Hasta</mat-label>
+      <input matInput class="cifra" type="date" formControlName="hasta">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Sede</mat-label>
+      <mat-select formControlName="idBranch">
+        <mat-option [value]="0">Todas las sedes</mat-option>
+        @for (sede of sedes(); track sede.idBranch) {
+          <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button class="primario" type="submit" [disabled]="cargando()">
+      {{ cargando() ? 'Generando...' : 'Ver reporte' }}
+    </button>
+
+    <div class="descargas">
+      <button mat-stroked-button type="button" class="secundario-boton" (click)="descargar('pdf')" [disabled]="descargando() !== ''">
+        <span class="material-symbols-outlined">picture_as_pdf</span>
+        {{ descargando() === 'pdf' ? 'Descargando...' : 'Descargar PDF' }}
+      </button>
+      <button mat-stroked-button type="button" class="secundario-boton" (click)="descargar('csv')" [disabled]="descargando() !== ''">
+        <span class="material-symbols-outlined">table_view</span>
+        {{ descargando() === 'csv' ? 'Descargando...' : 'Descargar CSV' }}
+      </button>
+    </div>
+  </form>
+
+  @if (form.hasError('rangoInvalido')) {
+    <p class="aviso error">La fecha "hasta" no puede ser anterior a la fecha "desde".</p>
+  }
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (reporte(); as datos) {
+    <div class="resumen">
+      <div>
+        <p class="etiqueta-dato">Consumo</p>
+        <p class="numero">{{ datos.totalKwh | number: '1.1-1' }}<span>kWh</span></p>
+      </div>
+      <div>
+        <p class="etiqueta-dato">Costo</p>
+        <p class="numero">S/ {{ datos.totalCost | number: '1.2-2' }}</p>
+      </div>
+      <div>
+        <p class="etiqueta-dato">Registros</p>
+        <p class="numero">{{ datos.totalRecords }}</p>
+      </div>
+      <p class="periodo">Del {{ datos.desde | date: 'dd/MM/yyyy' }} al {{ datos.hasta | date: 'dd/MM/yyyy' }}</p>
+    </div>
+
+    @if (datos.totalRecords === 0) {
+      <p class="estado">No hay consumos registrados en ese periodo.</p>
+    } @else {
+      <div class="bloques">
+        <section class="bloque">
+          <h2>Por sede</h2>
+          <ng-container *ngTemplateOutlet="tabla; context: { items: datos.byBranch, columna: 'Sede' }"></ng-container>
+        </section>
+
+        <section class="bloque">
+          <h2>Por área</h2>
+          <ng-container *ngTemplateOutlet="tabla; context: { items: datos.byDepartment, columna: 'Área' }"></ng-container>
+        </section>
+      </div>
+
+      <section class="bloque">
+        <h2>Los 5 equipos que más consumen</h2>
+        <ng-container *ngTemplateOutlet="tabla; context: { items: datos.topEquipments, columna: 'Equipo' }"></ng-container>
+      </section>
+    }
+  }
+</section>
+
+<ng-template #tabla let-items="items" let-columna="columna">
+  <table class="tabla-reporte">
+    <thead>
+      <tr>
+        <th>{{ columna }}</th>
+        <th class="barra-col">Parte del consumo</th>
+        <th class="derecha">kWh</th>
+        <th class="derecha">Costo</th>
+        <th class="derecha">Registros</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of items; track item.id) {
+        <tr>
+          <td>
+            {{ item.name }}
+            @if (item.detail) {
+              <span class="secundario">{{ item.detail }}</span>
+            }
+          </td>
+          <td class="barra-col"><span class="barra"><span [style.width.%]="parte(item)"></span></span></td>
+          <td class="derecha cifra">{{ item.totalKwh | number: '1.1-1' }}</td>
+          <td class="derecha cifra">S/ {{ item.totalCost | number: '1.2-2' }}</td>
+          <td class="derecha">{{ item.recordCount }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
