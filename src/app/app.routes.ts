@@ -13,6 +13,18 @@ import { UsuarioRegistrar } from './components/usuario-registrar/usuario-registr
 import { AreaListar } from './components/area-listar/area-listar';
 import { AreaRegistrar } from './components/area-registrar/area-registrar';
 import { EmpresaListar } from './components/empresa-listar/empresa-listar';
+import { ConsumoListar } from './components/consumo-listar/consumo-listar';
+import { ConsumoRegistrar } from './components/consumo-registrar/consumo-registrar';
+import { TarifaListar } from './components/tarifa-listar/tarifa-listar';
+import { TarifaRegistrar } from './components/tarifa-registrar/tarifa-registrar';
+import { AlertaListar } from './components/alerta-listar/alerta-listar';
+import { AlertaRegistrar } from './components/alerta-registrar/alerta-registrar';
+import { HuellaListar } from './components/huella-listar/huella-listar';
+import { HuellaRegistrar } from './components/huella-registrar/huella-registrar';
+import { PrediccionListar } from './components/prediccion-listar/prediccion-listar';
+import { PrediccionGenerar } from './components/prediccion-generar/prediccion-generar';
+import { ClimaListar } from './components/clima-listar/clima-listar';
+import { EquipoRegistrar } from './components/equipo-registrar/equipo-registrar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
 import { Landing } from './components/landing/landing';
 
@@ -43,13 +55,23 @@ export const routes: Routes = [
       { path: 'usuarios/nuevo', component: UsuarioRegistrar, data: { titulo: 'Registrar usuario', roles: ['ADMIN'] } },
       { path: 'usuarios/editar/:id', component: UsuarioRegistrar, data: { titulo: 'Editar usuario', roles: ['ADMIN'] } },
       { path: 'equipos', component: EquipoListar, data: { titulo: 'Equipos', roles: TODOS } },
-      { path: 'equipos/nuevo', component: PaginaPendiente, data: { titulo: 'Registrar equipo', historia: 'HU096', roles: GESTION } },
-      { path: 'consumos', component: PaginaPendiente, data: { titulo: 'Consumos', historia: 'HU097', roles: TODOS } },
-      { path: 'tarifas', component: PaginaPendiente, data: { titulo: 'Tarifas', historia: 'HU098', roles: GESTION } },
-      { path: 'alertas', component: PaginaPendiente, data: { titulo: 'Alertas', historia: 'HU101', roles: TODOS } },
-      { path: 'predicciones', component: PaginaPendiente, data: { titulo: 'Predicciones', historia: 'HU102', roles: GESTION } },
-      { path: 'huella', component: PaginaPendiente, data: { titulo: 'Huella de carbono', historia: 'HU103', roles: GESTION } },
-      { path: 'clima', component: PaginaPendiente, data: { titulo: 'Clima', historia: 'HU104', roles: GESTION } },
+      { path: 'equipos/nuevo', component: EquipoRegistrar, data: { titulo: 'Registrar equipo', roles: GESTION } },
+      { path: 'equipos/editar/:id', component: EquipoRegistrar, data: { titulo: 'Editar equipo', roles: GESTION } },
+      { path: 'consumos', component: ConsumoListar, data: { titulo: 'Consumos', roles: TODOS } },
+      { path: 'consumos/nuevo', component: ConsumoRegistrar, data: { titulo: 'Registrar consumo', roles: TODOS } },
+      { path: 'consumos/editar/:id', component: ConsumoRegistrar, data: { titulo: 'Editar consumo', roles: GESTION } },
+      { path: 'tarifas', component: TarifaListar, data: { titulo: 'Tarifas', roles: GESTION } },
+      { path: 'tarifas/nueva', component: TarifaRegistrar, data: { titulo: 'Registrar tarifa', roles: GESTION } },
+      { path: 'tarifas/editar/:id', component: TarifaRegistrar, data: { titulo: 'Editar tarifa', roles: GESTION } },
+      { path: 'alertas', component: AlertaListar, data: { titulo: 'Alertas', roles: TODOS } },
+      { path: 'alertas/nueva', component: AlertaRegistrar, data: { titulo: 'Registrar alerta', roles: GESTION } },
+      { path: 'alertas/editar/:id', component: AlertaRegistrar, data: { titulo: 'Editar alerta', roles: GESTION } },
+      { path: 'predicciones', component: PrediccionListar, data: { titulo: 'Predicciones', roles: GESTION } },
+      { path: 'predicciones/nueva', component: PrediccionGenerar, data: { titulo: 'Generar predicción', roles: GESTION } },
+      { path: 'huella', component: HuellaListar, data: { titulo: 'Huella de carbono', roles: GESTION } },
+      { path: 'huella/nueva', component: HuellaRegistrar, data: { titulo: 'Calcular huella de carbono', roles: GESTION } },
+      { path: 'huella/editar/:id', component: HuellaRegistrar, data: { titulo: 'Recalcular huella de carbono', roles: GESTION } },
+      { path: 'clima', component: ClimaListar, data: { titulo: 'Clima', roles: GESTION } },
       { path: 'reportes', component: PaginaPendiente, data: { titulo: 'Reportes', historia: 'HU105', roles: GESTION } },
       { path: 'perfil', component: PaginaPendiente, data: { titulo: 'Mi perfil', historia: 'HU099', roles: TODOS } }
     ]

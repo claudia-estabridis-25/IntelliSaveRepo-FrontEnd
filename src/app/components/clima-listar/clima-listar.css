@@ -1,0 +1,173 @@
+.listado {
+  max-width: 1280px;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.resumen {
+  margin: 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.registrar {
+  --mat-button-filled-container-color: #17705b;
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-container-shape: 6px;
+}
+
+.material-symbols-outlined {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso.ok {
+  color: #17705b;
+  border-color: #17705b;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.estado {
+  margin: 0;
+  padding: 20px 0;
+  font-size: 14px;
+  color: #4f6b63;
+  border-top: 1px solid #0e2a2b;
+}
+
+.tabla {
+  width: 100%;
+  border-top: 1px solid #0e2a2b;
+  --mat-table-background-color: transparent;
+  --mat-table-row-item-outline-color: #ddd6c7;
+  --mat-table-header-headline-color: #4f6b63;
+  --mat-table-row-item-label-text-color: #0e2a2b;
+}
+
+.tabla th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.nombre {
+  font-weight: 600;
+}
+
+.acciones {
+  text-align: right;
+}
+
+.eliminar {
+  --mat-button-text-label-text-color: #a1231b;
+  --mat-button-text-container-shape: 6px;
+}
+.descripcion {
+  max-width: 320px;
+  color: #4f6b63;
+}
+
+.acciones {
+  white-space: nowrap;
+}
+
+.editar {
+  --mat-button-text-label-text-color: #0e2a2b;
+  --mat-button-text-container-shape: 6px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filtros mat-form-field {
+  width: 220px;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-outlined-focus-outline-color: #17705b;
+  --mat-form-field-outlined-focus-label-text-color: #17705b;
+}
+
+.secundario {
+  display: block;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #4f6b63;
+  border: 1px solid #ddd6c7;
+  border-radius: 6px;
+}
+
+.etiqueta.verde {
+  color: #17705b;
+  border-color: #17705b;
+}
+
+.etiqueta.ambar {
+  color: #8a5a00;
+  border-color: #f2b53c;
+  background: #fdf3dc;
+}
+
+.etiqueta.rojo {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.acciones-encabezado {
+  display: flex;
+  gap: 12px;
+}
+
+.secundario-boton {
+  --mat-button-outlined-label-text-color: #0e2a2b;
+  --mat-button-outlined-outline-color: #0e2a2b;
+  --mat-button-outlined-container-shape: 6px;
+}
+
+.estado-select {
+  width: 150px;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-container-height: 36px;
+  --mat-form-field-container-vertical-padding: 6px;
+}
+
+.filtros {
+  align-items: center;
+}
