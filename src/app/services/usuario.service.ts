@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Usuario, UsuarioInsert } from '../models/usuario';
+import { PerfilUpdate, Usuario, UsuarioInsert } from '../models/usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +36,13 @@ export class UsuarioService {
 
   desactivar(id: number): Observable<Usuario> {
     return this.http.patch<Usuario>(`${this.url}/${id}/deactivate`, {});
+  }
+
+  miPerfil(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.url}/me`);
+  }
+
+  editarMiPerfil(datos: PerfilUpdate): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.url}/me`, datos);
   }
 }

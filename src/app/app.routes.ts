@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { Login } from './components/login/login';
 import { Layout } from './components/layout/layout';
 import { Dashboard } from './components/dashboard/dashboard';
-import { PaginaPendiente } from './components/pagina-pendiente/pagina-pendiente';
 import { authGuard } from './guards/auth.guard';
 import { rolGuard } from './guards/rol.guard';
 import { EmpresaRegistrar } from './components/empresa-registrar/empresa-registrar';
@@ -23,6 +22,8 @@ import { HuellaListar } from './components/huella-listar/huella-listar';
 import { HuellaRegistrar } from './components/huella-registrar/huella-registrar';
 import { PrediccionListar } from './components/prediccion-listar/prediccion-listar';
 import { PrediccionGenerar } from './components/prediccion-generar/prediccion-generar';
+import { Reportes } from './components/reportes/reportes';
+import { Perfil } from './components/perfil/perfil';
 import { ClimaListar } from './components/clima-listar/clima-listar';
 import { EquipoRegistrar } from './components/equipo-registrar/equipo-registrar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
@@ -72,8 +73,8 @@ export const routes: Routes = [
       { path: 'huella/nueva', component: HuellaRegistrar, data: { titulo: 'Calcular huella de carbono', roles: GESTION } },
       { path: 'huella/editar/:id', component: HuellaRegistrar, data: { titulo: 'Recalcular huella de carbono', roles: GESTION } },
       { path: 'clima', component: ClimaListar, data: { titulo: 'Clima', roles: GESTION } },
-      { path: 'reportes', component: PaginaPendiente, data: { titulo: 'Reportes', historia: 'HU105', roles: GESTION } },
-      { path: 'perfil', component: PaginaPendiente, data: { titulo: 'Mi perfil', historia: 'HU099', roles: TODOS } }
+      { path: 'reportes', component: Reportes, data: { titulo: 'Reportes', roles: GESTION } },
+      { path: 'perfil', component: Perfil, data: { titulo: 'Mi perfil', roles: TODOS } }
     ]
   },
   { path: '**', redirectTo: '' }

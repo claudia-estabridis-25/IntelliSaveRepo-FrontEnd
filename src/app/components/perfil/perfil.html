@@ -1,0 +1,93 @@
+@if (cargando()) {
+  <p class="estado">Cargando tu perfil...</p>
+} @else if (perfil(); as datos) {
+  <section class="perfil">
+    <header>
+      <h1>{{ nombreCompleto() }}</h1>
+      <p>{{ datos.positionUser }} · {{ rol() }}{{ ubicacion() ? ' · ' + ubicacion() : '' }}</p>
+    </header>
+
+    <div class="columnas">
+      <section aria-labelledby="datos-titulo" class="columna">
+        <h2 id="datos-titulo">Tus datos</h2>
+        <p class="ayuda">Si algo está mal, pídele al administrador que lo corrija.</p>
+        <dl>
+          <dt>Correo</dt><dd>{{ datos.emailUser }}</dd>
+          <dt>DNI</dt><dd class="cifra">{{ datos.dniUser }}</dd>
+          <dt>Cargo</dt><dd>{{ datos.positionUser }}</dd>
+          <dt>Rol</dt><dd>{{ rol() }}</dd>
+          <dt>Área</dt><dd>{{ datos.nameDepartment || '—' }}</dd>
+          <dt>Sede</dt><dd>{{ datos.nameBranch || '—' }}</dd>
+          <dt>Empresa</dt><dd>{{ datos.nameCompany || '—' }}</dd>
+        </dl>
+      </section>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="columna" aria-labelledby="cambiar-titulo" novalidate>
+        <h2 id="cambiar-titulo" class="con-linea">Lo que puedes cambiar</h2>
+
+        @if (mensaje()) {
+          <p class="aviso ok">{{ mensaje() }}</p>
+        }
+        @if (error()) {
+          <p class="aviso error">{{ error() }}</p>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>Segundo nombre</mat-label>
+          <input matInput formControlName="secondName" maxlength="20">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput class="cifra" type="tel" inputmode="numeric" maxlength="9" formControlName="telephoneUser">
+          @if (form.get('telephoneUser')?.hasError('required')) {
+            <mat-error>El teléfono es obligatorio.</mat-error>
+          } @else if (form.get('telephoneUser')?.hasError('pattern')) {
+            <mat-error>
+              El teléfono debe tener 9 dígitos.{{ faltanDigitos() > 0 ? (faltanDigitos() === 1 ? ' Falta 1.' : ' Faltan ' + faltanDigitos() + '.') : '' }}
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <fieldset>
+          <legend>Cambiar contraseña</legend>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña actual</mat-label>
+            <input matInput type="password" formControlName="currentPassword" autocomplete="current-password">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nueva contraseña</mat-label>
+            <input matInput type="password" formControlName="newPassword" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+            @if (form.get('newPassword')?.hasError('minlength')) {
+              <mat-error>La contraseña debe tener al menos 6 caracteres.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Repite la nueva contraseña</mat-label>
+            <input matInput type="password" formControlName="repeatPassword" autocomplete="new-password">
+          </mat-form-field>
+
+          @if (form.hasError('noCoinciden') && form.get('repeatPassword')?.dirty) {
+            <p class="aviso error">Las contraseñas nuevas no coinciden.</p>
+          }
+          @if (form.hasError('faltaActual') && form.get('newPassword')?.dirty) {
+            <p class="aviso error">Escribe tu contraseña actual para poder cambiarla.</p>
+          }
+          @if (form.hasError('faltaNueva') && form.get('currentPassword')?.dirty) {
+            <p class="aviso error">Escribe la nueva contraseña o borra la actual.</p>
+          }
+          <p class="ayuda">Déjalas vacías si no quieres cambiarla.</p>
+        </fieldset>
+
+        <button mat-flat-button class="guardar" type="submit" [disabled]="form.pristine || guardando()">
+          {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </form>
+    </div>
+  </section>
+} @else {
+  <p class="aviso error">{{ error() }}</p>
+}

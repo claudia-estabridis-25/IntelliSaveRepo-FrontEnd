@@ -1,20 +1,157 @@
-<mat-card appearance="outlined" class="tarjeta">
-  <mat-card-header>
-    <mat-card-title>Bienvenido a IntelliSave</mat-card-title>
-    <mat-card-subtitle>{{ usuario }}</mat-card-subtitle>
-  </mat-card-header>
+@if (cargando()) {
+  <p class="estado">Cargando indicadores...</p>
+} @else {
+  <div class="dashboard">
+    <header class="cabecera">
+      <div>
+        <p class="subtitulo">{{ subtitulo() }}</p>
+        <h1>{{ titulo() }}</h1>
+      </div>
+      <div class="controles">
+        @if (puedeGestionar && sedes().length > 1) {
+          <label class="control">
+            <span>Sede</span>
+            <select [value]="idSede()" (change)="cambiarSede($event)">
+              <option [value]="0">Todas las sedes</option>
+              @for (sede of sedes(); track sede.idBranch) {
+                <option [value]="sede.idBranch">{{ sede.nameBranch }}</option>
+              }
+            </select>
+          </label>
+        }
+        <label class="control">
+          <span>Periodo</span>
+          <select [value]="periodo()" (change)="cambiarPeriodo($event)">
+            <option value="mes">Este mes, hasta hoy</option>
+            <option value="anterior">Mes anterior</option>
+            <option value="treinta">Últimos 30 días</option>
+          </select>
+        </label>
+        @if (puedeGestionar) {
+          <button type="button" class="boton-borde" (click)="descargarPdf()" [disabled]="descargando()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+            {{ descargando() ? 'Descargando...' : 'Reporte PDF' }}
+          </button>
+        } @else {
+          <a class="boton-lleno" routerLink="/consumos/nuevo">Registrar consumo</a>
+        }
+      </div>
+    </header>
 
-  <mat-card-content>
-    <p><strong>Roles:</strong> {{ roles.join(', ') }}</p>
-
-    @if (perfil(); as datos) {
-      <p><strong>Nombre:</strong> {{ datos.firstName }} {{ datos.paternalSurname }}</p>
-      <p><strong>Cargo:</strong> {{ datos.positionUser }}</p>
-      <p class="ok">Conexión con la API correcta: el token se envió en la petición.</p>
-    } @else if (errorPerfil()) {
-      <p class="error">{{ errorPerfil() }}</p>
-    } @else {
-      <p>Cargando perfil...</p>
+    @if (error()) {
+      <p class="aviso error">{{ error() }}</p>
     }
-  </mat-card-content>
-</mat-card>
+
+    <section class="fila">
+      <div class="principal">
+        <div class="cifra-grande">
+          <p class="kwh">{{ totalKwh() | number: '1.1-1' }}<span>kWh</span></p>
+          <p class="explicacion">
+            S/ {{ totalCosto() | number: '1.2-2' }} en energía.
+            @if (totalAnterior() > 0) {
+              {{ (diferencia() >= 0 ? diferencia() : -diferencia()) | number: '1.1-1' }} kWh {{ diferencia() >= 0 ? 'más' : 'menos' }} que en {{ nombreAnterior() }}.
+            } @else {
+              No hay consumos en {{ nombreAnterior() }} para comparar.
+            }
+          </p>
+        </div>
+
+        @if (totalKwh() > 0) {
+          <div class="grafico" role="img" [attr.aria-label]="'Consumo diario. El pico fue el ' + fechaCorta(pico().dia) + ' con ' + (pico().kwh | number: '1.1-1') + ' kWh.'">
+            <canvas baseChart [data]="grafico()" [options]="opciones" type="bar"></canvas>
+          </div>
+          <p class="nota">
+            Pico: <strong>{{ fechaCorta(pico().dia) }} · {{ pico().kwh | number: '1.1-1' }} kWh</strong> (en ámbar).
+            La línea punteada es el promedio diario, {{ promedio() | number: '1.1-1' }} kWh.
+          </p>
+        } @else {
+          <p class="vacio">No hay consumos registrados en este periodo.</p>
+        }
+      </div>
+
+      <div class="lateral">
+        <h2>Para revisar</h2>
+        @if (pendientes().length === 0) {
+          <p class="vacio">Todo en orden: no hay alertas pendientes.</p>
+        } @else {
+          <ol class="pendientes">
+            @for (item of pendientes(); track item.titulo) {
+              <li>
+                <span class="punto" [class]="'punto ' + item.color"></span>
+                <div>
+                  <p class="titulo-item">{{ item.titulo }}</p>
+                  <p class="detalle-item">{{ item.detalle }}</p>
+                  <a [routerLink]="item.enlace">{{ item.textoEnlace }}</a>
+                </div>
+              </li>
+            }
+          </ol>
+        }
+      </div>
+    </section>
+
+    <section class="fila">
+      @if (puedeGestionar) {
+        <div class="principal">
+          <h2>Por área</h2>
+          @if (porArea().length === 0) {
+            <p class="vacio">Sin consumos en este periodo.</p>
+          } @else {
+            <div class="tabla-contenedor">
+              <table class="tabla-area">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th class="barra-col">Parte del consumo</th>
+                    <th class="derecha">kWh</th>
+                    <th class="derecha">Costo</th>
+                    <th class="derecha">Equipos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (area of porArea(); track area.nombre) {
+                    <tr>
+                      <td>{{ area.nombre }}</td>
+                      <td class="barra-col"><span class="barra"><span [style.width.%]="area.parte"></span></span></td>
+                      <td class="derecha cifra">{{ area.kwh | number: '1.1-1' }}</td>
+                      <td class="derecha cifra">S/ {{ area.costo | number: '1.2-2' }}</td>
+                      <td class="derecha">{{ area.equipos }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="lateral">
+        <h2>Por tipo de equipo</h2>
+        @if (porTipo().length === 0) {
+          <p class="vacio">Sin consumos en este periodo.</p>
+        } @else {
+          <div class="apilada" role="img" [attr.aria-label]="'Consumo por tipo de equipo'">
+            @for (tipo of porTipo(); track tipo.nombre) {
+              <span [style.width.%]="tipo.parte" [style.background]="tipo.color"></span>
+            }
+          </div>
+          <dl class="leyenda">
+            @for (tipo of porTipo(); track tipo.nombre) {
+              <div>
+                <span class="muestra" [style.background]="tipo.color"></span>
+                <dt>{{ tipo.nombre }}</dt>
+                <dd class="cifra">{{ tipo.parte | number: '1.0-0' }}%</dd>
+              </div>
+            }
+          </dl>
+        }
+        <p class="huella">
+          Huella estimada del periodo: <strong>{{ huellaPeriodo() | number: '1.1-1' }} kg CO₂</strong>
+          con un factor de {{ factor() | number: '1.2-4' }} kg por kWh{{ huellas().length > 0 ? ' (el último que registraron)' : ' (referencia de la red peruana)' }}.
+        </p>
+      </div>
+    </section>
+
+    <p class="pie">Datos actualizados el {{ actualizado | date: 'dd/MM/yyyy, HH:mm' }}. El clima de cada sede se registra cada hora.</p>
+  </div>
+}
