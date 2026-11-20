@@ -1,0 +1,106 @@
+<section class="formulario">
+  <a class="volver" routerLink="/alertas">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Volver a alertas
+  </a>
+
+  <p class="indicacion">
+    {{ esEdicion ? 'Modifica los datos de la alerta y guarda los cambios.' : 'Registra una alerta manual sobre un equipo. Las alertas de consumo elevado también se generan solas cada noche.' }}
+  </p>
+
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando alerta...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Equipo</mat-label>
+          <mat-select formControlName="idEquipment">
+            @for (grupo of grupos(); track grupo.area) {
+              <mat-optgroup [label]="grupo.area">
+                @for (equipo of grupo.equipos; track equipo.idEquipment) {
+                  <mat-option [value]="equipo.idEquipment">{{ equipo.nameEquipment }}</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+          @if (form.get('idEquipment')?.hasError('required')) {
+            <mat-error>Elige el equipo.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de alerta</mat-label>
+          <input matInput formControlName="typeAlert" maxlength="20" list="tipos-alerta">
+          <datalist id="tipos-alerta">
+            @for (tipo of tipos; track tipo) {
+              <option [value]="tipo"></option>
+            }
+          </datalist>
+          @if (form.get('typeAlert')?.hasError('required')) {
+            <mat-error>El tipo de alerta es obligatorio.</mat-error>
+          }
+          <mat-hint align="end">{{ largo('typeAlert') }}/20</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Prioridad</mat-label>
+          <mat-select formControlName="priorityLevelAlert">
+            @for (opcion of prioridades; track opcion) {
+              <mat-option [value]="opcion">{{ opcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Consumo detectado (kWh)</mat-label>
+          <input matInput class="cifra" type="number" step="any" min="0" formControlName="kwhDetected">
+          @if (form.get('kwhDetected')?.hasError('required')) {
+            <mat-error>El consumo detectado es obligatorio.</mat-error>
+          } @else if (form.get('kwhDetected')?.hasError('min')) {
+            <mat-error>El consumo no puede ser negativo.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha y hora (opcional)</mat-label>
+          <input matInput class="cifra" type="datetime-local" formControlName="dateTimeAlert">
+          <mat-hint>{{ esEdicion ? 'Si la borras, se conserva la original.' : 'Si la dejas vacía, se usa la fecha y hora actual.' }}</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="statusAlert">
+            @for (opcion of estados; track opcion) {
+              <mat-option [value]="opcion">{{ opcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descriptionAlert" rows="2" maxlength="90"></textarea>
+        @if (form.get('descriptionAlert')?.hasError('required')) {
+          <mat-error>La descripción es obligatoria.</mat-error>
+        }
+        <mat-hint align="end">{{ largo('descriptionAlert') }}/90</mat-hint>
+      </mat-form-field>
+
+      <div class="botones">
+        <a mat-button class="cancelar" routerLink="/alertas">Cancelar</a>
+        <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar alerta') }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,88 @@
+<section class="listado">
+  <div class="encabezado">
+    <p class="resumen">
+      {{ filtrados().length }} registros · el clima de cada sede se guarda solo cada hora
+    </p>
+    @if (esAdminPlataforma()) {
+      <button mat-flat-button type="button" class="registrar" (click)="actualizarTodas()" [disabled]="consultando()">
+        <span class="material-symbols-outlined">refresh</span>
+        Actualizar todas las sedes
+      </button>
+    }
+  </div>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Sede</mat-label>
+      <mat-select [value]="idSede()" (selectionChange)="idSede.set($event.value)">
+        <mat-option [value]="0">Todas las sedes</mat-option>
+        @for (sede of sedes(); track sede.idBranch) {
+          <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-stroked-button type="button" class="secundario-boton" (click)="consultarSede()" [disabled]="idSede() === 0 || consultando()">
+      <span class="material-symbols-outlined">partly_cloudy_day</span>
+      {{ consultando() ? 'Consultando...' : 'Consultar clima actual de la sede' }}
+    </button>
+  </div>
+
+  @if (mensaje()) {
+    <p class="aviso ok">{{ mensaje() }}</p>
+  }
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando clima...</p>
+  } @else if (filtrados().length === 0 && !error()) {
+    <p class="estado">Todavía no hay registros de clima.</p>
+  } @else if (filtrados().length > 0) {
+    <table mat-table [dataSource]="visibles()" class="tabla">
+      <ng-container matColumnDef="sede">
+        <th mat-header-cell *matHeaderCellDef>Sede</th>
+        <td mat-cell *matCellDef="let registro" class="nombre">{{ registro.nameBranch }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="empresa">
+        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <td mat-cell *matCellDef="let registro">{{ registro.nameCompany }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.climateDateTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="condicion">
+        <th mat-header-cell *matHeaderCellDef>Condición</th>
+        <td mat-cell *matCellDef="let registro">{{ registro.climateCondition }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="temperatura">
+        <th mat-header-cell *matHeaderCellDef>Temperatura</th>
+        <td mat-cell *matCellDef="let registro" class="cifra">
+          {{ registro.temperature | number: '1.1-1' }} °C
+          <span class="secundario">Se siente {{ registro.thermalSensation | number: '1.1-1' }} °C</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="humedad">
+        <th mat-header-cell *matHeaderCellDef>Humedad</th>
+        <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.humidity | number: '1.0-0' }} %</td>
+      </ng-container>
+
+      <ng-container matColumnDef="viento">
+        <th mat-header-cell *matHeaderCellDef>Viento</th>
+        <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.windSpeed | number: '1.1-1' }} km/h</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas()"></tr>
+      <tr mat-row *matRowDef="let fila; columns: columnas()"></tr>
+    </table>
+    @if (filtrados().length > limite) {
+      <p class="estado">Se muestran los {{ limite }} registros más recientes.</p>
+    }
+  }
+</section>

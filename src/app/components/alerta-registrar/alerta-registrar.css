@@ -1,0 +1,105 @@
+.formulario {
+  max-width: 720px;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #17705b;
+  text-decoration: none;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+.material-symbols-outlined {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.indicacion {
+  margin: 12px 0 20px;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.estado {
+  margin: 0;
+  padding: 20px 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid #0e2a2b;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-outlined-focus-outline-color: #17705b;
+  --mat-form-field-outlined-focus-label-text-color: #17705b;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.guardar {
+  --mat-button-filled-container-color: #17705b;
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-container-shape: 6px;
+}
+
+.cancelar {
+  --mat-button-text-label-text-color: #0e2a2b;
+  --mat-button-text-container-shape: 6px;
+}
+
+@media (max-width: 700px) {
+  .fila {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+h2 {
+  margin: 8px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4f6b63;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}

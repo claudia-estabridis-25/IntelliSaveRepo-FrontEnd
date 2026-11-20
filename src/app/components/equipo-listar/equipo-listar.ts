@@ -30,6 +30,7 @@ export class EquipoListar implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.mensaje.set(history.state?.mensaje ?? '');
     this.puedeGestionar = this.loginService.tieneRol('ADMIN') || this.loginService.tieneRol('SUPERVISOR');
     if (this.puedeGestionar) {
       this.columnas = [...this.columnas, 'acciones'];

@@ -1,0 +1,76 @@
+<section class="formulario">
+  <a class="volver" routerLink="/predicciones">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Volver a predicciones
+  </a>
+
+  <p class="indicacion">
+    La IA usa el historial de consumo del área o del equipo para estimar cuántos kWh se consumirán en el periodo elegido (máximo 90 días).
+  </p>
+
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="generar()" novalidate>
+    <div class="fila">
+      <mat-form-field appearance="outline">
+        <mat-label>Área</mat-label>
+        <mat-select formControlName="idDepartment">
+          @for (grupo of grupos(); track grupo.sede) {
+            <mat-optgroup [label]="grupo.sede">
+              @for (area of grupo.areas; track area.idDepartment) {
+                <mat-option [value]="area.idDepartment">{{ area.nameDepartment }}</mat-option>
+              }
+            </mat-optgroup>
+          }
+        </mat-select>
+        @if (form.get('idDepartment')?.hasError('required')) {
+          <mat-error>Elige el área.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Equipo (opcional)</mat-label>
+        <mat-select formControlName="idEquipment">
+          <mat-option [value]="null">Toda el área</mat-option>
+          @for (equipo of equiposDelArea(); track equipo.idEquipment) {
+            <mat-option [value]="equipo.idEquipment">{{ equipo.nameEquipment }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Déjalo en "Toda el área" para predecir el consumo de todos sus equipos.</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="fila">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput class="cifra" type="date" formControlName="initialDatePrediction">
+        @if (form.get('initialDatePrediction')?.hasError('required')) {
+          <mat-error>La fecha de inicio es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput class="cifra" type="date" formControlName="endDatePrediction">
+        @if (form.get('endDatePrediction')?.hasError('required')) {
+          <mat-error>La fecha de fin es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (form.hasError('rangoInvalido')) {
+      <p class="aviso error">La fecha de fin no puede ser anterior a la fecha de inicio.</p>
+    } @else if (form.hasError('rangoLargo')) {
+      <p class="aviso error">El periodo a predecir no puede superar los 90 días.</p>
+    }
+
+    <div class="botones">
+      <a mat-button class="cancelar" routerLink="/predicciones">Cancelar</a>
+      <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Generando...' : 'Generar predicción' }}
+      </button>
+    </div>
+  </form>
+</section>

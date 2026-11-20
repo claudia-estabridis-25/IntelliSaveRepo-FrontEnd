@@ -1,0 +1,83 @@
+<section class="formulario">
+  <a class="volver" routerLink="/tarifas">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Volver a tarifas
+  </a>
+
+  <p class="indicacion">
+    {{ esEdicion ? 'Modifica los datos de la tarifa y guarda los cambios.' : 'Registra el costo por kWh que cobra el proveedor a la sede. Dos tarifas de una misma sede no pueden cruzarse en fechas.' }}
+  </p>
+
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando tarifa...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Sede</mat-label>
+          <mat-select formControlName="idBranch">
+            @for (grupo of grupos(); track grupo.empresa) {
+              <mat-optgroup [label]="grupo.empresa">
+                @for (sede of grupo.sedes; track sede.idBranch) {
+                  <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+          @if (form.get('idBranch')?.hasError('required')) {
+            <mat-error>Elige la sede de la tarifa.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Proveedor (opcional)</mat-label>
+          <input matInput formControlName="supplier" maxlength="60" placeholder="Luz del Sur">
+          <mat-hint align="end">{{ largo('supplier') }}/60</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="fila">
+        <mat-form-field appearance="outline">
+          <mat-label>Vigente desde</mat-label>
+          <input matInput class="cifra" type="date" formControlName="initialEffectiveDate">
+          @if (form.get('initialEffectiveDate')?.hasError('required')) {
+            <mat-error>La fecha de inicio es obligatoria.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Vigente hasta</mat-label>
+          <input matInput class="cifra" type="date" formControlName="endEffectiveDate">
+          @if (form.get('endEffectiveDate')?.hasError('required')) {
+            <mat-error>La fecha de fin es obligatoria.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      @if (form.hasError('rangoInvalido')) {
+        <p class="aviso error">La fecha de fin no puede ser anterior a la fecha de inicio.</p>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Costo por kWh (S/)</mat-label>
+        <input matInput class="cifra" type="number" step="any" min="0" formControlName="costPerKwh" placeholder="0.72">
+        @if (form.get('costPerKwh')?.hasError('required')) {
+          <mat-error>El costo por kWh es obligatorio.</mat-error>
+        } @else if (form.get('costPerKwh')?.hasError('min')) {
+          <mat-error>El costo debe ser mayor a 0.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="botones">
+        <a mat-button class="cancelar" routerLink="/tarifas">Cancelar</a>
+        <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar tarifa') }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

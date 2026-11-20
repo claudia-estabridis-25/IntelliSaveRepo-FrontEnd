@@ -5,3 +5,10 @@ export interface Equipment {
   categoryEquipment: string;
   statusEquipment: string;
 }
+
+export interface EquipmentInsert extends Equipment {
+  brandEquipment: string;
+  modelEquipment: string;
+  wattPowerEquipment: number;
+  acquisitionDateEquipment: string;
+}
