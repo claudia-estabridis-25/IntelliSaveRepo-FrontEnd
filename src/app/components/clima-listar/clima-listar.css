@@ -171,3 +171,105 @@
 .filtros {
   align-items: center;
 }
+
+.titulo-seccion {
+  margin: 8px 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #fffdf8;
+  border: 1px solid #ddd6c7;
+  border-radius: 10px;
+}
+
+.tarjeta h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+.tarjeta .empresa {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.principal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.material-symbols-outlined.icono-clima {
+  font-size: 40px;
+  color: #f2b53c;
+}
+
+.temperatura {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  color: #0e2a2b;
+}
+
+.condicion {
+  margin: 0;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid #ddd6c7;
+}
+
+.datos dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4f6b63;
+}
+
+.datos dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #0e2a2b;
+}
+
+.fecha {
+  margin: 0;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.tarjeta.sin-datos {
+  border-style: dashed;
+}
+
+.vacio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: auto 0;
+  font-size: 14px;
+  color: #4f6b63;
+}

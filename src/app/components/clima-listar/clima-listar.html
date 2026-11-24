@@ -11,6 +11,47 @@
     }
   </div>
 
+  <h2 class="titulo-seccion">Clima actual por sede</h2>
+  @if (!cargando()) {
+    @if (tarjetas().length === 0) {
+      <p class="estado">No hay sedes registradas.</p>
+    } @else {
+      <div class="tarjetas">
+        @for (tarjeta of tarjetas(); track tarjeta.sede.idBranch) {
+          <article class="tarjeta" [class.sin-datos]="!tarjeta.registro">
+            <header>
+              <h3>{{ tarjeta.sede.nameBranch }}</h3>
+              @if (esAdminPlataforma() && tarjeta.empresa) {
+                <p class="empresa">{{ tarjeta.empresa }}</p>
+              }
+            </header>
+            @if (tarjeta.registro; as registro) {
+              <div class="principal">
+                <span class="material-symbols-outlined icono-clima" aria-hidden="true">{{ icono(registro.climateCondition) }}</span>
+                <div>
+                  <p class="temperatura cifra">{{ registro.temperature | number: '1.1-1' }} °C</p>
+                  <p class="condicion">{{ registro.climateCondition }}</p>
+                </div>
+              </div>
+              <dl class="datos">
+                <div><dt>Sensación</dt><dd class="cifra">{{ registro.thermalSensation | number: '1.1-1' }} °C</dd></div>
+                <div><dt>Humedad</dt><dd class="cifra">{{ registro.humidity | number: '1.0-0' }} %</dd></div>
+                <div><dt>Viento</dt><dd class="cifra">{{ registro.windSpeed | number: '1.1-1' }} km/h</dd></div>
+              </dl>
+              <p class="fecha">Registro del {{ registro.climateDateTime | date: 'dd/MM/yyyy HH:mm' }}</p>
+            } @else {
+              <p class="vacio">
+                <span class="material-symbols-outlined" aria-hidden="true">cloud_off</span>
+                Sin datos
+              </p>
+            }
+          </article>
+        }
+      </div>
+    }
+  }
+
+  <h2 class="titulo-seccion">Historial</h2>
   <div class="filtros">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Sede</mat-label>
