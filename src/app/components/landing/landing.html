@@ -258,7 +258,7 @@
           </div>
           <div class="enviar">
             <button type="submit" class="boton acento grande">{{ t().demo.enviar }}</button>
-            <span class="legal">{{ t().demo.aceptas }} <a href="#">{{ t().demo.terminos }}</a>.</span>
+            <span class="legal">{{ t().demo.aceptas }} <a routerLink="/terminos">{{ t().demo.terminos }}</a>.</span>
           </div>
           @if (enviado()) {
             <p class="gracias" role="status">{{ t().demo.gracias }}</p>
@@ -288,13 +288,13 @@
       </nav>
       <nav class="pie-grupo" aria-label="Lumen Save">
         <span class="pie-titulo">Lumen Save</span>
-        <a href="#">{{ t().pie.nosotros }}</a>
+        <a routerLink="/nosotros">{{ t().pie.nosotros }}</a>
         <a [href]="'mailto:' + correoContacto">{{ t().pie.contacto }}</a>
       </nav>
       <nav class="pie-grupo" [attr.aria-label]="t().pie.legal">
         <span class="pie-titulo">{{ t().pie.legal }}</span>
-        <a href="#">{{ t().demo.terminos }}</a>
-        <a href="#">{{ t().pie.privacidad }}</a>
+        <a routerLink="/terminos">{{ t().demo.terminos }}</a>
+        <a routerLink="/privacidad">{{ t().pie.privacidad }}</a>
       </nav>
     </div>
     <div class="contenedor">

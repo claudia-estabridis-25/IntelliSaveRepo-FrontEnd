@@ -212,6 +212,23 @@ h1 {
   animation: girar 0.8s linear infinite;
 }
 
+.legal {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: #4f6b63;
+}
+
+.legal a {
+  color: #17705b;
+  font-weight: 500;
+}
+
+.legal a:hover {
+  color: #0e2a2b;
+}
+
 .pie {
   text-align: center;
   font-size: 12px;

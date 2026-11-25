@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, DOCUMENT, Inject, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DOCUMENT, Inject, Signal, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LoginService } from '../../services/login.service';
-import { Idioma, TEXTOS } from './landing.textos';
+import { IdiomaService } from '../../services/idioma.service';
+import { Idioma } from '../../models/idioma';
+import { TEXTOS } from './landing.textos';
 
 @Component({
   selector: 'app-landing',
@@ -26,7 +28,7 @@ export class Landing {
     description: ['M7 3h7l5 5v13H7Z', 'M14 3v5h5M10 13h6M10 17h6']
   };
 
-  idioma = signal<Idioma>('es');
+  idioma: Signal<Idioma>;
   t = computed(() => TEXTOS[this.idioma()]);
   menuAbierto = signal(false);
   enviado = signal(false);
@@ -42,8 +44,10 @@ export class Landing {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private fb: FormBuilder,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
   ) {
+    this.idioma = this.idiomaService.idioma;
     this.sesionActiva = this.loginService.estaAutenticado();
     this.formulario = this.fb.nonNullable.group({
       nombre: ['', Validators.required],
@@ -54,12 +58,11 @@ export class Landing {
   }
 
   cambiarIdioma(idioma: Idioma): void {
-    this.idioma.set(idioma);
-    this.document.documentElement.lang = idioma;
+    this.idiomaService.cambiar(idioma);
   }
 
   alternarIdioma(): void {
-    this.cambiarIdioma(this.idioma() === 'es' ? 'en' : 'es');
+    this.idiomaService.alternar();
   }
 
   alternarMenu(): void {
