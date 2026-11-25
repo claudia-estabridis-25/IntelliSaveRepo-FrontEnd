@@ -28,6 +28,7 @@ import { ClimaListar } from './components/clima-listar/clima-listar';
 import { EquipoRegistrar } from './components/equipo-registrar/equipo-registrar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
 import { Landing } from './components/landing/landing';
+import { PaginaInfo } from './components/pagina-info/pagina-info';
 
 const TODOS = ['ADMIN', 'SUPERVISOR', 'EMPLOYEE'];
 const GESTION = ['ADMIN', 'SUPERVISOR'];
@@ -35,6 +36,9 @@ const GESTION = ['ADMIN', 'SUPERVISOR'];
 export const routes: Routes = [
   { path: '', component: Landing, pathMatch: 'full' },
   { path: 'login', component: Login },
+  { path: 'nosotros', component: PaginaInfo, data: { pagina: 'nosotros' } },
+  { path: 'terminos', component: PaginaInfo, data: { pagina: 'terminos' } },
+  { path: 'privacidad', component: PaginaInfo, data: { pagina: 'privacidad' } },
   {
     path: '',
     component: Layout,

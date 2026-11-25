@@ -1,0 +1,130 @@
+<div class="pagina">
+  <header class="encabezado">
+    <div class="contenedor barra">
+      <a class="marca" routerLink="/">
+        <span class="logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" fill="#0e2a2b"></path>
+          </svg>
+        </span>
+        IntelliSave
+      </a>
+
+      <nav class="menu" [attr.aria-label]="comunes().navEtiqueta">
+        <a routerLink="/nosotros" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ comunes().nosotros }}</a>
+        <a routerLink="/terminos" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ comunes().terminos }}</a>
+        <a routerLink="/privacidad" routerLinkActive="activo" ariaCurrentWhenActive="page">{{ comunes().privacidad }}</a>
+      </nav>
+
+      <div class="acciones">
+        <div class="idiomas" role="group" [attr.aria-label]="comunes().idiomaGrupo">
+          <button type="button" [attr.aria-pressed]="idioma() === 'es'" [class.activo]="idioma() === 'es'" (click)="cambiarIdioma('es')">ES</button>
+          <button type="button" [attr.aria-pressed]="idioma() === 'en'" [class.activo]="idioma() === 'en'" (click)="cambiarIdioma('en')">EN</button>
+        </div>
+        <button type="button" class="idioma-movil" [attr.aria-label]="comunes().cambiarIdioma" (click)="alternarIdioma()">{{ comunes().otroIdioma }}</button>
+        <a class="volver" routerLink="/">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+          <span>{{ comunes().volver }}</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="portada" aria-labelledby="paginaTitulo">
+    <div class="contenedor">
+      <p class="etiqueta">{{ pagina().etiqueta }}</p>
+      <h1 id="paginaTitulo">{{ pagina().titulo }}</h1>
+      <p class="intro">{{ pagina().intro }}</p>
+      @if (pagina().actualizado) {
+        <p class="actualizado mono">{{ pagina().actualizado }}</p>
+      }
+    </div>
+  </section>
+
+  <main class="contenedor cuerpo" [class.legal]="esLegal()">
+    @if (esLegal()) {
+      <aside class="indice">
+        <nav [attr.aria-label]="comunes().indice">
+          <p class="indice-titulo">{{ comunes().indice }}</p>
+          <ol>
+            @for (seccion of pagina().secciones; track seccion.id) {
+              <li><a [href]="'#' + seccion.id" (click)="irA($event, seccion.id)">{{ seccion.titulo }}</a></li>
+            }
+          </ol>
+        </nav>
+      </aside>
+    }
+
+    <article class="contenido">
+      @for (seccion of pagina().secciones; track seccion.id) {
+        <section class="seccion" [id]="seccion.id" [attr.aria-labelledby]="seccion.id + 'Titulo'">
+          <h2 [id]="seccion.id + 'Titulo'">{{ seccion.titulo }}</h2>
+          @for (parrafo of seccion.parrafos; track $index) {
+            <p>{{ parrafo }}</p>
+          }
+          @if (seccion.lista) {
+            <ul>
+              @for (item of seccion.lista; track $index) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          }
+        </section>
+      }
+
+      @if (pagina().valores; as valores) {
+        <section class="seccion" aria-labelledby="valoresTitulo">
+          <h2 id="valoresTitulo">{{ valores.titulo }}</h2>
+          <ul class="valores">
+            @for (valor of valores.items; track valor.titulo) {
+              <li>
+                <h3>{{ valor.titulo }}</h3>
+                <p>{{ valor.texto }}</p>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      @if (pagina().equipo; as equipo) {
+        <section class="seccion" aria-labelledby="equipoTitulo">
+          <h2 id="equipoTitulo">{{ equipo.titulo }}</h2>
+          <p>{{ equipo.texto }}</p>
+          <ul class="equipo">
+            @for (miembro of equipo.miembros; track miembro.nombre) {
+              <li>
+                <span class="avatar mono" aria-hidden="true">{{ iniciales(miembro.nombre) }}</span>
+                <span class="miembro-nombre">{{ miembro.nombre }}</span>
+                <span class="miembro-rol">{{ miembro.rol }}</span>
+              </li>
+            }
+          </ul>
+          <p class="nota">{{ equipo.nota }}</p>
+        </section>
+      }
+
+      <aside class="dudas">
+        <div>
+          <h2>{{ comunes().dudas }}</h2>
+          <p>{{ comunes().dudasTexto }}</p>
+        </div>
+        <a class="boton acento" [href]="'mailto:' + correoContacto">{{ comunes().escribenos }}</a>
+      </aside>
+    </article>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie-contenido">
+      <span>{{ comunes().derechos }}</span>
+      <nav [attr.aria-label]="comunes().navEtiqueta">
+        <a routerLink="/">IntelliSave</a>
+        <a routerLink="/nosotros">{{ comunes().nosotros }}</a>
+        <a routerLink="/terminos">{{ comunes().terminos }}</a>
+        <a routerLink="/privacidad">{{ comunes().privacidad }}</a>
+        <a routerLink="/login">{{ comunes().iniciarSesion }}</a>
+      </nav>
+    </div>
+  </footer>
+</div>

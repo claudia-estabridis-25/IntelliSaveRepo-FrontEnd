@@ -1,4 +1,4 @@
-export type Idioma = 'es' | 'en';
+import { Idioma } from '../../models/idioma';
 
 export interface PasoLanding {
   titulo: string;
