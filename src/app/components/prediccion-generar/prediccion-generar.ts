@@ -96,9 +96,12 @@ export class PrediccionGenerar implements OnInit {
     this.predictionService.generar(solicitud).subscribe({
       next: resultado => {
         const prediccion = resultado.prediction;
+        const conAnalisis = !!prediccion.aiAnalysis;
         this.router.navigate(['/predicciones'], {
           state: {
             mensaje: `Predicción generada: ${prediccion.kwhPrediction.toFixed(2)} kWh (S/ ${prediccion.costPrediction.toFixed(2)}) con ${resultado.historicalDaysWithData} días de historial.`
+              + (conAnalisis ? ' Revisa abajo el análisis de la IA.' : ' El análisis con IA no está disponible por ahora; puedes generarlo luego.'),
+            abrir: prediccion.idPrediction
           }
         });
       },

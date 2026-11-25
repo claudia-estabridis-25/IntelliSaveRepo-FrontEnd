@@ -15,6 +15,8 @@ export interface Prediction {
   statusPrediction: string;
   realKwh: number | null;
   deviationPercent: number | null;
+  aiAnalysis: string | null;
+  aiRecommendations: string[];
 }
 
 export interface PredictionRequest {
