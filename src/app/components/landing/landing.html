@@ -1,112 +1,82 @@
 <div class="landing">
-  <header class="encabezado">
-    <div class="contenedor barra">
-      <a class="marca" href="#inicio" (click)="irA($event, 'inicio')">
-        <span class="logo">
-          <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" fill="#f2b53c"></path>
-          </svg>
-        </span>
-        IntelliSave
-      </a>
+  <div id="inicio" class="hero-fondo">
+    <img class="hero-imagen" [src]="imagenHero" alt="" aria-hidden="true">
+    <div class="hero-capa" aria-hidden="true"></div>
 
-      <nav class="menu" [class.abierto]="menuAbierto()" [attr.aria-label]="t().nav.etiqueta">
-        <a href="#como" (click)="irA($event, 'como')">{{ t().nav.como }}</a>
-        <a href="#funciones" (click)="irA($event, 'funciones')">{{ t().nav.funciones }}</a>
-        <a href="#para-quien" (click)="irA($event, 'para-quien')">{{ t().nav.paraQuien }}</a>
-        <a href="#demo" (click)="irA($event, 'demo')">{{ t().nav.contacto }}</a>
-        @if (sesionActiva) {
-          <a class="solo-movil" routerLink="/dashboard">{{ t().irAlPanel }}</a>
-        } @else {
-          <a class="solo-movil" routerLink="/login">{{ t().iniciarSesion }}</a>
-        }
-      </nav>
+    <header class="encabezado">
+      <div class="contenedor barra">
+        <a class="marca" href="#inicio" (click)="irA($event, 'inicio')">
+          <span class="logo">
+            <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" fill="#0e2a2b"></path>
+            </svg>
+          </span>
+          IntelliSave
+        </a>
 
-      <div class="acciones">
-        <div class="idiomas" role="group" [attr.aria-label]="t().idiomaGrupo">
-          <button type="button" [attr.aria-pressed]="idioma() === 'es'" [class.activo]="idioma() === 'es'" (click)="cambiarIdioma('es')">ES</button>
-          <button type="button" [attr.aria-pressed]="idioma() === 'en'" [class.activo]="idioma() === 'en'" (click)="cambiarIdioma('en')">EN</button>
+        <nav class="menu" [class.abierto]="menuAbierto()" [attr.aria-label]="t().nav.etiqueta">
+          <a href="#como" (click)="irA($event, 'como')">{{ t().nav.como }}</a>
+          <a href="#funciones" (click)="irA($event, 'funciones')">{{ t().nav.funciones }}</a>
+          <a href="#para-quien" (click)="irA($event, 'para-quien')">{{ t().nav.paraQuien }}</a>
+          <a href="#demo" (click)="irA($event, 'demo')">{{ t().nav.contacto }}</a>
+          @if (sesionActiva) {
+            <a class="solo-movil" routerLink="/dashboard">{{ t().irAlPanel }}</a>
+          } @else {
+            <a class="solo-movil" routerLink="/login">{{ t().iniciarSesion }}</a>
+          }
+        </nav>
+
+        <div class="acciones">
+          <div class="idiomas" role="group" [attr.aria-label]="t().idiomaGrupo">
+            <button type="button" [attr.aria-pressed]="idioma() === 'es'" [class.activo]="idioma() === 'es'" (click)="cambiarIdioma('es')">ES</button>
+            <button type="button" [attr.aria-pressed]="idioma() === 'en'" [class.activo]="idioma() === 'en'" (click)="cambiarIdioma('en')">EN</button>
+          </div>
+          <button type="button" class="idioma-movil" [attr.aria-label]="t().cambiarIdioma" (click)="alternarIdioma()">{{ t().otroIdioma }}</button>
+          @if (sesionActiva) {
+            <a class="boton contorno solo-escritorio" routerLink="/dashboard">{{ t().irAlPanel }}</a>
+          } @else {
+            <a class="boton contorno solo-escritorio" routerLink="/login">{{ t().iniciarSesion }}</a>
+          }
+          <button type="button" class="hamburguesa" [attr.aria-label]="menuAbierto() ? t().cerrarMenu : t().abrirMenu" [attr.aria-expanded]="menuAbierto()" (click)="alternarMenu()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              @if (menuAbierto()) {
+                <path d="M6 6l12 12M18 6L6 18"></path>
+              } @else {
+                <path d="M4 7h16M4 12h16M4 17h16"></path>
+              }
+            </svg>
+          </button>
         </div>
-        <button type="button" class="idioma-movil" [attr.aria-label]="t().cambiarIdioma" (click)="alternarIdioma()">
-          {{ idioma() === 'es' ? 'EN' : 'ES' }}
-        </button>
-        @if (sesionActiva) {
-          <a class="boton secundario solo-escritorio" routerLink="/dashboard">{{ t().irAlPanel }}</a>
-        } @else {
-          <a class="boton secundario solo-escritorio" routerLink="/login">{{ t().iniciarSesion }}</a>
-        }
-        <button type="button" class="hamburguesa" [attr.aria-label]="t().abrirMenu" [attr.aria-expanded]="menuAbierto()" (click)="alternarMenu()">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            @if (menuAbierto()) {
-              <path d="M6 6l12 12M18 6L6 18"></path>
-            } @else {
-              <path d="M4 7h16M4 12h16M4 17h16"></path>
-            }
-          </svg>
-        </button>
       </div>
-    </div>
-  </header>
+    </header>
+
+    <section class="contenedor hero" aria-labelledby="heroTitulo">
+      <div class="hero-texto">
+        <p class="hero-etiqueta">{{ t().hero.etiqueta }}</p>
+        <h1 id="heroTitulo">{{ t().hero.titulo }}</h1>
+        <p class="hero-descripcion">{{ t().hero.descripcion }}</p>
+        <div class="hero-botones">
+          <a class="boton acento grande" href="#demo" (click)="irA($event, 'demo')">{{ t().hero.solicitarDemo }}</a>
+          <a class="boton contorno grande" href="#como" (click)="irA($event, 'como')">{{ t().hero.verComo }}</a>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <main>
-    <section id="inicio" class="contenedor hero" aria-labelledby="heroTitulo">
-      <div class="hero-texto">
-        <p class="etiqueta">{{ t().hero.etiqueta }}</p>
-        <h1 id="heroTitulo">{{ t().hero.titulo }}</h1>
-        <p class="descripcion">{{ t().hero.descripcion }}</p>
-        <div class="hero-botones">
-          <a class="boton primario" href="#demo" (click)="irA($event, 'demo')">{{ t().hero.solicitarDemo }}</a>
-          <a class="boton secundario" href="#como" (click)="irA($event, 'como')">{{ t().hero.verComo }}</a>
-        </div>
-        <p class="nota">{{ t().hero.nota }}</p>
-      </div>
-
-      <figure class="vista" [attr.aria-label]="t().vista.etiqueta">
-        <div class="vista-cabecera">
-          <span class="vista-sede">{{ t().vista.sede }}</span>
-          <span class="vista-periodo">{{ t().vista.periodo }}</span>
-        </div>
-        <p class="vista-cifra">276.4<span>kWh</span></p>
-        <p class="vista-costo"><span class="cifra">S/ 199.01</span> {{ t().vista.costo }}</p>
-        <svg class="vista-grafico" viewBox="0 0 400 120" width="100%" height="120" role="img" [attr.aria-label]="t().vista.graficoEtiqueta">
-          <line x1="0" y1="64" x2="400" y2="64" stroke="#5f7a72" stroke-dasharray="3 4"></line>
-          <g fill="#17705b">
-            <rect x="4" y="74" width="16" height="36"></rect>
-            <rect x="30" y="68" width="16" height="42"></rect>
-            <rect x="56" y="78" width="16" height="32"></rect>
-            <rect x="82" y="70" width="16" height="40"></rect>
-            <rect x="108" y="72" width="16" height="38"></rect>
-            <rect x="134" y="76" width="16" height="34"></rect>
-            <rect x="160" y="66" width="16" height="44"></rect>
-            <rect x="212" y="72" width="16" height="38"></rect>
-            <rect x="238" y="70" width="16" height="40"></rect>
-            <rect x="264" y="78" width="16" height="32"></rect>
-            <rect x="290" y="68" width="16" height="42"></rect>
-            <rect x="316" y="74" width="16" height="36"></rect>
-            <rect x="342" y="72" width="16" height="38"></rect>
-            <rect x="368" y="76" width="16" height="34"></rect>
-          </g>
-          <rect x="186" y="20" width="16" height="90" fill="#f2b53c"></rect>
-          <text x="208" y="16" font-size="11" fill="#0e2a2b" font-family="Poppins, sans-serif">{{ t().vista.pico }}</text>
-          <line x1="0" y1="110.5" x2="400" y2="110.5" stroke="#0e2a2b"></line>
-        </svg>
-        <div class="vista-alerta">
-          <span class="punto"></span>
-          <span><strong>{{ t().vista.revisar }}</strong> {{ t().vista.alerta }}</span>
-        </div>
-      </figure>
-    </section>
-
-    <section id="como" class="seccion clara" aria-labelledby="comoTitulo">
+    <section id="como" class="seccion papel" aria-labelledby="comoTitulo">
       <div class="contenedor">
         <h2 id="comoTitulo">{{ t().como.titulo }}</h2>
         <p class="subtitulo">{{ t().como.subtitulo }}</p>
         <ol class="pasos">
           @for (paso of t().como.pasos; track $index) {
             <li>
-              <span class="numero">0{{ $index + 1 }}</span>
-              <h3>{{ paso.titulo }}</h3>
-              <p>{{ paso.texto }}</p>
+              <img [src]="imagenesPasos[$index]" [alt]="paso.alt" width="480" height="300" loading="lazy">
+              <div class="paso-texto">
+                <span class="numero">0{{ $index + 1 }}</span>
+                <h3>{{ paso.titulo }}</h3>
+                <p>{{ paso.texto }}</p>
+              </div>
             </li>
           }
         </ol>
@@ -115,35 +85,134 @@
 
     <section id="funciones" class="seccion" aria-labelledby="funcionesTitulo">
       <div class="contenedor">
-        <h2 id="funcionesTitulo">{{ t().funciones.titulo }}</h2>
-        <ul class="funciones">
-          @for (funcion of t().funciones.items; track funcion.icono) {
-            <li>
-              <svg class="icono" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                @for (trazo of iconos[funcion.icono]; track $index) {
+        <div class="funciones-cabecera">
+          <h2 id="funcionesTitulo">{{ t().funciones.titulo }}</h2>
+          <p>{{ t().funciones.intro }}</p>
+        </div>
+
+        <ul class="bento">
+          <li class="tarjeta principal">
+            <div class="principal-texto">
+              <span class="icono icono-acento">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e2a2b" stroke-width="1.8" aria-hidden="true">
+                  @for (trazo of iconos['bolt']; track $index) {
+                    <path [attr.d]="trazo"></path>
+                  }
+                </svg>
+              </span>
+              <h3>{{ t().funciones.principal.titulo }}</h3>
+              <p>{{ t().funciones.principal.texto }}</p>
+            </div>
+            <figure class="principal-figura" [attr.aria-label]="t().funciones.principal.figura">
+              @for (area of t().funciones.principal.areas; track area.nombre) {
+                <div class="barra-area">
+                  <span>{{ area.nombre }}</span>
+                  <span class="pista"><span class="relleno" [class.destacada]="area.destacada" [style.width.%]="area.ancho"></span></span>
+                  <span class="mono valor">{{ area.kwh }}</span>
+                </div>
+              }
+              <figcaption>{{ t().funciones.principal.pie }}</figcaption>
+              <p class="mono total">{{ t().funciones.principal.total }} <span>{{ t().funciones.principal.totalDetalle }}</span></p>
+            </figure>
+          </li>
+
+          <li class="tarjeta">
+            <span class="icono icono-ambar">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a5a00" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos['notifications']; track $index) {
                   <path [attr.d]="trazo"></path>
                 }
               </svg>
-              <div>
-                <h3>{{ funcion.titulo }}</h3>
-                <p>{{ funcion.texto }}</p>
-              </div>
-            </li>
-          }
+            </span>
+            <h3>{{ t().funciones.alertas.titulo }}</h3>
+            <p>{{ t().funciones.alertas.texto }}</p>
+            <p class="mono detalle">{{ t().funciones.alertas.detalle }}</p>
+          </li>
+
+          <li class="tarjeta">
+            <span class="icono icono-verde">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17705b" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos['trending_up']; track $index) {
+                  <path [attr.d]="trazo"></path>
+                }
+              </svg>
+            </span>
+            <h3>{{ t().funciones.prediccion.titulo }}</h3>
+            <p>{{ t().funciones.prediccion.texto }}</p>
+            <svg class="mini-grafico" viewBox="0 0 200 40" width="200" height="40" role="img" [attr.aria-label]="t().funciones.prediccion.grafico">
+              <path d="M2 32 L30 26 L58 29 L86 20 L114 22 L142 14" stroke="#8fb8ab" stroke-width="2" fill="none"></path>
+              <path d="M142 14 L170 10 L198 6" stroke="#f2b53c" stroke-width="2" stroke-dasharray="4 4" fill="none"></path>
+              <circle cx="198" cy="6" r="3" fill="#f2b53c"></circle>
+            </svg>
+            <p class="mono detalle">{{ t().funciones.prediccion.detalle }}</p>
+          </li>
+
+          <li class="tarjeta">
+            <span class="icono icono-verde">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17705b" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos['cloud']; track $index) {
+                  <path [attr.d]="trazo"></path>
+                }
+              </svg>
+            </span>
+            <h3>{{ t().funciones.clima.titulo }}</h3>
+            <p>{{ t().funciones.clima.texto }}</p>
+            <p class="mono dato">{{ t().funciones.clima.dato }} <span>{{ t().funciones.clima.lugar }}</span></p>
+            <p class="mono detalle">{{ t().funciones.clima.detalle }}</p>
+          </li>
+
+          <li class="tarjeta">
+            <span class="icono icono-verde">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17705b" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos['eco']; track $index) {
+                  <path [attr.d]="trazo"></path>
+                }
+              </svg>
+            </span>
+            <h3>{{ t().funciones.huella.titulo }}</h3>
+            <p>{{ t().funciones.huella.texto }}</p>
+            <p class="mono detalle">{{ t().funciones.huella.detalle }}</p>
+            <p class="mono dato">{{ t().funciones.huella.dato }} <span>{{ t().funciones.huella.periodo }}</span></p>
+          </li>
+
+          <li class="tarjeta ancha">
+            <span class="icono icono-verde">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#17705b" stroke-width="1.8" aria-hidden="true">
+                @for (trazo of iconos['description']; track $index) {
+                  <path [attr.d]="trazo"></path>
+                }
+              </svg>
+            </span>
+            <h3>{{ t().funciones.reportes.titulo }}</h3>
+            <p>{{ t().funciones.reportes.texto }}</p>
+            <div class="archivos">
+              @for (archivo of t().funciones.reportes.archivos; track archivo) {
+                <span>{{ archivo }}</span>
+              }
+            </div>
+          </li>
         </ul>
       </div>
     </section>
 
-    <section id="para-quien" class="seccion clara" aria-labelledby="quienTitulo">
+    <section id="para-quien" class="seccion papel" aria-labelledby="quienTitulo">
       <div class="contenedor">
         <h2 id="quienTitulo">{{ t().roles.titulo }}</h2>
         <p class="subtitulo">{{ t().roles.subtitulo }}</p>
         <div class="roles">
           @for (rol of t().roles.items; track $index) {
-            <div>
-              <h3>{{ rol.titulo }}</h3>
-              <p>{{ rol.texto }}</p>
-            </div>
+            <article class="rol">
+              <img [src]="imagenesRoles[$index]" [alt]="rol.alt" [style.background]="fondosRoles[$index]" width="200" height="200" loading="lazy">
+              <div class="rol-texto">
+                <h3>{{ rol.titulo }}</h3>
+                <p>{{ rol.texto }}</p>
+                <ul class="chips" [attr.aria-label]="rol.etiquetaLista">
+                  @for (chip of rol.chips; track chip) {
+                    <li>{{ chip }}</li>
+                  }
+                </ul>
+              </div>
+            </article>
           }
         </div>
       </div>
@@ -188,7 +257,7 @@
             </select>
           </div>
           <div class="enviar">
-            <button type="submit" class="boton acento">{{ t().demo.enviar }}</button>
+            <button type="submit" class="boton acento grande">{{ t().demo.enviar }}</button>
             <span class="legal">{{ t().demo.aceptas }} <a href="#">{{ t().demo.terminos }}</a>.</span>
           </div>
           @if (enviado()) {
@@ -208,36 +277,36 @@
           </svg>
           IntelliSave
         </p>
-        <p class="pie-descripcion">{{ t().pie.descripcion }}</p>
+        <p class="pie-descripcion solo-escritorio">{{ t().pie.descripcion }}</p>
+        <p class="pie-descripcion solo-movil">{{ t().pie.descripcionCorta }}</p>
       </div>
-      <nav [attr.aria-label]="t().pie.producto">
+      <nav class="pie-grupo solo-escritorio" [attr.aria-label]="t().pie.producto">
         <span class="pie-titulo">{{ t().pie.producto }}</span>
         <a href="#como" (click)="irA($event, 'como')">{{ t().nav.como }}</a>
         <a href="#funciones" (click)="irA($event, 'funciones')">{{ t().nav.funciones }}</a>
         <a routerLink="/login">{{ t().iniciarSesion }}</a>
       </nav>
-      <nav aria-label="Lumen Save">
+      <nav class="pie-grupo" aria-label="Lumen Save">
         <span class="pie-titulo">Lumen Save</span>
         <a href="#">{{ t().pie.nosotros }}</a>
         <a [href]="'mailto:' + correoContacto">{{ t().pie.contacto }}</a>
       </nav>
-      <nav [attr.aria-label]="t().pie.legal">
+      <nav class="pie-grupo" [attr.aria-label]="t().pie.legal">
         <span class="pie-titulo">{{ t().pie.legal }}</span>
         <a href="#">{{ t().demo.terminos }}</a>
         <a href="#">{{ t().pie.privacidad }}</a>
       </nav>
     </div>
-    <div class="contenedor pie-final">
-      <span>{{ t().pie.derechos }}</span>
-      <span>
-        <button type="button" class="enlace" [class.actual]="idioma() === 'es'" (click)="cambiarIdioma('es')">Español</button>
-        ·
-        <button type="button" class="enlace" [class.actual]="idioma() === 'en'" (click)="cambiarIdioma('en')">English</button>
-      </span>
+    <div class="contenedor">
+      <div class="pie-final">
+        <span class="solo-escritorio">{{ t().pie.derechos }}</span>
+        <span class="solo-movil">{{ t().pie.derechosCorto }}</span>
+        <span>
+          <button type="button" class="enlace" [class.actual]="idioma() === 'es'" (click)="cambiarIdioma('es')">Español</button>
+          ·
+          <button type="button" class="enlace" [class.actual]="idioma() === 'en'" (click)="cambiarIdioma('en')">English</button>
+        </span>
+      </div>
     </div>
   </footer>
 </div>
-<!--
-- Falta implementar funcionalidad a: Nosotros, Términos y condiciones, Política de privacidad.
-- Mejorar las secciones de Cómo funciona y Funciones (se ve muy simple y feo actualmente).
--->
