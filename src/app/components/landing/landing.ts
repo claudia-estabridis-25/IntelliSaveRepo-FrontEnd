@@ -1,5 +1,5 @@
-import { Component, DOCUMENT, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, DOCUMENT, Inject, computed, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { Idioma, TEXTOS } from './landing.textos';
@@ -7,15 +7,16 @@ import { Idioma, TEXTOS } from './landing.textos';
 @Component({
   selector: 'app-landing',
   imports: [RouterLink, ReactiveFormsModule],
-  templateUrl: './landing.html',  
-  styleUrl: './landing.css'
+  templateUrl: './landing.html',
+  styleUrl: './landing.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Landing {
-  private document = inject(DOCUMENT);
-  private fb = inject(FormBuilder);
-  private loginService = inject(LoginService);
-
   readonly correoContacto = 'contacto@lumensave.pe';
+  readonly imagenHero = '/landing/hero-ciudad.svg';
+  readonly imagenesPasos = ['/landing/paso-organizacion.svg', '/landing/paso-horas.svg', '/landing/paso-revisa.svg'];
+  readonly imagenesRoles = ['/landing/rol-admin.svg', '/landing/rol-supervisor.svg', '/landing/rol-empleado.svg'];
+  readonly fondosRoles = ['#0e2a2b', '#17705b', '#f2b53c'];
   readonly iconos: Record<string, string[]> = {
     bolt: ['M13 2 L4 14 H11 L10 22 L20 9 H13 Z'],
     notifications: ['M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z', 'M10 20a2 2 0 0 0 4 0'],
@@ -29,14 +30,28 @@ export class Landing {
   t = computed(() => TEXTOS[this.idioma()]);
   menuAbierto = signal(false);
   enviado = signal(false);
-  sesionActiva = this.loginService.estaAutenticado();
+  sesionActiva: boolean;
 
-  formulario = this.fb.nonNullable.group({
-    nombre: ['', Validators.required],
-    empresa: ['', Validators.required],
-    correo: ['', [Validators.required, Validators.email]],
-    sedes: [0]
-  });
+  formulario: FormGroup<{
+    nombre: FormControl<string>;
+    empresa: FormControl<string>;
+    correo: FormControl<string>;
+    sedes: FormControl<number>;
+  }>;
+
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private fb: FormBuilder,
+    private loginService: LoginService
+  ) {
+    this.sesionActiva = this.loginService.estaAutenticado();
+    this.formulario = this.fb.nonNullable.group({
+      nombre: ['', Validators.required],
+      empresa: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      sedes: [0]
+    });
+  }
 
   cambiarIdioma(idioma: Idioma): void {
     this.idioma.set(idioma);
