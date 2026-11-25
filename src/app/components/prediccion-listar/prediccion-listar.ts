@@ -24,6 +24,9 @@ export class PrediccionListar implements OnInit {
   mensaje = signal('');
   error = signal('');
   esAdmin = false;
+  abierta = signal<number | null>(null);
+  analizando = signal(false);
+  errorAnalisis = signal('');
   estados = ['En curso', 'Cumplida', 'Errada'];
   columnas = ['objetivo', 'periodo', 'prediccion', 'confianza', 'real', 'estado', 'acciones'];
 
@@ -33,10 +36,15 @@ export class PrediccionListar implements OnInit {
       .sort((a, b) => b.idPrediction - a.idPrediction)
   );
 
+  seleccionada = computed(() =>
+    this.predicciones().find(prediccion => prediccion.idPrediction === this.abierta()) ?? null
+  );
+
   constructor(private predictionService: PredictionService, private loginService: LoginService) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
+    this.abierta.set(history.state?.abrir ?? null);
     this.esAdmin = this.loginService.tieneRol('ADMIN');
     this.cargar();
   }
@@ -78,6 +86,33 @@ export class PrediccionListar implements OnInit {
     });
   }
 
+  verAnalisis(prediccion: Prediction): void {
+    this.errorAnalisis.set('');
+    this.abierta.set(this.abierta() === prediccion.idPrediction ? null : prediccion.idPrediction);
+  }
+
+  cerrarAnalisis(): void {
+    this.abierta.set(null);
+    this.errorAnalisis.set('');
+  }
+
+  generarAnalisis(prediccion: Prediction): void {
+    this.analizando.set(true);
+    this.errorAnalisis.set('');
+    this.predictionService.analizar(prediccion.idPrediction).subscribe({
+      next: actualizada => {
+        this.predicciones.update(lista => lista.map(p => p.idPrediction === actualizada.idPrediction ? actualizada : p));
+        this.analizando.set(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.analizando.set(false);
+        this.errorAnalisis.set(err.status === 400
+          ? (err.error?.message ?? 'No se pudo generar el análisis con IA.')
+          : 'No se pudo generar el análisis con IA. Intenta de nuevo en unos minutos.');
+      }
+    });
+  }
+
   eliminar(prediccion: Prediction): void {
     if (!confirm(`¿Eliminar la predicción de ${prediccion.nameEquipment ?? prediccion.nameDepartment}?`)) {
       return;
@@ -87,6 +122,9 @@ export class PrediccionListar implements OnInit {
     this.predictionService.eliminar(prediccion.idPrediction).subscribe({
       next: () => {
         this.predicciones.update(lista => lista.filter(p => p.idPrediction !== prediccion.idPrediction));
+        if (this.abierta() === prediccion.idPrediction) {
+          this.cerrarAnalisis();
+        }
         this.mensaje.set('Se eliminó la predicción.');
       },
       error: (err: HttpErrorResponse) => {

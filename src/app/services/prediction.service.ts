@@ -24,6 +24,10 @@ export class PredictionService {
     return this.http.post<Prediction[]>(`${this.url}/evaluate`, {});
   }
 
+  analizar(id: number): Observable<Prediction> {
+    return this.http.post<Prediction>(`${this.url}/${id}/analysis`, {});
+  }
+
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
