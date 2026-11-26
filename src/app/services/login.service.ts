@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, shareReplay } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environment';
 import { LoginRequest } from '../models/login-request';
@@ -15,6 +16,7 @@ import { Usuario } from '../models/usuario';
 export class LoginService {
   private claveToken = 'token';
   private claveUsuario = 'username';
+  private perfil$: Observable<Usuario | null> | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -24,6 +26,53 @@ export class LoginService {
 
   obtenerPerfil(): Observable<Usuario> {
     return this.http.get<Usuario>(`${environment.apiUrl}/api/users/me`);
+  }
+
+  // Perfil del usuario en sesión, pedido una sola vez y compartido por el menú, los guards y las pantallas.
+  // Se necesita porque el JWT solo trae los roles: el nivel de administrador sale de idCompany.
+  perfilActual(): Observable<Usuario | null> {
+    if (!this.perfil$) {
+      this.perfil$ = this.obtenerPerfil().pipe(
+        catchError(() => of(null)),
+        shareReplay(1)
+      );
+    }
+    return this.perfil$;
+  }
+
+  // ADMIN sin empresa = administrador de la plataforma; ADMIN con empresa = administrador de la empresa (HU091)
+  esAdminPlataforma(perfil: Usuario | null): boolean {
+    return this.tieneRol('ADMIN') && !!perfil && perfil.idCompany === null;
+  }
+
+  esAdminEmpresa(perfil: Usuario | null): boolean {
+    return this.tieneRol('ADMIN') && !!perfil && perfil.idCompany !== null;
+  }
+
+  // Además de ADMIN, SUPERVISOR y EMPLOYEE acepta ADMIN_PLATAFORMA y ADMIN_EMPRESA.
+  puedeAcceder(roles: string[], perfil: Usuario | null): boolean {
+    return roles.length === 0 || roles.some(rol => {
+      if (rol === 'ADMIN_PLATAFORMA') {
+        return this.esAdminPlataforma(perfil);
+      }
+      if (rol === 'ADMIN_EMPRESA') {
+        return this.esAdminEmpresa(perfil);
+      }
+      return this.tieneRol(rol);
+    });
+  }
+
+  nombreRol(perfil: Usuario | null): string {
+    if (this.esAdminPlataforma(perfil)) {
+      return 'Administrador de la plataforma';
+    }
+    if (this.tieneRol('ADMIN')) {
+      return 'Administrador de empresa';
+    }
+    if (this.tieneRol('SUPERVISOR')) {
+      return 'Supervisor energético';
+    }
+    return 'Empleado de área';
   }
 
   guardarSesion(respuesta: LoginResponse, recordar: boolean): void {
@@ -59,6 +108,7 @@ export class LoginService {
   }
 
   limpiarSesion(): void {
+    this.perfil$ = null;
     localStorage.removeItem(this.claveToken);
     localStorage.removeItem(this.claveUsuario);
     sessionStorage.removeItem(this.claveToken);

@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, Ro
 import { filter } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { LoginService } from '../../services/login.service';
+import { Usuario } from '../../models/usuario';
 
 interface OpcionMenu {
   texto: string;
@@ -46,7 +47,7 @@ export class Layout implements OnInit {
     {
       titulo: 'Organización',
       opciones: [
-        { texto: 'Empresas', icono: 'domain', ruta: '/empresas', roles: ['ADMIN'] },
+        { texto: 'Empresas', icono: 'domain', ruta: '/empresas', roles: ['ADMIN_PLATAFORMA'] },
         { texto: 'Sedes', icono: 'location_on', ruta: '/sedes', roles: ['ADMIN'] },
         { texto: 'Áreas', icono: 'grid_view', ruta: '/areas', roles: ['ADMIN'] },
         { texto: 'Usuarios', icono: 'group', ruta: '/usuarios', roles: ['ADMIN'] }
@@ -96,27 +97,27 @@ export class Layout implements OnInit {
 
   ngOnInit(): void {
     this.usuario.set(this.loginService.obtenerUsuario());
-    this.rolPrincipal.set(this.obtenerNombreRol());
+    this.armarMenu(null);
+    this.actualizarTitulo();
+
+    // HU091: el menú final depende del nivel de administrador, que sale del perfil.
+    this.loginService.perfilActual().subscribe(perfil => {
+      this.armarMenu(perfil);
+      this.empresa.set(perfil?.nameCompany ?? 'IntelliSave');
+      this.sede.set(perfil ? perfil.nameBranch ?? 'Todas las empresas' : '');
+    });
+  }
+
+  private armarMenu(perfil: Usuario | null): void {
+    this.rolPrincipal.set(this.loginService.nombreRol(perfil));
     this.secciones.set(
       this.menu
         .map(seccion => ({
           titulo: seccion.titulo,
-          opciones: seccion.opciones.filter(opcion => opcion.roles.some(rol => this.loginService.tieneRol(rol)))
+          opciones: seccion.opciones.filter(opcion => this.loginService.puedeAcceder(opcion.roles, perfil))
         }))
         .filter(seccion => seccion.opciones.length > 0)
     );
-    this.actualizarTitulo();
-
-    this.loginService.obtenerPerfil().subscribe({
-      next: perfil => {
-        this.empresa.set(perfil.nameCompany ?? 'IntelliSave');
-        this.sede.set(perfil.nameBranch ?? 'Todas las empresas');
-      },
-      error: () => {
-        this.empresa.set('IntelliSave');
-        this.sede.set('');
-      }
-    });
   }
 
   cerrarSesion(): void {
@@ -129,15 +130,5 @@ export class Layout implements OnInit {
       ruta = ruta.firstChild;
     }
     this.titulo.set(ruta.snapshot.data['titulo'] ?? '');
-  }
-
-  private obtenerNombreRol(): string {
-    if (this.loginService.tieneRol('ADMIN')) {
-      return 'Administrador';
-    }
-    if (this.loginService.tieneRol('SUPERVISOR')) {
-      return 'Supervisor energético';
-    }
-    return 'Empleado de área';
   }
 }

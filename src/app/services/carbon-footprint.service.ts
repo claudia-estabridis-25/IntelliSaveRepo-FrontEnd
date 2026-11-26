@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CarbonFootprint, CarbonFootprintInsert } from '../models/carbon-footprint';
+import { EmisionSede } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,10 @@ export class CarbonFootprintService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  // HU154: emisiones de CO2 por sede.
+  emisionesPorSede(): Observable<EmisionSede[]> {
+    return this.http.get<EmisionSede[]>(`${this.url}/by-branch`);
   }
 }

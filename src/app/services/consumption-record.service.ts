@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ConsumptionRecord, ConsumptionRecordInsert } from '../models/consumption-record';
+import { ConsumoElevado } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +31,21 @@ export class ConsumptionRecordService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  // HU100: historial con filtros opcionales. desde/hasta en formato yyyy-MM-ddTHH:mm:ss.
+  historial(filtros: { idBranch?: number | null; idDepartment?: number | null; idEquipment?: number | null; desde?: string | null; hasta?: string | null }): Observable<ConsumptionRecord[]> {
+    let params = new HttpParams();
+    for (const [clave, valor] of Object.entries(filtros)) {
+      if (valor !== null && valor !== undefined && valor !== '' && valor !== 0) {
+        params = params.set(clave, String(valor));
+      }
+    }
+    return this.http.get<ConsumptionRecord[]>(`${this.url}/history`, { params });
+  }
+
+  // HU042: equipos con consumo elevado de un área (404 si el área no tiene consumos).
+  consumoElevado(idDepartment: number): Observable<ConsumoElevado[]> {
+    return this.http.get<ConsumoElevado[]>(`${this.url}/department/${idDepartment}/elevated-consumption`);
   }
 }

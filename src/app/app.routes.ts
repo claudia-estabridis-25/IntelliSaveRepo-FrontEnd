@@ -47,9 +47,9 @@ export const routes: Routes = [
     children: [
       //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard, data: { titulo: 'Dashboard', roles: TODOS } },
-      { path: 'empresas', component: EmpresaListar, data: { titulo: 'Empresas', roles: ['ADMIN'] } },
-      { path: 'empresas/nueva', component: EmpresaRegistrar, data: { titulo: 'Registrar empresa', roles: ['ADMIN'] } },
-      { path: 'empresas/editar/:id', component: EmpresaRegistrar, data: { titulo: 'Editar empresa', roles: ['ADMIN'] } },
+      { path: 'empresas', component: EmpresaListar, data: { titulo: 'Empresas', roles: ['ADMIN_PLATAFORMA'] } },
+      { path: 'empresas/nueva', component: EmpresaRegistrar, data: { titulo: 'Registrar empresa', roles: ['ADMIN_PLATAFORMA'] } },
+      { path: 'empresas/editar/:id', component: EmpresaRegistrar, data: { titulo: 'Editar empresa', roles: ['ADMIN_PLATAFORMA'] } },
       { path: 'sedes', component: SedeListar, data: { titulo: 'Sedes', roles: ['ADMIN'] } },
       { path: 'sedes/nueva', component: SedeRegistrar, data: { titulo: 'Registrar sede', roles: ['ADMIN'] } },
       { path: 'sedes/editar/:id', component: SedeRegistrar, data: { titulo: 'Editar sede', roles: ['ADMIN'] } },

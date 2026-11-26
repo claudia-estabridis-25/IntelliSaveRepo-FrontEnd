@@ -75,8 +75,8 @@ export class PrediccionListar implements OnInit {
       next: evaluadas => {
         this.evaluando.set(false);
         this.mensaje.set(evaluadas.length === 0
-          ? 'No hay predicciones con el periodo terminado por evaluar.'
-          : `Se evaluaron ${evaluadas.length} predicciones con el consumo real.`);
+          ? 'Los estados ya coinciden con el consumo real: ninguna predicción cambió.'
+          : `Se actualizó el estado de ${evaluadas.length} ${evaluadas.length === 1 ? 'predicción' : 'predicciones'} según el consumo real.`);
         this.cargar();
       },
       error: () => {

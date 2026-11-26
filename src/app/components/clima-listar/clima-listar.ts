@@ -97,9 +97,9 @@ export class ClimaListar implements OnInit {
   ngOnInit(): void {
     this.cargar();
     this.branchService.listar().subscribe({ next: datos => this.sedes.set(datos) });
-    this.loginService.obtenerPerfil().subscribe({
+    this.loginService.perfilActual().subscribe({
       next: perfil => {
-        const adminPlataforma = perfil.idCompany === null && perfil.roles.includes('ROLE_ADMIN');
+        const adminPlataforma = this.loginService.esAdminPlataforma(perfil);
         this.esAdminPlataforma.set(adminPlataforma);
         if (adminPlataforma) {
           // Para poner el nombre de la empresa en las tarjetas de sedes sin registros.
@@ -141,7 +141,8 @@ export class ClimaListar implements OnInit {
     this.climateRecordService.consultarSede(idSede).subscribe({
       next: registro => {
         this.consultando.set(false);
-        this.registros.update(lista => [registro, ...lista]);
+        // Si el backend actualizó el registro de esta hora, se reemplaza en vez de duplicarlo.
+        this.registros.update(lista => [registro, ...lista.filter(r => r.idClimate !== registro.idClimate)]);
         this.mensaje.set(`Clima actual de ${registro.nameBranch}: ${registro.temperature.toFixed(1)} °C, ${registro.climateCondition}.`);
       },
       error: (err: HttpErrorResponse) => {

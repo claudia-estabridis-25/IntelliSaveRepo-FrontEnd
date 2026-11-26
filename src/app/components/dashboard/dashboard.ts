@@ -100,7 +100,7 @@ export class Dashboard implements OnInit {
       return [empresa, datos?.nameBranch, datos?.nameDepartment].filter(parte => !!parte).join(' · ');
     }
     const sede = this.sedes().find(s => s.idBranch === this.idSede());
-    return `${empresa} · ${sede ? 'Sede ' + sede.nameBranch : 'Todas las sedes'}`;
+    return `${empresa} · ${sede ? sede.nameBranch : 'Todas las sedes'}`;
   });
 
   equiposPorId = computed(() => new Map(this.equipos().map(equipo => [equipo.idEquipment, equipo])));
@@ -260,6 +260,7 @@ export class Dashboard implements OnInit {
     const orden: Record<string, number> = { Alta: 0, Media: 1, Baja: 2 };
     const items: Pendiente[] = this.alertas()
       .filter(alerta => alerta.statusAlert === 'Pendiente' || alerta.statusAlert === 'En revisión')
+      .filter(alerta => this.idSede() === 0 || this.areasPorId().get(alerta.idDepartment)?.idBranch === this.idSede())
       .sort((a, b) => (orden[a.priorityLevelAlert] ?? 3) - (orden[b.priorityLevelAlert] ?? 3) || b.dateTimeAlert.localeCompare(a.dateTimeAlert))
       .slice(0, 3)
       .map(alerta => ({
