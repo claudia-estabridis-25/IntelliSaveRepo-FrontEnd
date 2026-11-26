@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CarbonFootprint, CarbonFootprintInsert } from '../models/carbon-footprint';
-import { EmisionSede } from '../models/estadisticas';
+import { ComparacionHuella, EmisionArea, EmisionSede } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +44,18 @@ export class CarbonFootprintService {
   // HU154: emisiones de CO2 por sede.
   emisionesPorSede(): Observable<EmisionSede[]> {
     return this.http.get<EmisionSede[]>(`${this.url}/by-branch`);
+  }
+
+  // Emisiones de CO2 por área.
+  emisionesPorArea(): Observable<EmisionArea[]> {
+    return this.http.get<EmisionArea[]>(`${this.url}/by-department`);
+  }
+
+  // Compara la huella de un área o de una sede entre dos fechas de cálculo (yyyy-MM-dd) del mismo periodo.
+  comparar(alcance: { idDepartment?: number; idBranch?: number }, periodo: string, fechaA: string, fechaB: string): Observable<ComparacionHuella> {
+    let params = new HttpParams().set('timePeriod', periodo).set('dateA', fechaA).set('dateB', fechaB);
+    if (alcance.idDepartment) params = params.set('idDepartment', alcance.idDepartment);
+    if (alcance.idBranch) params = params.set('idBranch', alcance.idBranch);
+    return this.http.get<ComparacionHuella>(`${this.url}/compare`, { params });
   }
 }

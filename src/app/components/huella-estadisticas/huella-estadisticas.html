@@ -1,0 +1,137 @@
+@if (cargando()) {
+  <p class="estado">{{ 'Cargando estadísticas...' | t }}</p>
+} @else {
+  <div class="resumen-cifras">
+    <div>
+      <p class="cifra-grande">{{ totalCo2() | number: '1.2-2' }} <span class="unidad">kg CO₂</span></p>
+      <p class="etiqueta-cifra">{{ 'emisiones calculadas en total' | t }}</p>
+    </div>
+    <div>
+      <p class="cifra-grande">{{ totalKwh() | number: '1.2-2' }} <span class="unidad">kWh</span></p>
+      <p class="etiqueta-cifra">{{ 'consumo considerado' | t }}</p>
+    </div>
+    <div>
+      <p class="cifra-grande">{{ totalCalculos() }}</p>
+      <p class="etiqueta-cifra">{{ 'cálculos de huella' | t }}</p>
+    </div>
+  </div>
+
+  <div class="encabezado-bloque">
+    <h3>{{ 'Emisiones por área' | t }}</h3>
+    <div class="selector" role="group" [attr.aria-label]="'Valor del gráfico' | t">
+      <button type="button" [class.activo]="metrica() === 'co2'" [attr.aria-pressed]="metrica() === 'co2'" (click)="metrica.set('co2')">kg CO₂</button>
+      <button type="button" [class.activo]="metrica() === 'kwh'" [attr.aria-pressed]="metrica() === 'kwh'" (click)="metrica.set('kwh')">kWh</button>
+    </div>
+  </div>
+  <section class="bloque">
+    @if (porArea().error) {
+      <p class="aviso error">{{ porArea().error | t }}</p>
+    } @else if (barrasArea().length === 0) {
+      <p class="vacio">{{ 'Todavía no hay huellas de carbono calculadas.' | t }}</p>
+    } @else {
+      <div class="grafico" [style.height.px]="altoArea()" role="img" [attr.aria-label]="'Gráfico de barras de emisiones por área' | t">
+        <canvas baseChart type="bar" [data]="graficoArea()" [options]="opcionesArea()"></canvas>
+      </div>
+      <p class="nota">{{ 'En ámbar, el área con el valor más alto.' | t }}</p>
+    }
+  </section>
+
+  <section class="bloque">
+    <h3>{{ 'Emisiones por sede' | t }}</h3>
+    @if (porSede().error) {
+      <p class="aviso error">{{ porSede().error | t }}</p>
+    } @else if (barrasSede().length === 0) {
+      <p class="vacio">{{ 'Todavía no hay huellas de carbono calculadas.' | t }}</p>
+    } @else {
+      <div class="grafico" role="img" [attr.aria-label]="'Gráfico de barras de emisiones por sede' | t">
+        <canvas baseChart type="bar" [data]="graficoSede()" [options]="opcionesSede()"></canvas>
+      </div>
+    }
+  </section>
+
+  <section class="bloque comparar">
+    <h3>{{ 'Comparar dos periodos' | t }}</h3>
+    <p class="indicacion">{{ 'Compara la huella de un área o de una sede entre dos fechas de cálculo del mismo periodo.' | t }}</p>
+
+    @if (huellas().length === 0) {
+      <p class="vacio">{{ 'Calcula al menos dos huellas del mismo periodo para poder compararlas.' | t }}</p>
+    } @else {
+      <div class="filtros">
+        <div class="selector" role="group" [attr.aria-label]="'Comparar por' | t">
+          <button type="button" [class.activo]="alcance() === 'area'" [attr.aria-pressed]="alcance() === 'area'" (click)="cambiarAlcance('area')">{{ 'Área' | t }}</button>
+          <button type="button" [class.activo]="alcance() === 'sede'" [attr.aria-pressed]="alcance() === 'sede'" (click)="cambiarAlcance('sede')">{{ 'Sede' | t }}</button>
+        </div>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="ancho">
+          <mat-label>{{ (alcance() === 'area' ? 'Área' : 'Sede') | t }}</mat-label>
+          <mat-select [value]="idElegido()" (selectionChange)="cambiarElegido($event.value)">
+            @for (opcion of opcionesAlcance(); track opcion.id) {
+              <mat-option [value]="opcion.id">{{ opcion.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'Periodo' | t }}</mat-label>
+          <mat-select [value]="periodo()" (selectionChange)="cambiarPeriodo($event.value)">
+            @for (opcion of periodosDisponibles(); track opcion) {
+              <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'Fecha A (base)' | t }}</mat-label>
+          <mat-select [value]="fechaA()" (selectionChange)="fechaA.set($event.value); comparacion.set(null)">
+            @for (fecha of fechasDisponibles(); track fecha) {
+              <mat-option [value]="fecha">{{ fecha | date: 'dd/MM/yyyy' }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'Fecha B' | t }}</mat-label>
+          <mat-select [value]="fechaB()" (selectionChange)="fechaB.set($event.value); comparacion.set(null)">
+            @for (fecha of fechasDisponibles(); track fecha) {
+              <mat-option [value]="fecha">{{ fecha | date: 'dd/MM/yyyy' }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-flat-button type="button" class="registrar" (click)="comparar()" [disabled]="!puedeComparar() || comparando()">
+          <span class="material-symbols-outlined">compare_arrows</span>
+          {{ (comparando() ? 'Comparando...' : 'Comparar') | t }}
+        </button>
+      </div>
+
+      @if (fechasDisponibles().length < 2) {
+        <p class="vacio">{{ 'Hace falta otro cálculo de este periodo para comparar (por ahora solo hay {0}).' | t: [fechasDisponibles().length] }}</p>
+      }
+      @if (errorComparacion()) {
+        <p class="aviso error">{{ errorComparacion() | t }}</p>
+      }
+
+      @if (comparacion(); as datos) {
+        <div class="resultado">
+          <div class="grafico pequeno" role="img" [attr.aria-label]="'Gráfico de barras de la comparación de emisiones' | t">
+            <canvas baseChart type="bar" [data]="graficoComparacion()" [options]="opcionesComparacion()"></canvas>
+          </div>
+          <dl class="detalle">
+            <div><dt>{{ 'Fecha A (base)' | t }}</dt><dd class="cifra">{{ datos.co2A | number: '1.2-2' }} kg CO₂ · {{ datos.kwhA | number: '1.2-2' }} kWh</dd></div>
+            <div><dt>{{ 'Fecha B' | t }}</dt><dd class="cifra">{{ datos.co2B | number: '1.2-2' }} kg CO₂ · {{ datos.kwhB | number: '1.2-2' }} kWh</dd></div>
+            <div>
+              <dt>{{ 'Variación' | t }}</dt>
+              <dd class="cifra" [class]="'cifra ' + tendencia(datos)">
+                {{ datos.variationCo2 > 0 ? '+' : '' }}{{ datos.variationCo2 | number: '1.2-2' }} kg CO₂
+                @if (datos.variationPercent !== null) {
+                  ({{ datos.variationPercent > 0 ? '+' : '' }}{{ datos.variationPercent | number: '1.1-1' }} %)
+                }
+                · {{ datos.trend | t }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      }
+    }
+  </section>
+}
