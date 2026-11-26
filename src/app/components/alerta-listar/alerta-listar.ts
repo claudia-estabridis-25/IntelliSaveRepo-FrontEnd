@@ -15,6 +15,7 @@ import { Alert, ESTADOS_ALERTA, PRIORIDADES_ALERTA } from '../../models/alert';
 import { Department } from '../../models/department';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { AlertaEstadisticas } from '../alerta-estadisticas/alerta-estadisticas';
 
 // Estados que siguen en el listado principal; "Atendida" y "Descartada" pasan al historial (HU144 CA02).
 const ESTADOS_ABIERTOS = ['Pendiente', 'En revisión'];
@@ -27,8 +28,7 @@ const TIPOS_ALERTA = ['Consumo excesivo', 'Pico anormal', 'Consumo elevado', 'Fa
   selector: 'app-alerta-listar',
   imports: [
     MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatTabsModule,
-    RouterLink, DatePipe, DecimalPipe, NgTemplateOutlet, TraducirPipe
-  ],
+    RouterLink, DatePipe, DecimalPipe, NgTemplateOutlet, TraducirPipe, AlertaEstadisticas],
   templateUrl: './alerta-listar.html',
   styleUrl: './alerta-listar.css'
 })

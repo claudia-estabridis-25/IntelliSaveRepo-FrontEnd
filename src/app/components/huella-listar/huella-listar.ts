@@ -6,15 +6,17 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { CarbonFootprintService } from '../../services/carbon-footprint.service';
 import { LoginService } from '../../services/login.service';
 import { CarbonFootprint, PERIODOS_HUELLA } from '../../models/carbon-footprint';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { HuellaEstadisticas } from '../huella-estadisticas/huella-estadisticas';
 
 @Component({
   selector: 'app-huella-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
+  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatTabsModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe, HuellaEstadisticas],
   templateUrl: './huella-listar.html',
   styleUrl: './huella-listar.css'
 })

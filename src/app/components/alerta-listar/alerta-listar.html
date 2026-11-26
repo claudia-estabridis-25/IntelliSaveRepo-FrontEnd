@@ -18,6 +18,15 @@
           <ng-container *ngTemplateOutlet="generarTpl" />
         </div>
       </mat-tab>
+
+      <mat-tab [label]="'Estadísticas' | t">
+        <!-- Se crea al abrir la pestaña, para que los gráficos se midan con el panel visible. -->
+        <ng-template matTabContent>
+          <div class="panel">
+            <app-alerta-estadisticas />
+          </div>
+        </ng-template>
+      </mat-tab>
     </mat-tab-group>
   } @else {
     <ng-container *ngTemplateOutlet="activas" />

@@ -1,0 +1,71 @@
+@if (cargando()) {
+  <p class="estado">{{ 'Cargando estadísticas...' | t }}</p>
+} @else {
+  <div class="resumen-cifras">
+    <div>
+      <p class="cifra-grande">{{ total() }}</p>
+      <p class="etiqueta-cifra">{{ 'alertas registradas' | t }}</p>
+    </div>
+    <div>
+      <p class="cifra-grande">{{ abiertas() }}</p>
+      <p class="etiqueta-cifra">{{ 'sin atender (pendientes o en revisión)' | t }}</p>
+    </div>
+    <div>
+      @if (areaMayor(); as area) {
+        <p class="cifra-grande texto">{{ area.nombre }}</p>
+        <p class="etiqueta-cifra">{{ 'área con más alertas ({0})' | t: [area.total] }}</p>
+      } @else {
+        <p class="cifra-grande texto">—</p>
+        <p class="etiqueta-cifra">{{ 'área con más alertas' | t }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="fila-graficos">
+    <section class="bloque">
+      <h3>{{ 'Alertas por estado' | t }}</h3>
+      @if (porEstado().error) {
+        <p class="aviso error">{{ porEstado().error | t }}</p>
+      } @else if (total() === 0) {
+        <p class="vacio">{{ 'Todavía no hay alertas registradas.' | t }}</p>
+      } @else {
+        <div class="grafico" role="img" [attr.aria-label]="'Gráfico de barras de alertas por estado' | t">
+          <canvas baseChart type="bar" [data]="graficoEstado()" [options]="opcionesColumnas()"></canvas>
+        </div>
+      }
+    </section>
+
+    <section class="bloque">
+      <h3>{{ 'Alertas por prioridad' | t }}</h3>
+      @if (porPrioridad().error) {
+        <p class="aviso error">{{ porPrioridad().error | t }}</p>
+      } @else if (total() === 0) {
+        <p class="vacio">{{ 'Todavía no hay alertas registradas.' | t }}</p>
+      } @else {
+        <div class="grafico" role="img" [attr.aria-label]="'Gráfico de barras de alertas por prioridad' | t">
+          <canvas baseChart type="bar" [data]="graficoPrioridad()" [options]="opcionesColumnas()"></canvas>
+        </div>
+      }
+    </section>
+  </div>
+
+  <section class="bloque">
+    <div class="encabezado-bloque">
+      <h3>{{ 'Alertas por área' | t }}</h3>
+      <div class="selector" role="group" [attr.aria-label]="'Dividir cada barra por' | t">
+        <button type="button" [class.activo]="agrupacion() === 'estado'" [attr.aria-pressed]="agrupacion() === 'estado'" (click)="agrupacion.set('estado')">{{ 'Por estado' | t }}</button>
+        <button type="button" [class.activo]="agrupacion() === 'tipo'" [attr.aria-pressed]="agrupacion() === 'tipo'" (click)="agrupacion.set('tipo')">{{ 'Por tipo' | t }}</button>
+      </div>
+    </div>
+    @if (porArea().error) {
+      <p class="aviso error">{{ porArea().error | t }}</p>
+    } @else if (areas().length === 0) {
+      <p class="vacio">{{ 'Ninguna área tiene alertas todavía.' | t }}</p>
+    } @else {
+      <div class="grafico" [style.height.px]="altoArea()" role="img" [attr.aria-label]="'Gráfico de barras apiladas de alertas por área' | t">
+        <canvas baseChart type="bar" [data]="graficoArea()" [options]="opcionesArea()"></canvas>
+      </div>
+      <p class="nota">{{ 'Consulta nativa con JOIN entre alertas, equipos y áreas. Cada barra suma las alertas del área.' | t }}</p>
+    }
+  </section>
+}

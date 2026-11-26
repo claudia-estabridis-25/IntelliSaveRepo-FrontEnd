@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Alert, AlertInsert } from '../models/alert';
-import { ConteoAlertas } from '../models/estadisticas';
+import { ConteoAlertas, ConteoAlertasArea } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -60,5 +60,10 @@ export class AlertService {
 
   contarPorPrioridad(): Observable<ConteoAlertas[]> {
     return this.http.get<ConteoAlertas[]>(`${this.url}/count-by-priority`);
+  }
+
+  // Consulta nativa con JOIN: alertas por área, tipo y estado.
+  contarPorArea(): Observable<ConteoAlertasArea[]> {
+    return this.http.get<ConteoAlertasArea[]>(`${this.url}/count-by-department`);
   }
 }

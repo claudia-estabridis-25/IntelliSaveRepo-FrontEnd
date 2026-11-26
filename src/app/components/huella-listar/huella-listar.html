@@ -1,89 +1,104 @@
 <section class="listado">
-  <div class="encabezado">
-    <p class="resumen">
-      {{ (filtradas().length === 1 ? '{0} cálculo' : '{0} cálculos') | t: [filtradas().length] }} ·
-      <span class="cifra">{{ totalCo2() | number: '1.2-2' }} kg CO₂</span>
-    </p>
-    <a mat-flat-button class="registrar" routerLink="/huella/nueva">
-      <span class="material-symbols-outlined">calculate</span>
-      {{ 'Calcular huella' | t }}
-    </a>
-  </div>
-
-  <div class="filtros">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ 'Periodo' | t }}</mat-label>
-      <mat-select [value]="periodo()" (selectionChange)="periodo.set($event.value)">
-        <mat-option value="">{{ 'Todos los periodos' | t }}</mat-option>
-        @for (opcion of periodos; track opcion) {
-          <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  @if (mensaje()) {
-    <p class="aviso ok">{{ mensaje() }}</p>
-  }
-  @if (error()) {
-    <p class="aviso error">{{ error() }}</p>
-  }
-
-  @if (cargando()) {
-    <p class="estado">{{ 'Cargando huellas de carbono...' | t }}</p>
-  } @else if (filtradas().length === 0 && !error()) {
-    <p class="estado">{{ 'No hay huellas de carbono calculadas.' | t }}</p>
-  } @else if (filtradas().length > 0) {
-    <table mat-table [dataSource]="filtradas()" class="tabla">
-      <ng-container matColumnDef="area">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Área' | t }}</th>
-        <td mat-cell *matCellDef="let huella">
-          <span class="nombre">{{ huella.nameDepartment }}</span>
-          <span class="secundario">{{ huella.nameBranch }}</span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="periodo">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Periodo' | t }}</th>
-        <td mat-cell *matCellDef="let huella">
-          <span>{{ huella.timePeriod | t }}</span>
-          <span class="secundario cifra">{{ huella.periodStartDate | date: 'dd/MM/yyyy' }} – {{ huella.calculationDate | date: 'dd/MM/yyyy' }}</span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="kwh">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
-        <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.kwhTotalConsumption | number: '1.2-2' }} kWh</td>
-      </ng-container>
-
-      <ng-container matColumnDef="factor">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Factor' | t }}</th>
-        <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.emissionFactor | number: '1.2-4' }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="co2">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Emisiones' | t }}</th>
-        <td mat-cell *matCellDef="let huella" class="cifra nombre">{{ huella.co2Emissions | number: '1.2-2' }} kg CO₂</td>
-      </ng-container>
-
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let huella" class="acciones">
-          <a mat-button class="editar" [routerLink]="['/huella/editar', huella.idFootprint]">
-            <span class="material-symbols-outlined">edit</span>
-            {{ 'Recalcular' | t }}
+  <mat-tab-group class="pestanas" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab [label]="'Cálculos' | t">
+      <div class="panel">
+        <div class="encabezado">
+          <p class="resumen">
+            {{ (filtradas().length === 1 ? '{0} cálculo' : '{0} cálculos') | t: [filtradas().length] }} ·
+            <span class="cifra">{{ totalCo2() | number: '1.2-2' }} kg CO₂</span>
+          </p>
+          <a mat-flat-button class="registrar" routerLink="/huella/nueva">
+            <span class="material-symbols-outlined">calculate</span>
+            {{ 'Calcular huella' | t }}
           </a>
-          @if (esAdmin) {
-            <button mat-button type="button" class="eliminar" (click)="eliminar(huella)">
-              <span class="material-symbols-outlined">delete</span>
-              {{ 'Eliminar' | t }}
-            </button>
-          }
-        </td>
-      </ng-container>
+        </div>
 
-      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-      <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
-    </table>
-  }
+        <div class="filtros">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'Periodo' | t }}</mat-label>
+            <mat-select [value]="periodo()" (selectionChange)="periodo.set($event.value)">
+              <mat-option value="">{{ 'Todos los periodos' | t }}</mat-option>
+              @for (opcion of periodos; track opcion) {
+                <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @if (mensaje()) {
+          <p class="aviso ok">{{ mensaje() }}</p>
+        }
+        @if (error()) {
+          <p class="aviso error">{{ error() }}</p>
+        }
+
+        @if (cargando()) {
+          <p class="estado">{{ 'Cargando huellas de carbono...' | t }}</p>
+        } @else if (filtradas().length === 0 && !error()) {
+          <p class="estado">{{ 'No hay huellas de carbono calculadas.' | t }}</p>
+        } @else if (filtradas().length > 0) {
+          <table mat-table [dataSource]="filtradas()" class="tabla">
+            <ng-container matColumnDef="area">
+              <th mat-header-cell *matHeaderCellDef>{{ 'Área' | t }}</th>
+              <td mat-cell *matCellDef="let huella">
+                <span class="nombre">{{ huella.nameDepartment }}</span>
+                <span class="secundario">{{ huella.nameBranch }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="periodo">
+              <th mat-header-cell *matHeaderCellDef>{{ 'Periodo' | t }}</th>
+              <td mat-cell *matCellDef="let huella">
+                <span>{{ huella.timePeriod | t }}</span>
+                <span class="secundario cifra">{{ huella.periodStartDate | date: 'dd/MM/yyyy' }} – {{ huella.calculationDate | date: 'dd/MM/yyyy' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="kwh">
+              <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
+              <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.kwhTotalConsumption | number: '1.2-2' }} kWh</td>
+            </ng-container>
+
+            <ng-container matColumnDef="factor">
+              <th mat-header-cell *matHeaderCellDef>{{ 'Factor' | t }}</th>
+              <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.emissionFactor | number: '1.2-4' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="co2">
+              <th mat-header-cell *matHeaderCellDef>{{ 'Emisiones' | t }}</th>
+              <td mat-cell *matCellDef="let huella" class="cifra nombre">{{ huella.co2Emissions | number: '1.2-2' }} kg CO₂</td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let huella" class="acciones">
+                <a mat-button class="editar" [routerLink]="['/huella/editar', huella.idFootprint]">
+                  <span class="material-symbols-outlined">edit</span>
+                  {{ 'Recalcular' | t }}
+                </a>
+                @if (esAdmin) {
+                  <button mat-button type="button" class="eliminar" (click)="eliminar(huella)">
+                    <span class="material-symbols-outlined">delete</span>
+                    {{ 'Eliminar' | t }}
+                  </button>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+          </table>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="'Estadísticas' | t">
+      <!-- Se crea al abrir la pestaña, para que los gráficos se midan con el panel visible. -->
+      <ng-template matTabContent>
+        <div class="panel">
+          <app-huella-estadisticas [huellas]="huellas()" />
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
 </section>
