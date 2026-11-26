@@ -1,0 +1,141 @@
+:host {
+  display: block;
+}
+
+.estado {
+  margin: 0;
+  padding: 16px 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.aviso {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.resumen-cifras {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #ddd6c7;
+  border-radius: 10px;
+  background: #fffdf8;
+  margin-bottom: 24px;
+}
+
+.resumen-cifras > div {
+  padding: 16px 20px;
+  min-width: 0;
+}
+
+.resumen-cifras > div + div {
+  border-left: 1px solid #ddd6c7;
+}
+
+.cifra-grande {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  color: #0e2a2b;
+}
+
+.cifra-grande span {
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.cifra-grande.texto {
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.etiqueta-cifra {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.bloque {
+  margin-bottom: 28px;
+}
+
+.bloque h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0e2a2b;
+}
+
+.grafico {
+  position: relative;
+}
+
+.nota {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+.tabla-reporte {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: #0e2a2b;
+}
+
+.tabla-reporte th {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  color: #4f6b63;
+  border-bottom: 1px solid #0e2a2b;
+  white-space: nowrap;
+}
+
+.tabla-reporte td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e6dfcf;
+}
+
+.tabla-reporte th:first-child,
+.tabla-reporte td:first-child {
+  padding-left: 0;
+}
+
+.derecha {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+@media (max-width: 720px) {
+  .resumen-cifras {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-cifras > div + div {
+    border-left: none;
+    border-top: 1px solid #ddd6c7;
+  }
+}

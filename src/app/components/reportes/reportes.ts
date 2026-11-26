@@ -8,9 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ReportService } from '../../services/report.service';
+import { ConsumptionRecordService } from '../../services/consumption-record.service';
 import { BranchService } from '../../services/branch.service';
 import { ConsumptionReport, ReportItem } from '../../models/report';
 import { Branch } from '../../models/branch';
+import { ConsumoCategoria } from '../../models/estadisticas';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
 
@@ -36,6 +38,8 @@ export class Reportes implements OnInit {
   form: FormGroup;
   sedes = signal<Branch[]>([]);
   reporte = signal<ConsumptionReport | null>(null);
+  categorias = signal<ReportItem[]>([]);
+  errorCategorias = signal('');
   cargando = signal(false);
   descargando = signal('');
   error = signal('');
@@ -44,6 +48,7 @@ export class Reportes implements OnInit {
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
+    private consumptionRecordService: ConsumptionRecordService,
     private branchService: BranchService,
     private idiomaService: IdiomaService
   ) {
@@ -73,6 +78,7 @@ export class Reportes implements OnInit {
     }
     this.cargando.set(true);
     this.error.set('');
+    this.cargarCategorias();
     this.reportService.obtener(...this.filtros()).subscribe({
       next: datos => {
         this.reporte.set(datos);
@@ -118,8 +124,30 @@ export class Reportes implements OnInit {
     });
   }
 
-  parte(item: ReportItem): number {
-    const total = this.reporte()?.totalKwh ?? 0;
+  parte(item: ReportItem, total: number = this.reporte()?.totalKwh ?? 0): number {
     return total > 0 ? (item.totalKwh / total) * 100 : 0;
+  }
+
+  totalCategorias(): number {
+    return this.categorias().reduce((suma, item) => suma + item.totalKwh, 0);
+  }
+
+  private cargarCategorias(): void {
+    const { desde, hasta } = this.form.value;
+    this.errorCategorias.set('');
+    this.consumptionRecordService.consumoPorCategoria(desde, hasta).subscribe({
+      next: datos => this.categorias.set(datos.map((fila: ConsumoCategoria, indice: number) => ({
+        id: indice,
+        name: fila.categoryEquipment,
+        detail: this.idiomaService.t(fila.equipmentCount === 1 ? '{0} equipo' : '{0} equipos', [fila.equipmentCount]),
+        recordCount: fila.totalRecords,
+        totalKwh: fila.totalKwh,
+        totalCost: fila.totalCost
+      }))),
+      error: () => {
+        this.categorias.set([]);
+        this.errorCategorias.set(this.idiomaService.t('No se pudo cargar el consumo por categoría.'));
+      }
+    });
   }
 }

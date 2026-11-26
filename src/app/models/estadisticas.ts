@@ -66,3 +66,23 @@ export interface ComparacionHuella {
   variationPercent: number | null;
   trend: string;
 }
+
+export interface ReporteEquiposCategoria {
+  idCompany: number;
+  nameCompany: string;
+  categoryEquipment: string;
+  totalEquipments: number;
+  activeEquipments: number;
+  inactiveEquipments: number;
+  activePowerWatts: number;
+  totalKwh: number;
+  totalCost: number;
+}
+
+export interface ConsumoCategoria {
+  categoryEquipment: string;
+  equipmentCount: number;
+  totalRecords: number;
+  totalKwh: number;
+  totalCost: number;
+}

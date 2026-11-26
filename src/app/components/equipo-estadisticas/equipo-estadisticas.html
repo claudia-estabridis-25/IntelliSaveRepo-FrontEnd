@@ -1,0 +1,74 @@
+@if (cargando()) {
+  <p class="estado">{{ 'Cargando estadísticas...' | t }}</p>
+} @else if (error()) {
+  <p class="aviso error">{{ error() | t }}</p>
+} @else if (filas().length === 0) {
+  <p class="estado">{{ 'No hay equipos registrados.' | t }}</p>
+} @else {
+  <div class="resumen-cifras">
+    <div>
+      <p class="cifra-grande">{{ totalEquipos() }}</p>
+      <p class="etiqueta-cifra">{{ 'equipos en total, {0} activos' | t: [totalActivos()] }}</p>
+    </div>
+    <div>
+      <p class="cifra-grande">{{ potenciaKw() | number: '1.1-2' }}<span> kW</span></p>
+      <p class="etiqueta-cifra">{{ 'potencia instalada de los equipos activos' | t }}</p>
+    </div>
+    <div>
+      @if (categoriaMayor(); as mayor) {
+        <p class="cifra-grande texto">{{ mayor.categoria }}</p>
+        <p class="etiqueta-cifra">{{ 'categoría que más consume ({0} kWh)' | t: [(mayor.kwh | number: '1.1-2')] }}</p>
+      } @else {
+        <p class="cifra-grande texto">—</p>
+        <p class="etiqueta-cifra">{{ 'categoría que más consume' | t }}</p>
+      }
+    </div>
+  </div>
+
+  <section class="bloque">
+    <h3>{{ 'Consumo registrado por categoría' | t }}</h3>
+    <div class="grafico" [style.height.px]="altoGrafico()" role="img" [attr.aria-label]="'Gráfico de barras de consumo por categoría de equipo' | t">
+      <canvas baseChart type="bar" [data]="grafico()" [options]="opciones"></canvas>
+    </div>
+    <p class="nota">{{ 'En ámbar, la categoría con más consumo.' | t }}</p>
+  </section>
+
+  <section class="bloque">
+    <h3>{{ 'Detalle por categoría' | t }}</h3>
+    <div class="tabla-contenedor">
+      <table class="tabla-reporte">
+        <thead>
+          <tr>
+            @if (variasEmpresas()) {
+              <th>{{ 'Empresa' | t }}</th>
+            }
+            <th>{{ 'Categoría' | t }}</th>
+            <th class="derecha">{{ 'Equipos' | t }}</th>
+            <th class="derecha">{{ 'Activos' | t }}</th>
+            <th class="derecha">{{ 'Inactivos' | t }}</th>
+            <th class="derecha">{{ 'Potencia activa (W)' | t }}</th>
+            <th class="derecha">kWh</th>
+            <th class="derecha">{{ 'Costo' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of filas(); track fila.idCompany + fila.categoryEquipment) {
+            <tr>
+              @if (variasEmpresas()) {
+                <td>{{ fila.nameCompany }}</td>
+              }
+              <td>{{ fila.categoryEquipment }}</td>
+              <td class="derecha cifra">{{ fila.totalEquipments }}</td>
+              <td class="derecha cifra">{{ fila.activeEquipments }}</td>
+              <td class="derecha cifra">{{ fila.inactiveEquipments }}</td>
+              <td class="derecha cifra">{{ fila.activePowerWatts | number: '1.0-0' }}</td>
+              <td class="derecha cifra">{{ fila.totalKwh | number: '1.1-2' }}</td>
+              <td class="derecha cifra">S/ {{ fila.totalCost | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">{{ 'Consulta nativa con JOIN entre equipos, áreas, sedes, empresas y consumos.' | t }}</p>
+  </section>
+}
