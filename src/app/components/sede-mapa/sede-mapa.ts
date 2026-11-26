@@ -97,7 +97,12 @@ export class SedeMapa implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (ajustar) {
-      this.ajustarVista();
+      // Al llegar los datos aparece la lista lateral y el contenedor cambia de tamaño:
+      // se espera a que Angular actualice la vista y se mide de nuevo antes de encuadrar.
+      setTimeout(() => {
+        this.mapa?.invalidateSize();
+        this.ajustarVista();
+      });
     }
   }
 

@@ -20,6 +20,10 @@
   vertical-align: middle;
 }
 
+.ubicacion .secundario-boton .material-symbols-outlined {
+  margin-right: 6px;
+}
+
 .indicacion {
   margin: 12px 0 20px;
   font-size: 14px;
