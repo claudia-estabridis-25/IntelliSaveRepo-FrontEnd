@@ -3,8 +3,14 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { LoginService } from '../services/login.service';
+import { environment } from '../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // Solo las peticiones a nuestra API llevan el token; las APIs externas (p. ej. Nominatim) no.
+  if (!req.url.startsWith(environment.apiUrl)) {
+    return next(req);
+  }
+
   const loginService = inject(LoginService);
   const router = inject(Router);
   const token = loginService.obtenerToken();

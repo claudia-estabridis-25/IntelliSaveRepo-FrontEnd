@@ -12,6 +12,8 @@ import { CompanyService } from '../../services/company.service';
 import { TariffInsert } from '../../models/tariff';
 import { Branch } from '../../models/branch';
 import { Company } from '../../models/company';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 function rangoValido(grupo: AbstractControl): ValidationErrors | null {
   const inicio = grupo.get('initialEffectiveDate')?.value;
@@ -21,7 +23,7 @@ function rangoValido(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-tarifa-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './tarifa-registrar.html',
   styleUrl: './tarifa-registrar.css'
 })
@@ -49,7 +51,8 @@ export class TarifaRegistrar implements OnInit {
     private router: Router,
     private tariffService: TariffService,
     private branchService: BranchService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       idBranch: [null, Validators.required],
@@ -63,7 +66,7 @@ export class TarifaRegistrar implements OnInit {
   ngOnInit(): void {
     this.branchService.listar().subscribe({
       next: datos => this.sedes.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de sedes.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de sedes.'))
     });
     this.companyService.listar().subscribe({ next: datos => this.empresas.set(datos) });
 
@@ -86,7 +89,7 @@ export class TarifaRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a esta tarifa.' : 'No se encontró la tarifa.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a esta tarifa.' : 'No se encontró la tarifa.'));
         this.cargando.set(false);
       }
     });
@@ -116,17 +119,17 @@ export class TarifaRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardada => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
-        this.router.navigate(['/tarifas'], { state: { mensaje: `Se ${accion} la tarifa de ${guardada.nameBranch}.` } });
+        const plantilla = this.esEdicion ? 'Se actualizó la tarifa de {0}.' : 'Se registró la tarifa de {0}.';
+        this.router.navigate(['/tarifas'], { state: { mensaje: this.idiomaService.t(plantilla, [guardada.nameBranch]) } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para guardar tarifas en esa sede.');
+          this.error.set(this.idiomaService.t('No tienes acceso para guardar tarifas en esa sede.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar la tarifa.');
+          this.error.set(this.idiomaService.t('No se pudo guardar la tarifa.'));
         }
       }
     });

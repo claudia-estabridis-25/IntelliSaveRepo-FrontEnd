@@ -1,26 +1,72 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ filtrados().length }} {{ filtrados().length === 1 ? 'registro' : 'registros' }} ·
+      {{ (filtrados().length === 1 ? '{0} registro' : '{0} registros') | t: [filtrados().length] }} ·
       <span class="cifra">{{ totalKwh() | number: '1.2-2' }} kWh</span> ·
       <span class="cifra">S/ {{ totalCosto() | number: '1.2-2' }}</span>
     </p>
     <a mat-flat-button class="registrar" routerLink="/consumos/nuevo">
       <span class="material-symbols-outlined">add</span>
-      Registrar consumo
+      {{ 'Registrar consumo' | t }}
     </a>
   </div>
 
   <div class="filtros">
+    @if (puedeGestionar) {
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Sede' | t }}</mat-label>
+        <mat-select [value]="idSede()" (selectionChange)="cambiarSede($event.value)">
+          <mat-option [value]="0">{{ 'Todas las sedes' | t }}</mat-option>
+          @for (sede of listaSedes(); track sede.idBranch) {
+            <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Área' | t }}</mat-label>
+        <mat-select [value]="idArea()" (selectionChange)="cambiarArea($event.value)">
+          <mat-option [value]="0">{{ 'Todas las áreas' | t }}</mat-option>
+          @for (area of listaAreas(); track area.idDepartment) {
+            <mat-option [value]="area.idDepartment">{{ area.nameDepartment }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Equipo</mat-label>
+      <mat-label>{{ 'Equipo' | t }}</mat-label>
       <mat-select [value]="idEquipo()" (selectionChange)="idEquipo.set($event.value)">
-        <mat-option [value]="0">Todos los equipos</mat-option>
+        <mat-option [value]="0">{{ 'Todos los equipos' | t }}</mat-option>
         @for (equipo of listaEquipos(); track equipo.idEquipment) {
           <mat-option [value]="equipo.idEquipment">{{ equipo.nameEquipment }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
+
+    @if (puedeGestionar) {
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Desde' | t }}</mat-label>
+        <input matInput type="date" #inputDesde [value]="desde()" (input)="desde.set(inputDesde.value)">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Hasta' | t }}</mat-label>
+        <input matInput type="date" #inputHasta [value]="hasta()" (input)="hasta.set(inputHasta.value)">
+      </mat-form-field>
+
+      <div class="botones-filtro">
+        <button mat-flat-button type="button" class="registrar" (click)="filtrar()" [disabled]="cargando()">
+          <span class="material-symbols-outlined">filter_alt</span>
+          {{ 'Filtrar' | t }}
+        </button>
+        @if (hayFiltros()) {
+          <button mat-stroked-button type="button" class="secundario-boton" (click)="limpiarFiltros()" [disabled]="cargando()">
+            {{ 'Limpiar' | t }}
+          </button>
+        }
+      </div>
+    }
   </div>
 
   @if (mensaje()) {
@@ -31,41 +77,43 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando consumos...</p>
+    <p class="estado">{{ 'Cargando consumos...' | t }}</p>
   } @else if (filtrados().length === 0 && !error()) {
-    <p class="estado">No hay consumos registrados.</p>
+    <p class="estado">{{ (filtrosAplicados() ? 'Ningún consumo coincide con los filtros.' : 'No hay consumos registrados.') | t }}</p>
   } @else if (filtrados().length > 0) {
     <table mat-table [dataSource]="filtrados()" class="tabla">
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Fecha' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.dateTimeRecord | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="equipo">
-        <th mat-header-cell *matHeaderCellDef>Equipo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Equipo' | t }}</th>
         <td mat-cell *matCellDef="let registro">
           <span class="nombre">{{ nombreEquipo(registro.idEquipment) }}</span>
-          <span class="secundario">{{ nombreArea(registro.idEquipment) }}</span>
+          <span class="secundario">
+            {{ nombreArea(registro.idEquipment) }}@if (nombreSede(registro.idEquipment)) { · {{ nombreSede(registro.idEquipment) }} }
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="horas">
-        <th mat-header-cell *matHeaderCellDef>Horas</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Horas' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.hoursOfUse | number: '1.0-2' }} h</td>
       </ng-container>
 
       <ng-container matColumnDef="kwh">
-        <th mat-header-cell *matHeaderCellDef>Consumo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.kwhConsumption | number: '1.2-2' }} kWh</td>
       </ng-container>
 
       <ng-container matColumnDef="costo">
-        <th mat-header-cell *matHeaderCellDef>Costo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Costo' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">S/ {{ registro.costTotal | number: '1.2-2' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="observacion">
-        <th mat-header-cell *matHeaderCellDef>Observación</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Observación' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="descripcion">{{ registro.observationRecord }}</td>
       </ng-container>
 
@@ -75,13 +123,13 @@
           @if (puedeGestionar) {
             <a mat-button class="editar" [routerLink]="['/consumos/editar', registro.idConsumptionRecord]">
               <span class="material-symbols-outlined">edit</span>
-              Editar
+              {{ 'Editar' | t }}
             </a>
           }
           @if (esAdmin) {
             <button mat-button type="button" class="eliminar" (click)="eliminar(registro)">
               <span class="material-symbols-outlined">delete</span>
-              Eliminar
+              {{ 'Eliminar' | t }}
             </button>
           }
         </td>

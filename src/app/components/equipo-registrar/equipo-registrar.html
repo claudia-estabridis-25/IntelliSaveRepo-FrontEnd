@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/equipos">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a equipos
+    {{ 'Volver a equipos' | t }}
   </a>
 
   <p class="indicacion">
-    {{ esEdicion ? 'Modifica los datos del equipo y guarda los cambios.' : 'Completa los datos del equipo nuevo y elige el área donde está instalado.' }}
+    {{ (esEdicion ? 'Modifica los datos del equipo y guarda los cambios.' : 'Completa los datos del equipo nuevo y elige el área donde está instalado.') | t }}
   </p>
 
   @if (error()) {
@@ -13,29 +13,29 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando equipo...</p>
+    <p class="estado">{{ 'Cargando equipo...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre del equipo</mat-label>
-          <input matInput formControlName="nameEquipment" maxlength="40" placeholder="Aire acondicionado sala 2">
+          <mat-label>{{ 'Nombre del equipo' | t }}</mat-label>
+          <input matInput formControlName="nameEquipment" maxlength="40" [placeholder]="'Aire acondicionado sala 2' | t">
           @if (form.get('nameEquipment')?.hasError('required')) {
-            <mat-error>El nombre del equipo es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre del equipo es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('nameEquipment') }}/40</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Categoría</mat-label>
-          <input matInput formControlName="categoryEquipment" maxlength="40" list="categorias" placeholder="Climatización">
+          <mat-label>{{ 'Categoría' | t }}</mat-label>
+          <input matInput formControlName="categoryEquipment" maxlength="40" list="categorias" [placeholder]="'Climatización' | t">
           <datalist id="categorias">
             @for (categoria of categorias(); track categoria) {
               <option [value]="categoria"></option>
             }
           </datalist>
           @if (form.get('categoryEquipment')?.hasError('required')) {
-            <mat-error>La categoría es obligatoria.</mat-error>
+            <mat-error>{{ 'La categoría es obligatoria.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('categoryEquipment') }}/40</mat-hint>
         </mat-form-field>
@@ -43,19 +43,19 @@
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Marca</mat-label>
+          <mat-label>{{ 'Marca' | t }}</mat-label>
           <input matInput formControlName="brandEquipment" maxlength="30">
           @if (form.get('brandEquipment')?.hasError('required')) {
-            <mat-error>La marca es obligatoria.</mat-error>
+            <mat-error>{{ 'La marca es obligatoria.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('brandEquipment') }}/30</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Modelo</mat-label>
+          <mat-label>{{ 'Modelo' | t }}</mat-label>
           <input matInput formControlName="modelEquipment" maxlength="30">
           @if (form.get('modelEquipment')?.hasError('required')) {
-            <mat-error>El modelo es obligatorio.</mat-error>
+            <mat-error>{{ 'El modelo es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('modelEquipment') }}/30</mat-hint>
         </mat-form-field>
@@ -63,27 +63,27 @@
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Potencia (W)</mat-label>
+          <mat-label>{{ 'Potencia (W)' | t }}</mat-label>
           <input matInput class="cifra" type="number" step="any" min="0" formControlName="wattPowerEquipment">
           @if (form.get('wattPowerEquipment')?.hasError('required')) {
-            <mat-error>La potencia es obligatoria.</mat-error>
+            <mat-error>{{ 'La potencia es obligatoria.' | t }}</mat-error>
           } @else if (form.get('wattPowerEquipment')?.hasError('min')) {
-            <mat-error>La potencia debe ser mayor a 0.</mat-error>
+            <mat-error>{{ 'La potencia debe ser mayor a 0.' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Fecha de adquisición</mat-label>
+          <mat-label>{{ 'Fecha de adquisición' | t }}</mat-label>
           <input matInput class="cifra" type="date" [max]="hoy" formControlName="acquisitionDateEquipment">
           @if (form.get('acquisitionDateEquipment')?.hasError('required')) {
-            <mat-error>La fecha de adquisición es obligatoria.</mat-error>
+            <mat-error>{{ 'La fecha de adquisición es obligatoria.' | t }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Área</mat-label>
+          <mat-label>{{ 'Área' | t }}</mat-label>
           <mat-select formControlName="idDepartment">
             @for (grupo of grupos(); track grupo.sede) {
               <mat-optgroup [label]="grupo.sede">
@@ -94,23 +94,23 @@
             }
           </mat-select>
           @if (form.get('idDepartment')?.hasError('required')) {
-            <mat-error>Elige el área del equipo.</mat-error>
+            <mat-error>{{ 'Elige el área del equipo.' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Estado</mat-label>
+          <mat-label>{{ 'Estado' | t }}</mat-label>
           <mat-select formControlName="statusEquipment">
-            <mat-option value="Activo">Activo</mat-option>
-            <mat-option value="Inactivo">Inactivo</mat-option>
+            <mat-option value="Activo">{{ 'Activo' | t }}</mat-option>
+            <mat-option value="Inactivo">{{ 'Inactivo' | t }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/equipos">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/equipos">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar equipo') }}
+          {{ (guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar equipo')) | t }}
         </button>
       </div>
     </form>

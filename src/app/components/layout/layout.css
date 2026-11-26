@@ -135,6 +135,30 @@
   color: #0e2a2b;
 }
 
+.idiomas {
+  display: flex;
+  border: 1px solid #ddd6c7;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.idiomas button {
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: #4f6b63;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.idiomas button.activo {
+  background: #0e2a2b;
+  color: #f7f4ec;
+}
+
 .salir,
 .boton-menu {
   display: flex;

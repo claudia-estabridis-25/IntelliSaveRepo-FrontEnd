@@ -5,11 +5,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { BranchService } from '../../services/branch.service';
 import { CompanyService } from '../../services/company.service';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 import { Branch } from '../../models/branch';
 
 @Component({
   selector: 'app-sede-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink],
+  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './sede-listar.html',
   styleUrl: './sede-listar.css'
 })
@@ -26,7 +28,7 @@ export class SedeListar implements OnInit {
       : ['nombre', 'direccion', 'acciones']
   );
 
-  constructor(private branchService: BranchService, private companyService: CompanyService) {}
+  constructor(private branchService: BranchService, private companyService: CompanyService, private idiomaService: IdiomaService) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -44,18 +46,18 @@ export class SedeListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de sedes.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de sedes.'));
         this.cargando.set(false);
       }
     });
   }
 
   nombreEmpresa(idCompany: number): string {
-    return this.empresas().get(idCompany) ?? `Empresa ${idCompany}`;
+    return this.empresas().get(idCompany) ?? this.idiomaService.t('Empresa {0}', [idCompany]);
   }
 
   eliminar(sede: Branch): void {
-    if (!confirm(`¿Eliminar la sede ${sede.nameBranch}?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la sede {0}?', [sede.nameBranch]))) {
       return;
     }
     this.mensaje.set('');
@@ -63,15 +65,15 @@ export class SedeListar implements OnInit {
     this.branchService.eliminar(sede.idBranch).subscribe({
       next: () => {
         this.sedes.update(lista => lista.filter(s => s.idBranch !== sede.idBranch));
-        this.mensaje.set(`Se eliminó la sede ${sede.nameBranch}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó la sede {0}.', [sede.nameBranch]));
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 403) {
-          this.error.set('No tienes acceso para eliminar esta sede.');
+          this.error.set(this.idiomaService.t('No tienes acceso para eliminar esta sede.'));
         } else if (err.status === 409) {
-          this.error.set(`No se puede eliminar la sede ${sede.nameBranch} porque tiene áreas, tarifas o registros de clima.`);
+          this.error.set(this.idiomaService.t('No se puede eliminar la sede {0} porque tiene áreas, tarifas o registros de clima.', [sede.nameBranch]));
         } else {
-          this.error.set('No se pudo eliminar la sede.');
+          this.error.set(this.idiomaService.t('No se pudo eliminar la sede.'));
         }
       }
     });

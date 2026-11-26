@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Branch, BranchInsert } from '../models/branch';
+import { ConsumoSede } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +31,10 @@ export class BranchService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  // HU156: consumo y costo por sede de una empresa.
+  consumoPorSede(idCompany: number): Observable<ConsumoSede[]> {
+    return this.http.get<ConsumoSede[]>(`${this.url}/company/consumption/${idCompany}`);
   }
 }

@@ -12,10 +12,12 @@ import { BranchService } from '../../services/branch.service';
 import { CarbonFootprintInsert, PERIODOS_HUELLA } from '../../models/carbon-footprint';
 import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-huella-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './huella-registrar.html',
   styleUrl: './huella-registrar.css'
 })
@@ -46,7 +48,8 @@ export class HuellaRegistrar implements OnInit {
     private router: Router,
     private carbonFootprintService: CarbonFootprintService,
     private departmentService: DepartmentService,
-    private branchService: BranchService
+    private branchService: BranchService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       idDepartment: [null, Validators.required],
@@ -59,7 +62,7 @@ export class HuellaRegistrar implements OnInit {
   ngOnInit(): void {
     this.departmentService.listar().subscribe({
       next: datos => this.areas.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de áreas.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de áreas.'))
     });
     this.branchService.listar().subscribe({ next: datos => this.sedes.set(datos) });
 
@@ -89,7 +92,7 @@ export class HuellaRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a esta huella.' : 'No se encontró la huella.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a esta huella.' : 'No se encontró la huella.'));
         this.cargando.set(false);
       }
     });
@@ -109,7 +112,9 @@ export class HuellaRegistrar implements OnInit {
     if (this.todas()) {
       this.carbonFootprintService.calcularTodas(valores.timePeriod, valores.emissionFactor, fecha).subscribe({
         next: lista => this.router.navigate(['/huella'], {
-          state: { mensaje: `Se calculó la huella ${valores.timePeriod.toLowerCase()} de ${lista.length} áreas.` }
+          state: {
+            mensaje: this.idiomaService.t('Se calculó la huella {0} de {1} áreas.', [this.idiomaService.t(valores.timePeriod).toLowerCase(), lista.length])
+          }
         }),
         error: (err: HttpErrorResponse) => this.mostrarError(err)
       });
@@ -124,7 +129,13 @@ export class HuellaRegistrar implements OnInit {
     peticion.subscribe({
       next: guardada => {
         this.router.navigate(['/huella'], {
-          state: { mensaje: `Huella de ${guardada.nameDepartment}: ${guardada.co2Emissions.toFixed(2)} kg CO₂ (${guardada.kwhTotalConsumption.toFixed(2)} kWh).` }
+          state: {
+            mensaje: this.idiomaService.t('Huella de {0}: {1} kg CO₂ ({2} kWh).', [
+              guardada.nameDepartment,
+              guardada.co2Emissions.toFixed(2),
+              guardada.kwhTotalConsumption.toFixed(2)
+            ])
+          }
         });
       },
       error: (err: HttpErrorResponse) => this.mostrarError(err)
@@ -134,11 +145,11 @@ export class HuellaRegistrar implements OnInit {
   private mostrarError(err: HttpErrorResponse): void {
     this.guardando.set(false);
     if (err.status === 403) {
-      this.error.set('No tienes acceso para calcular la huella de esa área.');
+      this.error.set(this.idiomaService.t('No tienes acceso para calcular la huella de esa área.'));
     } else if (err.status === 400 || err.status === 404) {
-      this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+      this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
     } else {
-      this.error.set('No se pudo calcular la huella de carbono.');
+      this.error.set(this.idiomaService.t('No se pudo calcular la huella de carbono.'));
     }
   }
 }

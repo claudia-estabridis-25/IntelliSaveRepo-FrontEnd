@@ -9,10 +9,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { PredictionService } from '../../services/prediction.service';
 import { LoginService } from '../../services/login.service';
 import { Prediction } from '../../models/prediction';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-prediccion-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe],
+  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './prediccion-listar.html',
   styleUrl: './prediccion-listar.css'
 })
@@ -40,7 +42,11 @@ export class PrediccionListar implements OnInit {
     this.predicciones().find(prediccion => prediccion.idPrediction === this.abierta()) ?? null
   );
 
-  constructor(private predictionService: PredictionService, private loginService: LoginService) {}
+  constructor(
+    private predictionService: PredictionService,
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
+  ) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -57,7 +63,7 @@ export class PrediccionListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de predicciones.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de predicciones.'));
         this.cargando.set(false);
       }
     });
@@ -74,14 +80,19 @@ export class PrediccionListar implements OnInit {
     this.predictionService.evaluar().subscribe({
       next: evaluadas => {
         this.evaluando.set(false);
-        this.mensaje.set(evaluadas.length === 0
-          ? 'No hay predicciones con el periodo terminado por evaluar.'
-          : `Se evaluaron ${evaluadas.length} predicciones con el consumo real.`);
+        this.mensaje.set(this.idiomaService.t(
+          evaluadas.length === 0
+            ? 'Los estados ya coinciden con el consumo real: ninguna predicción cambió.'
+            : evaluadas.length === 1
+              ? 'Se actualizó el estado de {0} predicción según el consumo real.'
+              : 'Se actualizó el estado de {0} predicciones según el consumo real.',
+          [evaluadas.length]
+        ));
         this.cargar();
       },
       error: () => {
         this.evaluando.set(false);
-        this.error.set('No se pudieron evaluar las predicciones.');
+        this.error.set(this.idiomaService.t('No se pudieron evaluar las predicciones.'));
       }
     });
   }
@@ -107,14 +118,14 @@ export class PrediccionListar implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.analizando.set(false);
         this.errorAnalisis.set(err.status === 400
-          ? (err.error?.message ?? 'No se pudo generar el análisis con IA.')
-          : 'No se pudo generar el análisis con IA. Intenta de nuevo en unos minutos.');
+          ? (err.error?.message ?? this.idiomaService.t('No se pudo generar el análisis con IA.'))
+          : this.idiomaService.t('No se pudo generar el análisis con IA. Intenta de nuevo en unos minutos.'));
       }
     });
   }
 
   eliminar(prediccion: Prediction): void {
-    if (!confirm(`¿Eliminar la predicción de ${prediccion.nameEquipment ?? prediccion.nameDepartment}?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la predicción de {0}?', [prediccion.nameEquipment ?? prediccion.nameDepartment]))) {
       return;
     }
     this.mensaje.set('');
@@ -125,10 +136,10 @@ export class PrediccionListar implements OnInit {
         if (this.abierta() === prediccion.idPrediction) {
           this.cerrarAnalisis();
         }
-        this.mensaje.set('Se eliminó la predicción.');
+        this.mensaje.set(this.idiomaService.t('Se eliminó la predicción.'));
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso para eliminar esta predicción.' : 'No se pudo eliminar la predicción.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso para eliminar esta predicción.' : 'No se pudo eliminar la predicción.'));
       }
     });
   }

@@ -17,6 +17,8 @@ import { ConsumptionRecordInsert } from '../../models/consumption-record';
 import { Equipment } from '../../models/equipment';
 import { Department } from '../../models/department';
 import { Tariff } from '../../models/tariff';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 function ahoraLocal(): string {
   const ahora = new Date();
@@ -26,7 +28,7 @@ function ahoraLocal(): string {
 
 @Component({
   selector: 'app-consumo-registrar',
-  imports: [ReactiveFormsModule, RouterLink, DecimalPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, DecimalPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './consumo-registrar.html',
   styleUrl: './consumo-registrar.css'
 })
@@ -50,7 +52,7 @@ export class ConsumoRegistrar implements OnInit {
       equipo.statusEquipment === 'Activo' || equipo.idEquipment === this.idEquipoOriginal()
     );
     if (this.areas().length === 0) {
-      return disponibles.length > 0 ? [{ area: 'Equipos', equipos: disponibles }] : [];
+      return disponibles.length > 0 ? [{ area: this.idiomaService.t('Equipos'), equipos: disponibles }] : [];
     }
     return this.areas()
       .map(area => ({
@@ -74,7 +76,8 @@ export class ConsumoRegistrar implements OnInit {
     private equipmentService: EquipmentService,
     private departmentService: DepartmentService,
     private tariffService: TariffService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       idEquipment: [null, Validators.required],
@@ -90,7 +93,7 @@ export class ConsumoRegistrar implements OnInit {
     this.puedeGestionar = this.loginService.tieneRol('ADMIN') || this.loginService.tieneRol('SUPERVISOR');
     this.equipmentService.listar().subscribe({
       next: datos => this.equipos.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de equipos.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de equipos.'))
     });
     if (this.puedeGestionar) {
       this.departmentService.listar().subscribe({ next: datos => this.areas.set(datos) });
@@ -117,7 +120,7 @@ export class ConsumoRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a este consumo.' : 'No se encontró el consumo.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a este consumo.' : 'No se encontró el consumo.'));
         this.cargando.set(false);
       }
     });
@@ -147,19 +150,19 @@ export class ConsumoRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardado => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
+        const mensaje = this.esEdicion ? 'Se actualizó el consumo: {0} kWh, S/ {1}.' : 'Se registró el consumo: {0} kWh, S/ {1}.';
         this.router.navigate(['/consumos'], {
-          state: { mensaje: `Se ${accion} el consumo: ${guardado.kwhConsumption.toFixed(2)} kWh, S/ ${guardado.costTotal.toFixed(2)}.` }
+          state: { mensaje: this.idiomaService.t(mensaje, [guardado.kwhConsumption.toFixed(2), guardado.costTotal.toFixed(2)]) }
         });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para registrar consumos de ese equipo.');
+          this.error.set(this.idiomaService.t('No tienes acceso para registrar consumos de ese equipo.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar el consumo.');
+          this.error.set(this.idiomaService.t('No se pudo guardar el consumo.'));
         }
       }
     });

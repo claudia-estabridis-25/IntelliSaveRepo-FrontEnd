@@ -9,10 +9,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { UsuarioService } from '../../services/usuario.service';
 import { LoginService } from '../../services/login.service';
 import { ROLES, Usuario } from '../../models/usuario';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-usuario-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, RouterLink],
+  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, RouterLink, TraducirPipe],
   templateUrl: './usuario-listar.html',
   styleUrl: './usuario-listar.css'
 })
@@ -42,7 +44,11 @@ export class UsuarioListar implements OnInit {
     );
   });
 
-  constructor(private usuarioService: UsuarioService, private loginService: LoginService) {}
+  constructor(
+    private usuarioService: UsuarioService,
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
+  ) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -58,7 +64,7 @@ export class UsuarioListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de usuarios.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de usuarios.'));
         this.cargando.set(false);
       }
     });
@@ -76,9 +82,9 @@ export class UsuarioListar implements OnInit {
 
   nombreRol(usuario: Usuario): string {
     if (usuario.roles.includes('ROLE_ADMIN')) {
-      return usuario.idCompany === null ? 'Admin. de plataforma' : 'Admin. de empresa';
+      return this.idiomaService.t(usuario.idCompany === null ? 'Admin. de plataforma' : 'Admin. de empresa');
     }
-    return usuario.roles.map(rol => ROLES[rol] ?? rol).join(', ');
+    return usuario.roles.map(rol => this.idiomaService.t(ROLES[rol] ?? rol)).join(', ');
   }
 
   esUsuarioActual(usuario: Usuario): boolean {
@@ -86,7 +92,7 @@ export class UsuarioListar implements OnInit {
   }
 
   desactivar(usuario: Usuario): void {
-    if (!confirm(`¿Desactivar a ${this.nombreCompleto(usuario)}? Ya no podrá iniciar sesión.`)) {
+    if (!confirm(this.idiomaService.t('¿Desactivar a {0}? Ya no podrá iniciar sesión.', [this.nombreCompleto(usuario)]))) {
       return;
     }
     this.mensaje.set('');
@@ -94,13 +100,13 @@ export class UsuarioListar implements OnInit {
     this.usuarioService.desactivar(usuario.idUser).subscribe({
       next: actualizado => {
         this.usuarios.update(lista => lista.map(u => u.idUser === actualizado.idUser ? actualizado : u));
-        this.mensaje.set(`Se desactivó a ${this.nombreCompleto(usuario)}.`);
+        this.mensaje.set(this.idiomaService.t('Se desactivó a {0}.', [this.nombreCompleto(usuario)]));
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 403) {
-          this.error.set('No tienes acceso para desactivar a este usuario.');
+          this.error.set(this.idiomaService.t('No tienes acceso para desactivar a este usuario.'));
         } else {
-          this.error.set(err.error?.message ?? 'No se pudo desactivar al usuario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('No se pudo desactivar al usuario.'));
         }
       }
     });

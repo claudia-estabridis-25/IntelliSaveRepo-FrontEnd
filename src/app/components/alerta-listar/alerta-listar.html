@@ -1,58 +1,89 @@
 <section class="listado">
-  <div class="encabezado">
-    <p class="resumen">
-      {{ filtradas().length }} de {{ alertas().length }} alertas · {{ pendientes() }} pendientes
-    </p>
-    @if (puedeGestionar) {
-      <a mat-flat-button class="registrar" routerLink="/alertas/nueva">
-        <span class="material-symbols-outlined">add</span>
-        Registrar alerta
-      </a>
-    }
-  </div>
+  @if (puedeGestionar) {
+    <mat-tab-group class="pestanas" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start" (selectedIndexChange)="cambiarPestana($event)">
+      <mat-tab [label]="'Alertas activas' | t">
+        <div class="panel">
+          <ng-container *ngTemplateOutlet="activas" />
+        </div>
+      </mat-tab>
 
-  <div class="filtros">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Estado</mat-label>
-      <mat-select [value]="estado()" (selectionChange)="estado.set($event.value)">
-        <mat-option value="">Todos los estados</mat-option>
-        @for (opcion of estados; track opcion) {
-          <mat-option [value]="opcion">{{ opcion }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <mat-tab [label]="'Historial' | t">
+        <div class="panel">
+          <ng-container *ngTemplateOutlet="historialTpl" />
+        </div>
+      </mat-tab>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Prioridad</mat-label>
-      <mat-select [value]="prioridad()" (selectionChange)="prioridad.set($event.value)">
-        <mat-option value="">Todas las prioridades</mat-option>
-        @for (opcion of prioridades; track opcion) {
-          <mat-option [value]="opcion">{{ opcion }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
+      <mat-tab [label]="'Generar por área' | t">
+        <div class="panel">
+          <ng-container *ngTemplateOutlet="generarTpl" />
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  } @else {
+    <ng-container *ngTemplateOutlet="activas" />
+  }
+</section>
 
+<ng-template #avisos>
   @if (mensaje()) {
     <p class="aviso ok">{{ mensaje() }}</p>
   }
   @if (error()) {
     <p class="aviso error">{{ error() }}</p>
   }
+</ng-template>
+
+<!-- HU142 CA01: alertas abiertas (pendientes y en revisión) -->
+<ng-template #activas>
+  <div class="encabezado">
+    <p class="resumen">
+      {{ '{0} de {1} alertas activas · {2} pendientes' | t: [filtradas().length, abiertas().length, pendientes()] }}
+    </p>
+    @if (puedeGestionar) {
+      <a mat-flat-button class="registrar" routerLink="/alertas/nueva">
+        <span class="material-symbols-outlined">add</span>
+        {{ 'Registrar alerta' | t }}
+      </a>
+    }
+  </div>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Estado' | t }}</mat-label>
+      <mat-select [value]="estado()" (selectionChange)="estado.set($event.value)">
+        <mat-option value="">{{ 'Todos los estados' | t }}</mat-option>
+        @for (opcion of estadosAbiertos; track opcion) {
+          <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Prioridad' | t }}</mat-label>
+      <mat-select [value]="prioridad()" (selectionChange)="prioridad.set($event.value)">
+        <mat-option value="">{{ 'Todas las prioridades' | t }}</mat-option>
+        @for (opcion of prioridades; track opcion) {
+          <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <ng-container *ngTemplateOutlet="avisos" />
 
   @if (cargando()) {
-    <p class="estado">Cargando alertas...</p>
+    <p class="estado">{{ 'Cargando alertas...' | t }}</p>
   } @else if (filtradas().length === 0 && !error()) {
-    <p class="estado">{{ alertas().length === 0 ? 'No hay alertas registradas.' : 'Ninguna alerta coincide con los filtros.' }}</p>
+    <p class="estado">{{ (abiertas().length === 0 ? 'No hay alertas activas.' : 'Ninguna alerta coincide con los filtros.') | t }}</p>
   } @else if (filtradas().length > 0) {
     <table mat-table [dataSource]="filtradas()" class="tabla">
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef>Detectada</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Detectada' | t }}</th>
         <td mat-cell *matCellDef="let alerta" class="cifra">{{ alerta.dateTimeAlert | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="equipo">
-        <th mat-header-cell *matHeaderCellDef>Equipo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Equipo' | t }}</th>
         <td mat-cell *matCellDef="let alerta">
           <span class="nombre">{{ alerta.nameEquipment }}</span>
           <span class="secundario">{{ alerta.nameDepartment }}</span>
@@ -60,41 +91,38 @@
       </ng-container>
 
       <ng-container matColumnDef="alerta">
-        <th mat-header-cell *matHeaderCellDef>Alerta</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Alerta' | t }}</th>
         <td mat-cell *matCellDef="let alerta" class="descripcion">
-          <span>{{ alerta.typeAlert }}</span>
+          <span>{{ alerta.typeAlert | t }}</span>
           <span class="secundario">{{ alerta.descriptionAlert }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="prioridad">
-        <th mat-header-cell *matHeaderCellDef>Prioridad</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Prioridad' | t }}</th>
         <td mat-cell *matCellDef="let alerta">
-          <span [class]="'etiqueta ' + colorPrioridad(alerta.priorityLevelAlert)">{{ alerta.priorityLevelAlert }}</span>
+          <span [class]="'etiqueta ' + colorPrioridad(alerta.priorityLevelAlert)">{{ alerta.priorityLevelAlert | t }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="kwh">
-        <th mat-header-cell *matHeaderCellDef>Consumo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
         <td mat-cell *matCellDef="let alerta" class="cifra">{{ alerta.kwhDetected | number: '1.2-2' }} kWh</td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Estado' | t }}</th>
         <td mat-cell *matCellDef="let alerta">
           @if (puedeGestionar) {
             <mat-form-field appearance="outline" subscriptSizing="dynamic" class="estado-select">
-              <mat-select [value]="alerta.statusAlert" (selectionChange)="cambiarEstado(alerta, $event.value)" aria-label="Estado de la alerta">
+              <mat-select [value]="alerta.statusAlert" (selectionChange)="cambiarEstado(alerta, $event.value)" [aria-label]="'Estado de la alerta' | t">
                 @for (opcion of estados; track opcion) {
-                  <mat-option [value]="opcion">{{ opcion }}</mat-option>
+                  <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
           } @else {
-            <span class="etiqueta">{{ alerta.statusAlert }}</span>
-          }
-          @if (alerta.dateTimeResolution) {
-            <span class="secundario">Cerrada el {{ alerta.dateTimeResolution | date: 'dd/MM/yyyy' }}</span>
+            <span class="etiqueta">{{ alerta.statusAlert | t }}</span>
           }
         </td>
       </ng-container>
@@ -105,13 +133,13 @@
           @if (puedeGestionar) {
             <a mat-button class="editar" [routerLink]="['/alertas/editar', alerta.idAlert]">
               <span class="material-symbols-outlined">edit</span>
-              Editar
+              {{ 'Editar' | t }}
             </a>
           }
           @if (esAdmin) {
             <button mat-button type="button" class="eliminar" (click)="eliminar(alerta)">
               <span class="material-symbols-outlined">delete</span>
-              Eliminar
+              {{ 'Eliminar' | t }}
             </button>
           }
         </td>
@@ -121,4 +149,158 @@
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
   }
-</section>
+</ng-template>
+
+<!-- HU142 CA02: historial de alertas atendidas y descartadas -->
+<ng-template #historialTpl>
+  <div class="encabezado">
+    <p class="resumen">
+      {{ (historial().length === 1 ? '{0} alerta cerrada · atendidas y descartadas' : '{0} alertas cerradas · atendidas y descartadas') | t: [historial().length] }}
+    </p>
+  </div>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Tipo de alerta' | t }}</mat-label>
+      <mat-select [value]="tipoHistorial()" (selectionChange)="tipoHistorial.set($event.value)">
+        <mat-option value="">{{ 'Todos los tipos' | t }}</mat-option>
+        @for (tipo of tipos(); track tipo) {
+          <mat-option [value]="tipo">{{ tipo | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Desde' | t }}</mat-label>
+      <input matInput type="date" #desdeH [value]="desdeHistorial()" (input)="desdeHistorial.set(desdeH.value)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Hasta' | t }}</mat-label>
+      <input matInput type="date" #hastaH [value]="hastaHistorial()" (input)="hastaHistorial.set(hastaH.value)">
+    </mat-form-field>
+
+    <div class="botones-filtro">
+      <button mat-flat-button type="button" class="registrar" (click)="consultarHistorial()" [disabled]="cargandoHistorial()">
+        <span class="material-symbols-outlined">filter_alt</span>
+        {{ 'Filtrar' | t }}
+      </button>
+      @if (hayFiltrosHistorial()) {
+        <button mat-stroked-button type="button" class="secundario-boton" (click)="limpiarHistorial()" [disabled]="cargandoHistorial()">
+          {{ 'Limpiar' | t }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <ng-container *ngTemplateOutlet="avisos" />
+
+  @if (cargandoHistorial()) {
+    <p class="estado">{{ 'Cargando historial...' | t }}</p>
+  } @else if (historial().length === 0 && !error()) {
+    <p class="estado">{{ (hayFiltrosHistorial() ? 'Ninguna alerta cerrada coincide con los filtros.' : 'Todavía no hay alertas atendidas ni descartadas.') | t }}</p>
+  } @else if (historial().length > 0) {
+    <ng-container *ngTemplateOutlet="tablaLectura; context: { $implicit: historial(), columnas: columnasHistorial }" />
+  }
+</ng-template>
+
+<!-- HU145: generar alertas de consumo anormal de un área -->
+<ng-template #generarTpl>
+  <p class="resumen introduccion">
+    {{ 'Analiza los consumos de un área y crea alertas cuando un equipo consume muy por encima del promedio o registra un pico anormal. Si no eliges fechas se revisan todos sus consumos.' | t }}
+  </p>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Área' | t }}</mat-label>
+      <mat-select [value]="idArea()" (selectionChange)="idArea.set($event.value)">
+        <mat-option [value]="0" disabled>{{ 'Elige un área' | t }}</mat-option>
+        @for (area of areasOrdenadas(); track area.idDepartment) {
+          <mat-option [value]="area.idDepartment">{{ area.nameDepartment }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Desde (opcional)' | t }}</mat-label>
+      <input matInput type="date" #desdeG [value]="desdeGenerar()" (input)="desdeGenerar.set(desdeG.value)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Hasta (opcional)' | t }}</mat-label>
+      <input matInput type="date" #hastaG [value]="hastaGenerar()" (input)="hastaGenerar.set(hastaG.value)">
+    </mat-form-field>
+
+    <div class="botones-filtro">
+      <button mat-flat-button type="button" class="registrar" (click)="generar()" [disabled]="idArea() === 0 || generando()">
+        <span class="material-symbols-outlined">bolt</span>
+        {{ (generando() ? 'Analizando...' : 'Generar alertas') | t }}
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngTemplateOutlet="avisos" />
+
+  @if (generadas(); as lista) {
+    @if (lista.length === 0) {
+      <p class="estado">{{ 'No se detectó ningún consumo anormal en el área {0} para el periodo elegido.' | t: [areaGenerada()] }}</p>
+    } @else {
+      <p class="aviso ok">
+        {{ (lista.length === 1 ? 'Se generó 1 alerta para el área {1}.' : 'Se generaron {0} alertas para el área {1}.') | t: [lista.length, areaGenerada()] }}
+        {{ 'Quedaron como pendientes en Alertas activas.' | t }}
+      </p>
+      <ng-container *ngTemplateOutlet="tablaLectura; context: { $implicit: lista, columnas: columnasGeneradas }" />
+    }
+  }
+</ng-template>
+
+<!-- Tabla de solo lectura (historial y alertas generadas) -->
+<ng-template #tablaLectura let-datos let-columnas="columnas">
+  <table mat-table [dataSource]="datos" class="tabla">
+    <ng-container matColumnDef="fecha">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Detectada' | t }}</th>
+      <td mat-cell *matCellDef="let alerta" class="cifra">{{ alerta.dateTimeAlert | date: 'dd/MM/yyyy HH:mm' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="equipo">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Equipo' | t }}</th>
+      <td mat-cell *matCellDef="let alerta">
+        <span class="nombre">{{ alerta.nameEquipment }}</span>
+        <span class="secundario">{{ alerta.nameDepartment }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="alerta">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Alerta' | t }}</th>
+      <td mat-cell *matCellDef="let alerta" class="descripcion">
+        <span>{{ alerta.typeAlert | t }}</span>
+        <span class="secundario">{{ alerta.descriptionAlert }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="prioridad">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Prioridad' | t }}</th>
+      <td mat-cell *matCellDef="let alerta">
+        <span [class]="'etiqueta ' + colorPrioridad(alerta.priorityLevelAlert)">{{ alerta.priorityLevelAlert | t }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="kwh">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
+      <td mat-cell *matCellDef="let alerta" class="cifra">{{ alerta.kwhDetected | number: '1.2-2' }} kWh</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cierre">
+      <th mat-header-cell *matHeaderCellDef>{{ 'Estado' | t }}</th>
+      <td mat-cell *matCellDef="let alerta">
+        <span [class]="'etiqueta ' + colorEstado(alerta.statusAlert)">{{ alerta.statusAlert | t }}</span>
+        @if (alerta.dateTimeResolution) {
+          <span class="secundario">{{ 'Cerrada el {0}' | t: [alerta.dateTimeResolution | date: 'dd/MM/yyyy HH:mm'] }}</span>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+    <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
+  </table>
+</ng-template>

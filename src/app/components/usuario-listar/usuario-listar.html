@@ -1,26 +1,26 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ filtrados().length }} de {{ usuarios().length }} {{ usuarios().length === 1 ? 'usuario' : 'usuarios' }}
+      {{ (usuarios().length === 1 ? '{0} de {1} usuario' : '{0} de {1} usuarios') | t: [filtrados().length, usuarios().length] }}
     </p>
     <a mat-flat-button class="registrar" routerLink="/usuarios/nuevo">
       <span class="material-symbols-outlined">person_add</span>
-      Registrar usuario
+      {{ 'Registrar usuario' | t }}
     </a>
   </div>
 
   <div class="filtros">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Buscar por nombre, correo o DNI</mat-label>
+      <mat-label>{{ 'Buscar por nombre, correo o DNI' | t }}</mat-label>
       <input matInput (input)="filtrarTexto($event)">
     </mat-form-field>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Rol</mat-label>
+      <mat-label>{{ 'Rol' | t }}</mat-label>
       <mat-select [value]="rol()" (selectionChange)="rol.set($event.value)">
-        <mat-option value="">Todos los roles</mat-option>
+        <mat-option value="">{{ 'Todos los roles' | t }}</mat-option>
         @for (opcion of roles; track opcion[0]) {
-          <mat-option [value]="opcion[0]">{{ opcion[1] }}</mat-option>
+          <mat-option [value]="opcion[0]">{{ opcion[1] | t }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -34,13 +34,13 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando usuarios...</p>
+    <p class="estado">{{ 'Cargando usuarios...' | t }}</p>
   } @else if (filtrados().length === 0 && !error()) {
-    <p class="estado">{{ usuarios().length === 0 ? 'No hay usuarios registrados.' : 'Ningún usuario coincide con la búsqueda.' }}</p>
+    <p class="estado">{{ (usuarios().length === 0 ? 'No hay usuarios registrados.' : 'Ningún usuario coincide con la búsqueda.') | t }}</p>
   } @else if (filtrados().length > 0) {
     <table mat-table [dataSource]="filtrados()" class="tabla">
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Usuario' | t }}</th>
         <td mat-cell *matCellDef="let usuario">
           <span class="nombre">{{ nombreCompleto(usuario) }}</span>
           <span class="secundario">{{ usuario.emailUser }}</span>
@@ -53,37 +53,37 @@
       </ng-container>
 
       <ng-container matColumnDef="puesto">
-        <th mat-header-cell *matHeaderCellDef>Puesto</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Puesto' | t }}</th>
         <td mat-cell *matCellDef="let usuario">{{ usuario.positionUser }}</td>
       </ng-container>
 
       <ng-container matColumnDef="rol">
-        <th mat-header-cell *matHeaderCellDef>Rol</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Rol' | t }}</th>
         <td mat-cell *matCellDef="let usuario">{{ nombreRol(usuario) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="area">
-        <th mat-header-cell *matHeaderCellDef>Área</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Área' | t }}</th>
         <td mat-cell *matCellDef="let usuario">
           @if (usuario.idDepartment) {
             <span>{{ usuario.nameDepartment }}</span>
             <span class="secundario">{{ usuario.nameBranch }}</span>
           } @else {
-            <span class="secundario">Sin área</span>
+            <span class="secundario">{{ 'Sin área' | t }}</span>
           }
         </td>
       </ng-container>
 
       <ng-container matColumnDef="empresa">
-        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Empresa' | t }}</th>
         <td mat-cell *matCellDef="let usuario">{{ usuario.nameCompany ?? '—' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Estado' | t }}</th>
         <td mat-cell *matCellDef="let usuario">
           <span class="estado-usuario" [class.inactivo]="!usuario.statusUser">
-            {{ usuario.statusUser ? 'Activo' : 'Inactivo' }}
+            {{ (usuario.statusUser ? 'Activo' : 'Inactivo') | t }}
           </span>
         </td>
       </ng-container>
@@ -94,13 +94,13 @@
           @if (usuario.idDepartment) {
             <a mat-button class="editar" [routerLink]="['/usuarios/editar', usuario.idUser]">
               <span class="material-symbols-outlined">edit</span>
-              Editar
+              {{ 'Editar' | t }}
             </a>
           }
           @if (usuario.statusUser && !esUsuarioActual(usuario)) {
             <button mat-button type="button" class="eliminar" (click)="desactivar(usuario)">
               <span class="material-symbols-outlined">person_off</span>
-              Desactivar
+              {{ 'Desactivar' | t }}
             </button>
           }
         </td>

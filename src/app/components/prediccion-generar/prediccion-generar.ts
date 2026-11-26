@@ -15,6 +15,8 @@ import { PredictionRequest } from '../../models/prediction';
 import { Department } from '../../models/department';
 import { Equipment } from '../../models/equipment';
 import { Branch } from '../../models/branch';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 function rangoValido(grupo: AbstractControl): ValidationErrors | null {
   const inicio = grupo.get('initialDatePrediction')?.value;
@@ -31,7 +33,7 @@ function rangoValido(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-prediccion-generar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './prediccion-generar.html',
   styleUrl: './prediccion-generar.css'
 })
@@ -63,7 +65,8 @@ export class PrediccionGenerar implements OnInit {
     private predictionService: PredictionService,
     private departmentService: DepartmentService,
     private equipmentService: EquipmentService,
-    private branchService: BranchService
+    private branchService: BranchService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       idDepartment: [null, Validators.required],
@@ -78,7 +81,7 @@ export class PrediccionGenerar implements OnInit {
   ngOnInit(): void {
     this.departmentService.listar().subscribe({
       next: datos => this.areas.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de áreas.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de áreas.'))
     });
     this.equipmentService.listar().subscribe({ next: datos => this.equipos.set(datos) });
     this.branchService.listar().subscribe({ next: datos => this.sedes.set(datos) });
@@ -99,8 +102,13 @@ export class PrediccionGenerar implements OnInit {
         const conAnalisis = !!prediccion.aiAnalysis;
         this.router.navigate(['/predicciones'], {
           state: {
-            mensaje: `Predicción generada: ${prediccion.kwhPrediction.toFixed(2)} kWh (S/ ${prediccion.costPrediction.toFixed(2)}) con ${resultado.historicalDaysWithData} días de historial.`
-              + (conAnalisis ? ' Revisa abajo el análisis de la IA.' : ' El análisis con IA no está disponible por ahora; puedes generarlo luego.'),
+            mensaje: this.idiomaService.t('Predicción generada: {0} kWh (S/ {1}) con {2} días de historial.', [
+              prediccion.kwhPrediction.toFixed(2),
+              prediccion.costPrediction.toFixed(2),
+              resultado.historicalDaysWithData
+            ]) + ' ' + this.idiomaService.t(conAnalisis
+              ? 'Revisa abajo el análisis de la IA.'
+              : 'El análisis con IA no está disponible por ahora; puedes generarlo luego.'),
             abrir: prediccion.idPrediction
           }
         });
@@ -108,11 +116,11 @@ export class PrediccionGenerar implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para generar predicciones de esa área.');
+          this.error.set(this.idiomaService.t('No tienes acceso para generar predicciones de esa área.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo generar la predicción.');
+          this.error.set(this.idiomaService.t('No se pudo generar la predicción.'));
         }
       }
     });

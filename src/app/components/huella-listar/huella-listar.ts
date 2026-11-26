@@ -9,10 +9,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { CarbonFootprintService } from '../../services/carbon-footprint.service';
 import { LoginService } from '../../services/login.service';
 import { CarbonFootprint, PERIODOS_HUELLA } from '../../models/carbon-footprint';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-huella-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe],
+  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './huella-listar.html',
   styleUrl: './huella-listar.css'
 })
@@ -34,7 +36,11 @@ export class HuellaListar implements OnInit {
 
   totalCo2 = computed(() => this.filtradas().reduce((suma, huella) => suma + huella.co2Emissions, 0));
 
-  constructor(private carbonFootprintService: CarbonFootprintService, private loginService: LoginService) {}
+  constructor(
+    private carbonFootprintService: CarbonFootprintService,
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
+  ) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -45,14 +51,14 @@ export class HuellaListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de huellas de carbono.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de huellas de carbono.'));
         this.cargando.set(false);
       }
     });
   }
 
   eliminar(huella: CarbonFootprint): void {
-    if (!confirm(`¿Eliminar la huella ${huella.timePeriod.toLowerCase()} de ${huella.nameDepartment}?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la huella {0} de {1}?', [this.idiomaService.t(huella.timePeriod).toLowerCase(), huella.nameDepartment]))) {
       return;
     }
     this.mensaje.set('');
@@ -60,10 +66,10 @@ export class HuellaListar implements OnInit {
     this.carbonFootprintService.eliminar(huella.idFootprint).subscribe({
       next: () => {
         this.huellas.update(lista => lista.filter(h => h.idFootprint !== huella.idFootprint));
-        this.mensaje.set(`Se eliminó la huella de ${huella.nameDepartment}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó la huella de {0}.', [huella.nameDepartment]));
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso para eliminar esta huella.' : 'No se pudo eliminar la huella.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso para eliminar esta huella.' : 'No se pudo eliminar la huella.'));
       }
     });
   }

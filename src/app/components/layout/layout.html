@@ -6,15 +6,15 @@
         IntelliSave
       </div>
 
-      <nav class="menu" aria-label="Menú principal">
+      <nav class="menu" [attr.aria-label]="'Menú principal' | t">
         @for (seccion of secciones(); track seccion.titulo) {
           @if (seccion.titulo) {
-            <p class="seccion">{{ seccion.titulo }}</p>
+            <p class="seccion">{{ seccion.titulo | t }}</p>
           }
           @for (opcion of seccion.opciones; track opcion.ruta) {
             <a class="opcion" [routerLink]="opcion.ruta" routerLinkActive="activa" (click)="esMovil() && menuLateral.close()">
               <span class="material-symbols-outlined">{{ opcion.icono }}</span>
-              {{ opcion.texto }}
+              {{ opcion.texto | t }}
             </a>
           }
         }
@@ -22,7 +22,7 @@
 
       <div class="usuario">
         <p class="correo">{{ usuario() }}</p>
-        <p class="rol">{{ rolPrincipal() }}</p>
+        <p class="rol">{{ rolPrincipal() | t }}</p>
       </div>
     </div>
   </mat-sidenav>
@@ -30,21 +30,25 @@
   <mat-sidenav-content class="contenido">
     <header class="barra">
       @if (esMovil()) {
-        <button type="button" class="boton-menu" (click)="menuLateral.toggle()" aria-label="Abrir menú">
+        <button type="button" class="boton-menu" (click)="menuLateral.toggle()" [attr.aria-label]="'Abrir menú' | t">
           <span class="material-symbols-outlined">menu</span>
         </button>
       }
-      <h1 class="titulo">{{ titulo() }}</h1>
+      <h1 class="titulo">{{ titulo() | t }}</h1>
       <span class="espacio"></span>
       <p class="ubicacion">
         <strong>{{ empresa() }}</strong>
         @if (sede()) {
-          <span> · {{ sede() }}</span>
+          <span> · {{ sede() | t }}</span>
         }
       </p>
+      <div class="idiomas" role="group" [attr.aria-label]="'Idioma' | t">
+        <button type="button" [class.activo]="idioma() === 'es'" [attr.aria-pressed]="idioma() === 'es'" (click)="cambiarIdioma('es')">ES</button>
+        <button type="button" [class.activo]="idioma() === 'en'" [attr.aria-pressed]="idioma() === 'en'" (click)="cambiarIdioma('en')">EN</button>
+      </div>
       <button type="button" class="salir" (click)="cerrarSesion()">
         <span class="material-symbols-outlined">logout</span>
-        <span class="texto-salir">Cerrar sesión</span>
+        <span class="texto-salir">{{ 'Cerrar sesión' | t }}</span>
       </button>
     </header>
 

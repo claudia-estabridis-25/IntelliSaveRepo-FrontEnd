@@ -167,3 +167,13 @@
   --mat-form-field-container-height: 36px;
   --mat-form-field-container-vertical-padding: 6px;
 }
+
+.filtros input[type='date'] {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.botones-filtro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

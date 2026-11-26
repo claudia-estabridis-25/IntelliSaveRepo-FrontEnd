@@ -1,21 +1,62 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ filtrados().length }} registros · el clima de cada sede se guarda solo cada hora
+      {{ '{0} registros · el clima de cada sede se guarda solo cada hora' | t: [filtrados().length] }}
     </p>
     @if (esAdminPlataforma()) {
       <button mat-flat-button type="button" class="registrar" (click)="actualizarTodas()" [disabled]="consultando()">
         <span class="material-symbols-outlined">refresh</span>
-        Actualizar todas las sedes
+        {{ 'Actualizar todas las sedes' | t }}
       </button>
     }
   </div>
 
+  <h2 class="titulo-seccion">{{ 'Clima actual por sede' | t }}</h2>
+  @if (!cargando()) {
+    @if (tarjetas().length === 0) {
+      <p class="estado">{{ 'No hay sedes registradas.' | t }}</p>
+    } @else {
+      <div class="tarjetas">
+        @for (tarjeta of tarjetas(); track tarjeta.sede.idBranch) {
+          <article class="tarjeta" [class.sin-datos]="!tarjeta.registro">
+            <header>
+              <h3>{{ tarjeta.sede.nameBranch }}</h3>
+              @if (esAdminPlataforma() && tarjeta.empresa) {
+                <p class="empresa">{{ tarjeta.empresa }}</p>
+              }
+            </header>
+            @if (tarjeta.registro; as registro) {
+              <div class="principal">
+                <span class="material-symbols-outlined icono-clima" aria-hidden="true">{{ icono(registro.climateCondition) }}</span>
+                <div>
+                  <p class="temperatura cifra">{{ registro.temperature | number: '1.1-1' }} °C</p>
+                  <p class="condicion">{{ registro.climateCondition | t }}</p>
+                </div>
+              </div>
+              <dl class="datos">
+                <div><dt>{{ 'Sensación' | t }}</dt><dd class="cifra">{{ registro.thermalSensation | number: '1.1-1' }} °C</dd></div>
+                <div><dt>{{ 'Humedad' | t }}</dt><dd class="cifra">{{ registro.humidity | number: '1.0-0' }} %</dd></div>
+                <div><dt>{{ 'Viento' | t }}</dt><dd class="cifra">{{ registro.windSpeed | number: '1.1-1' }} km/h</dd></div>
+              </dl>
+              <p class="fecha">{{ 'Registro del {0}' | t: [registro.climateDateTime | date: 'dd/MM/yyyy HH:mm'] }}</p>
+            } @else {
+              <p class="vacio">
+                <span class="material-symbols-outlined" aria-hidden="true">cloud_off</span>
+                {{ 'Sin datos' | t }}
+              </p>
+            }
+          </article>
+        }
+      </div>
+    }
+  }
+
+  <h2 class="titulo-seccion">{{ 'Historial' | t }}</h2>
   <div class="filtros">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Sede</mat-label>
+      <mat-label>{{ 'Sede' | t }}</mat-label>
       <mat-select [value]="idSede()" (selectionChange)="idSede.set($event.value)">
-        <mat-option [value]="0">Todas las sedes</mat-option>
+        <mat-option [value]="0">{{ 'Todas las sedes' | t }}</mat-option>
         @for (sede of sedes(); track sede.idBranch) {
           <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
         }
@@ -23,7 +64,7 @@
     </mat-form-field>
     <button mat-stroked-button type="button" class="secundario-boton" (click)="consultarSede()" [disabled]="idSede() === 0 || consultando()">
       <span class="material-symbols-outlined">partly_cloudy_day</span>
-      {{ consultando() ? 'Consultando...' : 'Consultar clima actual de la sede' }}
+      {{ (consultando() ? 'Consultando...' : 'Consultar clima actual de la sede') | t }}
     </button>
   </div>
 
@@ -35,46 +76,46 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando clima...</p>
+    <p class="estado">{{ 'Cargando clima...' | t }}</p>
   } @else if (filtrados().length === 0 && !error()) {
-    <p class="estado">Todavía no hay registros de clima.</p>
+    <p class="estado">{{ 'Todavía no hay registros de clima.' | t }}</p>
   } @else if (filtrados().length > 0) {
     <table mat-table [dataSource]="visibles()" class="tabla">
       <ng-container matColumnDef="sede">
-        <th mat-header-cell *matHeaderCellDef>Sede</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Sede' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="nombre">{{ registro.nameBranch }}</td>
       </ng-container>
 
       <ng-container matColumnDef="empresa">
-        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Empresa' | t }}</th>
         <td mat-cell *matCellDef="let registro">{{ registro.nameCompany }}</td>
       </ng-container>
 
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Fecha' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.climateDateTime | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="condicion">
-        <th mat-header-cell *matHeaderCellDef>Condición</th>
-        <td mat-cell *matCellDef="let registro">{{ registro.climateCondition }}</td>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Condición' | t }}</th>
+        <td mat-cell *matCellDef="let registro">{{ registro.climateCondition | t }}</td>
       </ng-container>
 
       <ng-container matColumnDef="temperatura">
-        <th mat-header-cell *matHeaderCellDef>Temperatura</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Temperatura' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">
           {{ registro.temperature | number: '1.1-1' }} °C
-          <span class="secundario">Se siente {{ registro.thermalSensation | number: '1.1-1' }} °C</span>
+          <span class="secundario">{{ 'Se siente {0} °C' | t: [registro.thermalSensation | number: '1.1-1'] }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="humedad">
-        <th mat-header-cell *matHeaderCellDef>Humedad</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Humedad' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.humidity | number: '1.0-0' }} %</td>
       </ng-container>
 
       <ng-container matColumnDef="viento">
-        <th mat-header-cell *matHeaderCellDef>Viento</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Viento' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="cifra">{{ registro.windSpeed | number: '1.1-1' }} km/h</td>
       </ng-container>
 
@@ -82,7 +123,7 @@
       <tr mat-row *matRowDef="let fila; columns: columnas()"></tr>
     </table>
     @if (filtrados().length > limite) {
-      <p class="estado">Se muestran los {{ limite }} registros más recientes.</p>
+      <p class="estado">{{ 'Se muestran los {0} registros más recientes.' | t: [limite] }}</p>
     }
   }
 </section>

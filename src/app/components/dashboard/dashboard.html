@@ -1,5 +1,73 @@
 @if (cargando()) {
-  <p class="estado">Cargando indicadores...</p>
+  <p class="estado">{{ 'Cargando indicadores...' | t }}</p>
+} @else if (vista() === 'plataforma') {
+  <!-- HU042 CA01: administrador de la plataforma -->
+  <div class="dashboard">
+    <header class="cabecera">
+      <div>
+        <p class="subtitulo">{{ 'Administración de la plataforma' | t }}</p>
+        <h1>{{ 'Empresas registradas' | t }}</h1>
+      </div>
+      <div class="controles">
+        <a class="boton-borde" routerLink="/empresas">{{ 'Ver empresas' | t }}</a>
+        <a class="boton-lleno" routerLink="/empresas/nueva">{{ 'Registrar empresa' | t }}</a>
+      </div>
+    </header>
+
+    <section class="fila">
+      <div class="lateral">
+        <div class="cifra-grande">
+          <p class="kwh">{{ empresas().length }}<span>{{ (empresas().length === 1 ? 'empresa' : 'empresas') | t }}</span></p>
+          <p class="explicacion">
+            @if (sectores().length > 0) {
+              {{ (sectores().length === 1 ? 'Repartidas en {0} sector.' : 'Repartidas en {0} sectores.') | t: [sectores().length] }}
+              {{ 'El que más tiene es {0}, con {1}.' | t: [(sectores()[0].sectorCompany | t), sectores()[0].totalCompanies] }}
+            } @else {
+              {{ 'Todavía no hay empresas registradas en IntelliSave.' | t }}
+            }
+          </p>
+        </div>
+        <p class="huella">
+          {{ 'Para comparar las emisiones de CO₂ entre las sedes de todas las empresas, entra a' | t }}
+          <a routerLink="/comparar-sedes">{{ 'Comparar sedes' | t }}</a>.
+        </p>
+      </div>
+
+      <div class="principal">
+        <h2>{{ 'Empresas por sector' | t }}</h2>
+        @if (sectores().length === 0) {
+          <p class="vacio">{{ 'Sin empresas registradas.' | t }}</p>
+        } @else {
+          <div class="grafico" [style.height.px]="60 + sectores().length * 36" role="img"
+            [attr.aria-label]="'Cantidad de empresas por sector. El sector con más empresas es {0}.' | t: [(sectores()[0].sectorCompany | t)]">
+            <canvas baseChart [data]="graficoSectores()" [options]="opcionesConteo" type="bar"></canvas>
+          </div>
+          <div class="tabla-contenedor">
+            <table class="tabla-area tabla-corta">
+              <thead>
+                <tr>
+                  <th>{{ 'Sector' | t }}</th>
+                  <th class="derecha">{{ 'Empresas' | t }}</th>
+                  <th class="derecha">{{ 'Parte' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (sector of sectores(); track sector.sectorCompany) {
+                  <tr>
+                    <td>{{ sector.sectorCompany | t }}</td>
+                    <td class="derecha cifra">{{ sector.totalCompanies }}</td>
+                    <td class="derecha cifra">{{ (empresas().length > 0 ? (sector.totalCompanies / empresas().length) * 100 : 0) | number: '1.0-0' }}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </section>
+
+    <p class="pie">{{ 'Datos actualizados el {0}.' | t: [(actualizado | date: 'dd/MM/yyyy, HH:mm')] }}</p>
+  </div>
 } @else {
   <div class="dashboard">
     <header class="cabecera">
@@ -10,9 +78,9 @@
       <div class="controles">
         @if (puedeGestionar && sedes().length > 1) {
           <label class="control">
-            <span>Sede</span>
+            <span>{{ 'Sede' | t }}</span>
             <select [value]="idSede()" (change)="cambiarSede($event)">
-              <option [value]="0">Todas las sedes</option>
+              <option [value]="0">{{ 'Todas las sedes' | t }}</option>
               @for (sede of sedes(); track sede.idBranch) {
                 <option [value]="sede.idBranch">{{ sede.nameBranch }}</option>
               }
@@ -20,26 +88,52 @@
           </label>
         }
         <label class="control">
-          <span>Periodo</span>
+          <span>{{ 'Periodo' | t }}</span>
           <select [value]="periodo()" (change)="cambiarPeriodo($event)">
-            <option value="mes">Este mes, hasta hoy</option>
-            <option value="anterior">Mes anterior</option>
-            <option value="treinta">Últimos 30 días</option>
+            <option value="mes">{{ 'Este mes, hasta hoy' | t }}</option>
+            <option value="anterior">{{ 'Mes anterior' | t }}</option>
+            <option value="treinta">{{ 'Últimos 30 días' | t }}</option>
           </select>
         </label>
         @if (puedeGestionar) {
           <button type="button" class="boton-borde" (click)="descargarPdf()" [disabled]="descargando()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
-            {{ descargando() ? 'Descargando...' : 'Reporte PDF' }}
+            {{ (descargando() ? 'Descargando...' : 'Reporte PDF') | t }}
           </button>
         } @else {
-          <a class="boton-lleno" routerLink="/consumos/nuevo">Registrar consumo</a>
+          <a class="boton-lleno" routerLink="/consumos/nuevo">{{ 'Registrar consumo' | t }}</a>
         }
       </div>
     </header>
 
     @if (error()) {
-      <p class="aviso error">{{ error() }}</p>
+      <p class="aviso error">{{ error() | t }}</p>
+    }
+
+    @if (vista() === 'empleado') {
+      <!-- HU042 CA03: accesos directos del empleado -->
+      <nav class="accesos" [attr.aria-label]="'Accesos directos' | t">
+        <a class="acceso" routerLink="/consumos/nuevo">
+          <span class="material-symbols-outlined" aria-hidden="true">add_chart</span>
+          <span>
+            <strong>{{ 'Registrar consumo' | t }}</strong>
+            <small>{{ 'Anota los kWh y las horas de uso de un equipo de tu área' | t }}</small>
+          </span>
+        </a>
+        <a class="acceso" routerLink="/alertas">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+          <span>
+            <strong>{{ 'Ver alertas' | t }}</strong>
+            <small>
+              @if (alertasAbiertas() > 0) {
+                {{ '{0} sin atender' | t: [alertasAbiertas()] }}
+              } @else {
+                {{ 'Revisa los avisos de consumo anormal' | t }}
+              }
+            </small>
+          </span>
+        </a>
+      </nav>
     }
 
     <section class="fila">
@@ -47,32 +141,32 @@
         <div class="cifra-grande">
           <p class="kwh">{{ totalKwh() | number: '1.1-1' }}<span>kWh</span></p>
           <p class="explicacion">
-            S/ {{ totalCosto() | number: '1.2-2' }} en energía.
+            {{ 'S/ {0} en energía.' | t: [(totalCosto() | number: '1.2-2')] }}
             @if (totalAnterior() > 0) {
-              {{ (diferencia() >= 0 ? diferencia() : -diferencia()) | number: '1.1-1' }} kWh {{ diferencia() >= 0 ? 'más' : 'menos' }} que en {{ nombreAnterior() }}.
+              {{ (diferencia() >= 0 ? '{0} kWh más que en {1}.' : '{0} kWh menos que en {1}.') | t: [((diferencia() >= 0 ? diferencia() : -diferencia()) | number: '1.1-1'), nombreAnterior()] }}
             } @else {
-              No hay consumos en {{ nombreAnterior() }} para comparar.
+              {{ 'No hay consumos en {0} para comparar.' | t: [nombreAnterior()] }}
             }
           </p>
         </div>
 
         @if (totalKwh() > 0) {
-          <div class="grafico" role="img" [attr.aria-label]="'Consumo diario. El pico fue el ' + fechaCorta(pico().dia) + ' con ' + (pico().kwh | number: '1.1-1') + ' kWh.'">
+          <div class="grafico" role="img" [attr.aria-label]="'Consumo diario. El pico fue el {0} con {1} kWh.' | t: [fechaCorta(pico().dia), (pico().kwh | number: '1.1-1')]">
             <canvas baseChart [data]="grafico()" [options]="opciones" type="bar"></canvas>
           </div>
           <p class="nota">
-            Pico: <strong>{{ fechaCorta(pico().dia) }} · {{ pico().kwh | number: '1.1-1' }} kWh</strong> (en ámbar).
-            La línea punteada es el promedio diario, {{ promedio() | number: '1.1-1' }} kWh.
+            {{ 'Pico:' | t }} <strong>{{ fechaCorta(pico().dia) }} · {{ pico().kwh | number: '1.1-1' }} kWh</strong> {{ '(en ámbar).' | t }}
+            {{ 'La línea punteada es el promedio diario, {0} kWh.' | t: [(promedio() | number: '1.1-1')] }}
           </p>
         } @else {
-          <p class="vacio">No hay consumos registrados en este periodo.</p>
+          <p class="vacio">{{ 'No hay consumos registrados en este periodo.' | t }}</p>
         }
       </div>
 
       <div class="lateral">
-        <h2>Para revisar</h2>
+        <h2>{{ 'Para revisar' | t }}</h2>
         @if (pendientes().length === 0) {
-          <p class="vacio">Todo en orden: no hay alertas pendientes.</p>
+          <p class="vacio">{{ 'Todo en orden: no hay alertas pendientes.' | t }}</p>
         } @else {
           <ol class="pendientes">
             @for (item of pendientes(); track item.titulo) {
@@ -90,22 +184,110 @@
       </div>
     </section>
 
-    <section class="fila">
-      @if (puedeGestionar) {
+    @if (vista() === 'gestion') {
+      <!-- HU042 CA02: alertas por estado y prioridad, y equipos con consumo elevado del área -->
+      <section class="fila">
         <div class="principal">
-          <h2>Por área</h2>
-          @if (porArea().length === 0) {
-            <p class="vacio">Sin consumos en este periodo.</p>
+          <div class="titulo-con-control">
+            <h2>{{ 'Equipos con consumo elevado' | t }}{{ cantidadElevados() > 0 ? ': ' + cantidadElevados() : '' }}</h2>
+            @if (areasDeSede().length > 0) {
+              <label class="control">
+                <span>{{ 'Área' | t }}</span>
+                <select (change)="cambiarArea($event)">
+                  @for (area of areasDeSede(); track area.idDepartment) {
+                    <option [value]="area.idDepartment" [selected]="area.idDepartment === idArea()">{{ area.nameDepartment }}</option>
+                  }
+                </select>
+              </label>
+            }
+          </div>
+          @if (areasDeSede().length === 0) {
+            <p class="vacio">{{ 'Esta sede no tiene áreas registradas.' | t }}</p>
+          } @else if (cargandoElevados()) {
+            <p class="vacio">{{ 'Consultando los equipos del área...' | t }}</p>
+          } @else if (errorElevados()) {
+            <p class="aviso error">{{ errorElevados() | t }}</p>
+          } @else if (elevados().length === 0) {
+            <p class="vacio">{{ 'El área aún no tiene consumos registrados.' | t }}</p>
           } @else {
             <div class="tabla-contenedor">
               <table class="tabla-area">
                 <thead>
                   <tr>
-                    <th>Área</th>
-                    <th class="barra-col">Parte del consumo</th>
+                    <th>{{ 'Equipo' | t }}</th>
+                    <th class="derecha">{{ 'Consumo total' | t }}</th>
+                    <th class="derecha">{{ 'Promedio del área' | t }}</th>
+                    <th>{{ 'Estado' | t }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (equipo of elevadosOrdenados(); track equipo.idEquipment) {
+                    <tr>
+                      <td>{{ equipo.nameEquipment }}</td>
+                      <td class="derecha cifra">{{ equipo.totalKwhConsumption | number: '1.1-2' }} kWh</td>
+                      <td class="derecha cifra">{{ equipo.departmentAverageKwh | number: '1.1-2' }} kWh</td>
+                      <td>
+                        @if (equipo.elevatedConsumption) {
+                          <span class="etiqueta elevado">
+                            {{ 'Elevado' | t }}{{ equipo.departmentAverageKwh > 0 ? ', ' + ((equipo.totalKwhConsumption / equipo.departmentAverageKwh) | number: '1.1-1') + '×' : '' }}
+                          </span>
+                        } @else {
+                          <span class="etiqueta normal">{{ 'Normal' | t }}</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <p class="nota">{{ 'Un equipo tiene consumo elevado cuando su total supera el promedio de los equipos del área.' | t }}</p>
+          }
+        </div>
+
+        <div class="lateral">
+          <h2>{{ 'Alertas de la empresa' | t }}</h2>
+          @if (sinAccesoConteos()) {
+            <p class="vacio">{{ 'No se pudo obtener el conteo de alertas.' | t }}</p>
+          } @else {
+            <dl class="estados">
+              @for (item of alertasPorEstado(); track item.categoria) {
+                <div [class.destacado]="item.categoria === 'Pendiente' && item.total > 0">
+                  <dt>{{ item.categoria | t }}</dt>
+                  <dd class="cifra">{{ item.total }}</dd>
+                </div>
+              }
+            </dl>
+            <h3>{{ 'Por prioridad' | t }}</h3>
+            @if (totalAlertas() === 0) {
+              <p class="vacio">{{ 'No hay alertas registradas.' | t }}</p>
+            } @else {
+              <div class="grafico grafico-chico" role="img"
+                [attr.aria-label]="'Alertas por prioridad: {0}' | t: [resumenPrioridad()]">
+                <canvas baseChart [data]="graficoPrioridad()" [options]="opcionesConteo" type="bar"></canvas>
+              </div>
+            }
+            <a class="enlace" routerLink="/alertas">{{ 'Ir a alertas' | t }}</a>
+          }
+        </div>
+      </section>
+    }
+
+    <section class="fila">
+      @if (puedeGestionar) {
+        <div class="principal">
+          <h2>{{ 'Por área' | t }}</h2>
+          @if (porArea().length === 0) {
+            <p class="vacio">{{ 'Sin consumos en este periodo.' | t }}</p>
+          } @else {
+            <div class="tabla-contenedor">
+              <table class="tabla-area">
+                <thead>
+                  <tr>
+                    <th>{{ 'Área' | t }}</th>
+                    <th class="barra-col">{{ 'Parte del consumo' | t }}</th>
                     <th class="derecha">kWh</th>
-                    <th class="derecha">Costo</th>
-                    <th class="derecha">Equipos</th>
+                    <th class="derecha">{{ 'Costo' | t }}</th>
+                    <th class="derecha">{{ 'Equipos' | t }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,11 +308,11 @@
       }
 
       <div class="lateral">
-        <h2>Por tipo de equipo</h2>
+        <h2>{{ 'Por tipo de equipo' | t }}</h2>
         @if (porTipo().length === 0) {
-          <p class="vacio">Sin consumos en este periodo.</p>
+          <p class="vacio">{{ 'Sin consumos en este periodo.' | t }}</p>
         } @else {
-          <div class="apilada" role="img" [attr.aria-label]="'Consumo por tipo de equipo'">
+          <div class="apilada" role="img" [attr.aria-label]="'Consumo por tipo de equipo' | t">
             @for (tipo of porTipo(); track tipo.nombre) {
               <span [style.width.%]="tipo.parte" [style.background]="tipo.color"></span>
             }
@@ -139,19 +321,19 @@
             @for (tipo of porTipo(); track tipo.nombre) {
               <div>
                 <span class="muestra" [style.background]="tipo.color"></span>
-                <dt>{{ tipo.nombre }}</dt>
+                <dt>{{ tipo.nombre | t }}</dt>
                 <dd class="cifra">{{ tipo.parte | number: '1.0-0' }}%</dd>
               </div>
             }
           </dl>
         }
         <p class="huella">
-          Huella estimada del periodo: <strong>{{ huellaPeriodo() | number: '1.1-1' }} kg CO₂</strong>
-          con un factor de {{ factor() | number: '1.2-4' }} kg por kWh{{ huellas().length > 0 ? ' (el último que registraron)' : ' (referencia de la red peruana)' }}.
+          {{ 'Huella estimada del periodo:' | t }} <strong>{{ huellaPeriodo() | number: '1.1-1' }} kg CO₂</strong>
+          {{ (huellas().length > 0 ? 'con un factor de {0} kg por kWh (el último que registraron).' : 'con un factor de {0} kg por kWh (referencia de la red peruana).') | t: [(factor() | number: '1.2-4')] }}
         </p>
       </div>
     </section>
 
-    <p class="pie">Datos actualizados el {{ actualizado | date: 'dd/MM/yyyy, HH:mm' }}. El clima de cada sede se registra cada hora.</p>
+    <p class="pie">{{ 'Datos actualizados el {0}. El clima de cada sede se registra cada hora.' | t: [(actualizado | date: 'dd/MM/yyyy, HH:mm')] }}</p>
   </div>
 }

@@ -12,10 +12,12 @@ import { BranchService } from '../../services/branch.service';
 import { EquipmentInsert } from '../../models/equipment';
 import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-equipo-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './equipo-registrar.html',
   styleUrl: './equipo-registrar.css'
 })
@@ -45,7 +47,8 @@ export class EquipoRegistrar implements OnInit {
     private router: Router,
     private equipmentService: EquipmentService,
     private departmentService: DepartmentService,
-    private branchService: BranchService
+    private branchService: BranchService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       nameEquipment: ['', [Validators.required, Validators.maxLength(40)]],
@@ -62,7 +65,7 @@ export class EquipoRegistrar implements OnInit {
   ngOnInit(): void {
     this.departmentService.listar().subscribe({
       next: datos => this.areas.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de áreas.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de áreas.'))
     });
     this.branchService.listar().subscribe({ next: datos => this.sedes.set(datos) });
     this.equipmentService.listar().subscribe({
@@ -88,7 +91,7 @@ export class EquipoRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a este equipo.' : 'No se encontró el equipo.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a este equipo.' : 'No se encontró el equipo.'));
         this.cargando.set(false);
       }
     });
@@ -113,17 +116,17 @@ export class EquipoRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardado => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
-        this.router.navigate(['/equipos'], { state: { mensaje: `Se ${accion} el equipo ${guardado.nameEquipment}.` } });
+        const plantilla = this.esEdicion ? 'Se actualizó el equipo {0}.' : 'Se registró el equipo {0}.';
+        this.router.navigate(['/equipos'], { state: { mensaje: this.idiomaService.t(plantilla, [guardado.nameEquipment]) } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para guardar equipos en esa área.');
+          this.error.set(this.idiomaService.t('No tienes acceso para guardar equipos en esa área.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar el equipo.');
+          this.error.set(this.idiomaService.t('No se pudo guardar el equipo.'));
         }
       }
     });

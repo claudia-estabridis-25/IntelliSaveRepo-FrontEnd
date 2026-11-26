@@ -1,22 +1,22 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ filtradas().length }} {{ filtradas().length === 1 ? 'cálculo' : 'cálculos' }} ·
+      {{ (filtradas().length === 1 ? '{0} cálculo' : '{0} cálculos') | t: [filtradas().length] }} ·
       <span class="cifra">{{ totalCo2() | number: '1.2-2' }} kg CO₂</span>
     </p>
     <a mat-flat-button class="registrar" routerLink="/huella/nueva">
       <span class="material-symbols-outlined">calculate</span>
-      Calcular huella
+      {{ 'Calcular huella' | t }}
     </a>
   </div>
 
   <div class="filtros">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Periodo</mat-label>
+      <mat-label>{{ 'Periodo' | t }}</mat-label>
       <mat-select [value]="periodo()" (selectionChange)="periodo.set($event.value)">
-        <mat-option value="">Todos los periodos</mat-option>
+        <mat-option value="">{{ 'Todos los periodos' | t }}</mat-option>
         @for (opcion of periodos; track opcion) {
-          <mat-option [value]="opcion">{{ opcion }}</mat-option>
+          <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -30,13 +30,13 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando huellas de carbono...</p>
+    <p class="estado">{{ 'Cargando huellas de carbono...' | t }}</p>
   } @else if (filtradas().length === 0 && !error()) {
-    <p class="estado">No hay huellas de carbono calculadas.</p>
+    <p class="estado">{{ 'No hay huellas de carbono calculadas.' | t }}</p>
   } @else if (filtradas().length > 0) {
     <table mat-table [dataSource]="filtradas()" class="tabla">
       <ng-container matColumnDef="area">
-        <th mat-header-cell *matHeaderCellDef>Área</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Área' | t }}</th>
         <td mat-cell *matCellDef="let huella">
           <span class="nombre">{{ huella.nameDepartment }}</span>
           <span class="secundario">{{ huella.nameBranch }}</span>
@@ -44,25 +44,25 @@
       </ng-container>
 
       <ng-container matColumnDef="periodo">
-        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Periodo' | t }}</th>
         <td mat-cell *matCellDef="let huella">
-          <span>{{ huella.timePeriod }}</span>
+          <span>{{ huella.timePeriod | t }}</span>
           <span class="secundario cifra">{{ huella.periodStartDate | date: 'dd/MM/yyyy' }} – {{ huella.calculationDate | date: 'dd/MM/yyyy' }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="kwh">
-        <th mat-header-cell *matHeaderCellDef>Consumo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Consumo' | t }}</th>
         <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.kwhTotalConsumption | number: '1.2-2' }} kWh</td>
       </ng-container>
 
       <ng-container matColumnDef="factor">
-        <th mat-header-cell *matHeaderCellDef>Factor</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Factor' | t }}</th>
         <td mat-cell *matCellDef="let huella" class="cifra">{{ huella.emissionFactor | number: '1.2-4' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="co2">
-        <th mat-header-cell *matHeaderCellDef>Emisiones</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Emisiones' | t }}</th>
         <td mat-cell *matCellDef="let huella" class="cifra nombre">{{ huella.co2Emissions | number: '1.2-2' }} kg CO₂</td>
       </ng-container>
 
@@ -71,12 +71,12 @@
         <td mat-cell *matCellDef="let huella" class="acciones">
           <a mat-button class="editar" [routerLink]="['/huella/editar', huella.idFootprint]">
             <span class="material-symbols-outlined">edit</span>
-            Recalcular
+            {{ 'Recalcular' | t }}
           </a>
           @if (esAdmin) {
             <button mat-button type="button" class="eliminar" (click)="eliminar(huella)">
               <span class="material-symbols-outlined">delete</span>
-              Eliminar
+              {{ 'Eliminar' | t }}
             </button>
           }
         </td>

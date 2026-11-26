@@ -1,12 +1,12 @@
 <section class="formulario">
   <a class="volver" routerLink="/huella">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a huella de carbono
+    {{ 'Volver a huella de carbono' | t }}
   </a>
 
   <p class="indicacion">
-    El sistema suma los kWh consumidos en el periodo y los multiplica por el factor de emisión (kg de CO₂ por kWh).
-    {{ esEdicion ? 'Al guardar se vuelve a calcular.' : '' }}
+    {{ 'El sistema suma los kWh consumidos en el periodo y los multiplica por el factor de emisión (kg de CO₂ por kWh).' | t }}
+    {{ esEdicion ? ('Al guardar se vuelve a calcular.' | t) : '' }}
   </p>
 
   @if (error()) {
@@ -14,19 +14,19 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando huella...</p>
+    <p class="estado">{{ 'Cargando huella...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
       @if (!esEdicion) {
-        <div class="alcance" role="radiogroup" aria-label="Alcance del cálculo">
-          <button type="button" role="radio" [attr.aria-checked]="!todas()" [class.activo]="!todas()" (click)="elegirAlcance(false)">Un área</button>
-          <button type="button" role="radio" [attr.aria-checked]="todas()" [class.activo]="todas()" (click)="elegirAlcance(true)">Todas las áreas</button>
+        <div class="alcance" role="radiogroup" [attr.aria-label]="'Alcance del cálculo' | t">
+          <button type="button" role="radio" [attr.aria-checked]="!todas()" [class.activo]="!todas()" (click)="elegirAlcance(false)">{{ 'Un área' | t }}</button>
+          <button type="button" role="radio" [attr.aria-checked]="todas()" [class.activo]="todas()" (click)="elegirAlcance(true)">{{ 'Todas las áreas' | t }}</button>
         </div>
       }
 
       @if (!todas()) {
         <mat-form-field appearance="outline">
-          <mat-label>Área</mat-label>
+          <mat-label>{{ 'Área' | t }}</mat-label>
           <mat-select formControlName="idDepartment">
             @for (grupo of grupos(); track grupo.sede) {
               <mat-optgroup [label]="grupo.sede">
@@ -37,42 +37,42 @@
             }
           </mat-select>
           @if (form.get('idDepartment')?.hasError('required')) {
-            <mat-error>Elige el área.</mat-error>
+            <mat-error>{{ 'Elige el área.' | t }}</mat-error>
           }
         </mat-form-field>
       }
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Periodo</mat-label>
+          <mat-label>{{ 'Periodo' | t }}</mat-label>
           <mat-select formControlName="timePeriod">
             @for (opcion of periodos; track opcion) {
-              <mat-option [value]="opcion">{{ opcion }}</mat-option>
+              <mat-option [value]="opcion">{{ opcion | t }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Último día del periodo (opcional)</mat-label>
+          <mat-label>{{ 'Último día del periodo (opcional)' | t }}</mat-label>
           <input matInput class="cifra" type="date" [max]="hoy" formControlName="calculationDate">
-          <mat-hint>Si la dejas vacía, se usa la fecha de hoy.</mat-hint>
+          <mat-hint>{{ 'Si la dejas vacía, se usa la fecha de hoy.' | t }}</mat-hint>
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Factor de emisión (kg CO₂ por kWh)</mat-label>
+        <mat-label>{{ 'Factor de emisión (kg CO₂ por kWh)' | t }}</mat-label>
         <input matInput class="cifra" type="number" step="any" min="0" formControlName="emissionFactor" placeholder="0.52">
         @if (form.get('emissionFactor')?.hasError('required')) {
-          <mat-error>El factor de emisión es obligatorio.</mat-error>
+          <mat-error>{{ 'El factor de emisión es obligatorio.' | t }}</mat-error>
         } @else if (form.get('emissionFactor')?.hasError('min')) {
-          <mat-error>El factor debe ser mayor a 0.</mat-error>
+          <mat-error>{{ 'El factor debe ser mayor a 0.' | t }}</mat-error>
         }
       </mat-form-field>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/huella">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/huella">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Calculando...' : (esEdicion ? 'Recalcular' : 'Calcular huella') }}
+          {{ (guardando() ? 'Calculando...' : (esEdicion ? 'Recalcular' : 'Calcular huella')) | t }}
         </button>
       </div>
     </form>

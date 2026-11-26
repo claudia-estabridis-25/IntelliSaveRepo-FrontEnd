@@ -1,15 +1,15 @@
 <main class="pagina">
   <section class="panel-form">
     <form class="formulario" [class.sacudir]="sacudir()" [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
-      <a class="logo" routerLink="/" aria-label="Volver a la página de inicio de IntelliSave">
+      <a class="logo" routerLink="/" [attr.aria-label]="'Volver a la página de inicio de IntelliSave' | t">
         <span class="logo-icono">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z" /></svg>
         </span>
         <span class="logo-texto">Intelli<strong>Save</strong></span>
       </a>
 
-      <h1>Iniciar sesión</h1>
-      <p class="subtitulo">Ingresa a tu cuenta para gestionar el consumo energético de tu empresa.</p>
+      <h1>{{ 'Iniciar sesión' | t }}</h1>
+      <p class="subtitulo">{{ 'Ingresa a tu cuenta para gestionar el consumo energético de tu empresa.' | t }}</p>
 
       @if (mensajeInfo()) {
         <div class="alerta info" role="status">{{ mensajeInfo() }}</div>
@@ -18,19 +18,19 @@
         <div class="alerta error" role="alert">{{ mensajeError() }}</div>
       }
 
-      <label class="etiqueta" for="username">Correo electrónico</label>
+      <label class="etiqueta" for="username">{{ 'Correo electrónico' | t }}</label>
       <div class="campo" [class.invalido]="campoInvalido('username')">
-        <input id="username" type="email" formControlName="username" placeholder="nombre@empresa.pe" autocomplete="username" />
+        <input id="username" type="email" formControlName="username" [placeholder]="'nombre@empresa.pe' | t" autocomplete="username" />
         <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
       </div>
       @if (campoInvalido('username')) {
-        <small class="error-campo">Ingresa un correo válido</small>
+        <small class="error-campo">{{ 'Ingresa un correo válido' | t }}</small>
       }
 
-      <label class="etiqueta" for="password">Contraseña</label>
+      <label class="etiqueta" for="password">{{ 'Contraseña' | t }}</label>
       <div class="campo" [class.invalido]="campoInvalido('password')">
-        <input id="password" [type]="verPassword() ? 'text' : 'password'" formControlName="password" placeholder="Tu contraseña" autocomplete="current-password" />
-        <button type="button" class="ojo" (click)="verPassword.set(!verPassword())" [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+        <input id="password" [type]="verPassword() ? 'text' : 'password'" formControlName="password" [placeholder]="'Tu contraseña' | t" autocomplete="current-password" />
+        <button type="button" class="ojo" (click)="verPassword.set(!verPassword())" [attr.aria-label]="(verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña') | t">
           @if (verPassword()) {
             <svg class="icono" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /><path d="M3 3l18 18" /></svg>
           } @else {
@@ -39,32 +39,32 @@
         </button>
       </div>
       @if (campoInvalido('password')) {
-        <small class="error-campo">Ingresa tu contraseña</small>
+        <small class="error-campo">{{ 'Ingresa tu contraseña' | t }}</small>
       }
 
       <label class="recordar">
         <input type="checkbox" formControlName="recordar" />
-        Mantener sesión iniciada
+        {{ 'Mantener sesión iniciada' | t }}
       </label>
 
       <button type="submit" class="boton" [disabled]="form.invalid || cargando()">
         @if (cargando()) {
           <span class="cargando" aria-hidden="true"></span>
-          Ingresando...
+          {{ 'Ingresando...' | t }}
         } @else {
-          Ingresar
+          {{ 'Ingresar' | t }}
         }
       </button>
 
       <p class="legal">
-        Al ingresar aceptas los <a routerLink="/terminos">Términos y condiciones</a>
-        y la <a routerLink="/privacidad">Política de privacidad</a>.
+        {{ 'Al ingresar aceptas los' | t }} <a routerLink="/terminos">{{ 'Términos y condiciones' | t }}</a>
+        {{ 'y la' | t }} <a routerLink="/privacidad">{{ 'Política de privacidad' | t }}</a>.
       </p>
     </form>
 
     <footer class="pie">
-      <p>© 2026 Lumen Save. Todos los derechos reservados.</p>
-      <p>Plataforma de gestión inteligente de energía</p>
+      <p>{{ '© 2026 Lumen Save. Todos los derechos reservados.' | t }}</p>
+      <p>{{ 'Plataforma de gestión inteligente de energía' | t }}</p>
     </footer>
   </section>
 
