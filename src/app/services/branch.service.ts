@@ -17,6 +17,11 @@ export class BranchService {
     return this.http.get<Branch[]>(this.url);
   }
 
+  // HU117: sedes de una empresa (filtro del listado para el administrador de la plataforma).
+  listarPorEmpresa(idCompany: number): Observable<Branch[]> {
+    return this.http.get<Branch[]>(`${this.url}/company/${idCompany}`);
+  }
+
   listarPorId(id: number): Observable<BranchInsert> {
     return this.http.get<BranchInsert>(`${this.url}/${id}`);
   }

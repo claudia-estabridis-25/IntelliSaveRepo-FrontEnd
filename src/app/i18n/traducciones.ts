@@ -157,7 +157,7 @@ export const EN: Record<string, string> = {
   'Cargando empresas...': 'Loading companies...',
   'No hay empresas registradas.': 'There are no companies registered.',
   'No se pudo cargar la lista de empresas.': 'The company list could not be loaded.',
-  '¿Eliminar la empresa {0}? También se eliminarán sus sedes, áreas, usuarios, equipos y consumos. Esta acción no se puede deshacer.': 'Delete the company {0}? Its branches, departments, users, equipment and consumption records will also be deleted. This action cannot be undone.',
+  '¿Eliminar la empresa {0}? También se eliminarán sus sedes, áreas, usuarios, equipos, consumos, tarifas, alertas, predicciones, cálculos de huella de carbono y registros de clima. Esta acción no se puede deshacer.': 'Delete the company {0}? Its branches, departments, users, equipment, consumption records, tariffs, alerts, predictions, carbon footprint calculations and climate records will also be deleted. This action cannot be undone.',
   'Se eliminó la empresa {0}.': 'The company {0} was deleted.',
   'No tienes acceso para eliminar esta empresa.': 'You do not have access to delete this company.',
   'No se pudo eliminar la empresa.': 'The company could not be deleted.',

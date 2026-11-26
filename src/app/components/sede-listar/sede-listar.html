@@ -15,6 +15,20 @@
     </div>
   </div>
 
+  @if (empresas().size > 1) {
+    <div class="filtros">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Empresa' | t }}</mat-label>
+        <mat-select [value]="empresaFiltro()" (selectionChange)="filtrarPorEmpresa($event.value)">
+          <mat-option value="">{{ 'Todas las empresas' | t }}</mat-option>
+          @for (empresa of listaEmpresas(); track empresa.id) {
+            <mat-option [value]="empresa.id">{{ empresa.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
+
   @if (mensaje()) {
     <p class="aviso ok">{{ mensaje() }}</p>
   }
@@ -25,7 +39,7 @@
   @if (cargando()) {
     <p class="estado">{{ 'Cargando sedes...' | t }}</p>
   } @else if (sedes().length === 0 && !error()) {
-    <p class="estado">{{ 'No hay sedes registradas.' | t }}</p>
+    <p class="estado">{{ (empresaFiltro() === '' ? 'No hay sedes registradas.' : 'Esta empresa no tiene sedes registradas.') | t }}</p>
   } @else if (sedes().length > 0) {
     <table mat-table [dataSource]="sedes()" class="tabla">
       <ng-container matColumnDef="nombre">

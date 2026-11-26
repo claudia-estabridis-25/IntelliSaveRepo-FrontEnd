@@ -1,8 +1,8 @@
-import { Component, OnInit, Signal, computed, signal } from '@angular/core';
+import { Component, OnInit, Signal, ViewChild, computed, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormGroupDirective } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -34,6 +34,7 @@ function ahoraLocal(): string {
 })
 export class ConsumoRegistrar implements OnInit {
   form: FormGroup;
+  @ViewChild(FormGroupDirective) private formulario?: FormGroupDirective;
   idRegistro: number | null = null;
   equipos = signal<Equipment[]>([]);
   areas = signal<Department[]>([]);
@@ -42,6 +43,7 @@ export class ConsumoRegistrar implements OnInit {
   cargando = signal(false);
   guardando = signal(false);
   error = signal('');
+  mensaje = signal('');
   puedeGestionar = false;
   maximo = ahoraLocal();
 
@@ -136,6 +138,7 @@ export class ConsumoRegistrar implements OnInit {
       return;
     }
     this.guardando.set(true);
+    this.mensaje.set('');
     this.error.set('');
 
     const valores = this.form.value;
@@ -151,9 +154,16 @@ export class ConsumoRegistrar implements OnInit {
     peticion.subscribe({
       next: guardado => {
         const mensaje = this.esEdicion ? 'Se actualizó el consumo: {0} kWh, S/ {1}.' : 'Se registró el consumo: {0} kWh, S/ {1}.';
-        this.router.navigate(['/consumos'], {
-          state: { mensaje: this.idiomaService.t(mensaje, [guardado.kwhConsumption.toFixed(2), guardado.costTotal.toFixed(2)]) }
-        });
+        const texto = this.idiomaService.t(mensaje, [guardado.kwhConsumption.toFixed(2), guardado.costTotal.toFixed(2)]);
+        if (!this.puedeGestionar) {
+          // HU139: el empleado se queda en el formulario para registrar el siguiente consumo.
+          this.guardando.set(false);
+          this.mensaje.set(texto);
+          // resetForm (y no form.reset) también limpia el estado "enviado", para que no se marquen errores.
+          this.formulario?.resetForm({ idEquipment: null, dateTimeRecord: ahoraLocal(), hoursOfUse: null, idTariff: null, observationRecord: '' });
+          return;
+        }
+        this.router.navigate(['/consumos'], { state: { mensaje: texto } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);

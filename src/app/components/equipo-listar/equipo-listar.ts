@@ -1,10 +1,12 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { EquipmentService } from '../../services/equipment.service';
 import { DepartmentService } from '../../services/department.service';
 import { LoginService } from '../../services/login.service';
@@ -15,7 +17,7 @@ import { EquipoEstadisticas } from '../equipo-estadisticas/equipo-estadisticas';
 
 @Component({
   selector: 'app-equipo-listar',
-  imports: [MatTableModule, MatButtonModule, MatTabsModule, NgTemplateOutlet, RouterLink, TraducirPipe, EquipoEstadisticas],
+  imports: [MatTableModule, MatButtonModule, MatTabsModule, MatFormFieldModule, MatSelectModule, NgTemplateOutlet, RouterLink, TraducirPipe, EquipoEstadisticas],
   templateUrl: './equipo-listar.html',
   styleUrl: './equipo-listar.css'
 })
@@ -27,6 +29,12 @@ export class EquipoListar implements OnInit {
   error = signal('');
   puedeGestionar = false;
   columnas: string[] = ['nombre', 'categoria', 'area', 'estado'];
+  // HU132: filtro por estado ('' = todos).
+  estados = ['Activo', 'En mantenimiento', 'Inactivo'];
+  estadoFiltro = signal('');
+  filtrados = computed(() =>
+    this.estadoFiltro() === '' ? this.equipos() : this.equipos().filter(e => e.statusEquipment === this.estadoFiltro())
+  );
 
   constructor(
     private equipmentService: EquipmentService,

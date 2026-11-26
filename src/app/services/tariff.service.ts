@@ -27,8 +27,4 @@ export class TariffService {
   modificar(tarifa: TariffInsert): Observable<Tariff> {
     return this.http.put<Tariff>(this.url, tarifa);
   }
-
-  eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
-  }
 }

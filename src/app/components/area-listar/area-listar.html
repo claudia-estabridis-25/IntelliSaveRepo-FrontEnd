@@ -9,6 +9,30 @@
     </a>
   </div>
 
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Sede' | t }}</mat-label>
+      <mat-select [value]="sedeFiltro()" (selectionChange)="filtrarPorSede($event.value)">
+        <mat-option value="">{{ 'Todas las sedes' | t }}</mat-option>
+        @for (sede of listaSedes(); track sede.idBranch) {
+          <mat-option [value]="sede.idBranch">{{ sede.nameBranch }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Buscar por nombre' | t }}</mat-label>
+      <input matInput #busqueda [value]="nombreFiltro()" (input)="buscar(busqueda.value)" maxlength="60">
+      <span matSuffix class="material-symbols-outlined">search</span>
+    </mat-form-field>
+
+    @if (hayFiltros()) {
+      <button mat-stroked-button type="button" class="limpiar" (click)="limpiarFiltros()">
+        {{ 'Limpiar' | t }}
+      </button>
+    }
+  </div>
+
   @if (mensaje()) {
     <p class="aviso ok">{{ mensaje() }}</p>
   }
@@ -19,7 +43,7 @@
   @if (cargando()) {
     <p class="estado">{{ 'Cargando áreas...' | t }}</p>
   } @else if (areas().length === 0 && !error()) {
-    <p class="estado">{{ 'No hay áreas registradas.' | t }}</p>
+    <p class="estado">{{ (hayFiltros() ? 'Ninguna área coincide con los filtros.' : 'No hay áreas registradas.') | t }}</p>
   } @else if (areas().length > 0) {
     <table mat-table [dataSource]="areas()" class="tabla">
       <ng-container matColumnDef="nombre">

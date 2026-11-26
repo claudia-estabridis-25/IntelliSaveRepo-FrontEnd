@@ -53,7 +53,7 @@ export class EmpresaListar implements OnInit {
   }
 
   eliminar(empresa: Company): void {
-    if (!confirm(this.idiomaService.t('¿Eliminar la empresa {0}? También se eliminarán sus sedes, áreas, usuarios, equipos y consumos. Esta acción no se puede deshacer.', [empresa.comercialNamecompany]))) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la empresa {0}? También se eliminarán sus sedes, áreas, usuarios, equipos, consumos, tarifas, alertas, predicciones, cálculos de huella de carbono y registros de clima. Esta acción no se puede deshacer.', [empresa.comercialNamecompany]))) {
       return;
     }
     this.mensaje.set('');

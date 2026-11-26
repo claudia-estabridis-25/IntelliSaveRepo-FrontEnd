@@ -80,10 +80,6 @@
   text-align: right;
 }
 
-.eliminar {
-  --mat-button-text-label-text-color: #a1231b;
-  --mat-button-text-container-shape: 6px;
-}
 .descripcion {
   max-width: 320px;
   color: #4f6b63;

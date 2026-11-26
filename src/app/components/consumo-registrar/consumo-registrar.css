@@ -33,6 +33,11 @@
   border-left: 4px solid;
 }
 
+.aviso.ok {
+  color: #17705b;
+  border-color: #17705b;
+}
+
 .aviso.error {
   color: #a1231b;
   border-color: #a1231b;

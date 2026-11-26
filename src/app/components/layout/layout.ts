@@ -60,7 +60,9 @@ export class Layout implements OnInit {
       titulo: 'Energía',
       opciones: [
         { texto: 'Equipos', icono: 'power', ruta: '/equipos', roles: TODOS },
-        { texto: 'Consumos', icono: 'bolt', ruta: '/consumos', roles: TODOS },
+        { texto: 'Consumos', icono: 'bolt', ruta: '/consumos', roles: GESTION },
+        // HU139: el empleado solo registra consumos, así que la opción abre directamente el formulario.
+        { texto: 'Consumos', icono: 'bolt', ruta: '/consumos/nuevo', roles: ['EMPLOYEE'] },
         { texto: 'Tarifas', icono: 'payments', ruta: '/tarifas', roles: GESTION },
         { texto: 'Alertas', icono: 'notifications', ruta: '/alertas', roles: TODOS }
       ]

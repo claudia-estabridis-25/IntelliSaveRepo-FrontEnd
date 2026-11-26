@@ -97,3 +97,33 @@
   --mat-button-text-label-text-color: #0e2a2b;
   --mat-button-text-container-shape: 6px;
 }
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filtros mat-form-field {
+  width: 220px;
+  --mat-form-field-outlined-container-shape: 6px;
+  --mat-form-field-outlined-focus-outline-color: #17705b;
+  --mat-form-field-outlined-focus-label-text-color: #17705b;
+}
+
+@media (max-width: 600px) {
+  .filtros mat-form-field {
+    width: 100%;
+  }
+}
+
+.filtros .limpiar {
+  align-self: center;
+  --mat-button-outlined-container-shape: 6px;
+}
+
+.filtros [matSuffix] {
+  padding-right: 8px;
+  color: #4f6b63;
+}
