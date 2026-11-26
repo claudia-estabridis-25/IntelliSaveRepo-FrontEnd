@@ -6,6 +6,9 @@ import { filter } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { LoginService } from '../../services/login.service';
 import { Usuario } from '../../models/usuario';
+import { Idioma } from '../../models/idioma';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 interface OpcionMenu {
   texto: string;
@@ -24,7 +27,7 @@ const GESTION = ['ADMIN', 'SUPERVISOR'];
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatSidenavModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatSidenavModule, TraducirPipe],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
@@ -67,6 +70,7 @@ export class Layout implements OnInit {
       opciones: [
         { texto: 'Predicciones', icono: 'insights', ruta: '/predicciones', roles: GESTION },
         { texto: 'Huella de carbono', icono: 'eco', ruta: '/huella', roles: GESTION },
+        { texto: 'Comparar sedes', icono: 'compare_arrows', ruta: '/comparar-sedes', roles: GESTION },
         { texto: 'Clima', icono: 'partly_cloudy_day', ruta: '/clima', roles: GESTION },
         { texto: 'Reportes', icono: 'description', ruta: '/reportes', roles: GESTION }
       ]
@@ -83,7 +87,8 @@ export class Layout implements OnInit {
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private idiomaService: IdiomaService
   ) {
     this.breakpointObserver
       .observe('(max-width: 960px)')
@@ -118,6 +123,13 @@ export class Layout implements OnInit {
         }))
         .filter(seccion => seccion.opciones.length > 0)
     );
+  }
+
+  idioma = (): Idioma => this.idiomaService.idioma();
+
+  // HU162 CA01 y CA03: el selector está en la barra superior y el idioma se recuerda (IdiomaService).
+  cambiarIdioma(idioma: Idioma): void {
+    this.idiomaService.cambiar(idioma);
   }
 
   cerrarSesion(): void {

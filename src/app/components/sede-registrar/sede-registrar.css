@@ -94,3 +94,50 @@ mat-form-field {
 .cifra {
   font-family: 'IBM Plex Mono', monospace;
 }
+
+.ubicacion {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: -4px 0 8px;
+}
+
+.ubicacion .ayuda {
+  margin: 0;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.secundario-boton {
+  flex-shrink: 0;
+  --mat-button-outlined-label-text-color: #0e2a2b;
+  --mat-button-outlined-outline-color: #0e2a2b;
+  --mat-button-outlined-container-shape: 6px;
+}
+
+.aviso.ok {
+  color: #17705b;
+  border-color: #17705b;
+}
+
+.aviso .encontrada {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.mapa {
+  height: 320px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd6c7;
+  border-radius: 6px;
+  z-index: 0;
+}
+
+@media (max-width: 700px) {
+  .ubicacion {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

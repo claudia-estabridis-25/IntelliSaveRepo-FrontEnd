@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/consumos">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a consumos
+    {{ 'Volver a consumos' | t }}
   </a>
 
   <p class="indicacion">
-    {{ esEdicion ? 'Modifica los datos del consumo. El kWh y el costo se vuelven a calcular al guardar.' : 'Registra cuántas horas se usó el equipo. El sistema calcula el kWh y el costo con la potencia del equipo y la tarifa de la sede.' }}
+    {{ (esEdicion ? 'Modifica los datos del consumo. El kWh y el costo se vuelven a calcular al guardar.' : 'Registra cuántas horas se usó el equipo. El sistema calcula el kWh y el costo con la potencia del equipo y la tarifa de la sede.') | t }}
   </p>
 
   @if (error()) {
@@ -13,11 +13,11 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando consumo...</p>
+    <p class="estado">{{ 'Cargando consumo...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
       <mat-form-field appearance="outline">
-        <mat-label>Equipo</mat-label>
+        <mat-label>{{ 'Equipo' | t }}</mat-label>
         <mat-select formControlName="idEquipment" (selectionChange)="form.patchValue({ idTariff: null })">
           @for (grupo of grupos(); track grupo.area) {
             <mat-optgroup [label]="grupo.area">
@@ -28,58 +28,58 @@
           }
         </mat-select>
         @if (form.get('idEquipment')?.hasError('required')) {
-          <mat-error>Elige el equipo.</mat-error>
+          <mat-error>{{ 'Elige el equipo.' | t }}</mat-error>
         }
-        <mat-hint>Solo aparecen los equipos activos.</mat-hint>
+        <mat-hint>{{ 'Solo aparecen los equipos activos.' | t }}</mat-hint>
       </mat-form-field>
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Fecha y hora</mat-label>
+          <mat-label>{{ 'Fecha y hora' | t }}</mat-label>
           <input matInput class="cifra" type="datetime-local" [max]="maximo" formControlName="dateTimeRecord">
           @if (form.get('dateTimeRecord')?.hasError('required')) {
-            <mat-error>La fecha y hora son obligatorias.</mat-error>
+            <mat-error>{{ 'La fecha y hora son obligatorias.' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Horas de uso</mat-label>
+          <mat-label>{{ 'Horas de uso' | t }}</mat-label>
           <input matInput class="cifra" type="number" step="any" min="0" max="24" formControlName="hoursOfUse">
           @if (form.get('hoursOfUse')?.hasError('required')) {
-            <mat-error>Las horas de uso son obligatorias.</mat-error>
+            <mat-error>{{ 'Las horas de uso son obligatorias.' | t }}</mat-error>
           } @else if (form.get('hoursOfUse')?.hasError('min')) {
-            <mat-error>Las horas deben ser mayores a 0.</mat-error>
+            <mat-error>{{ 'Las horas deben ser mayores a 0.' | t }}</mat-error>
           } @else if (form.get('hoursOfUse')?.hasError('max')) {
-            <mat-error>No pueden ser más de 24 horas por registro.</mat-error>
+            <mat-error>{{ 'No pueden ser más de 24 horas por registro.' | t }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       @if (puedeGestionar) {
         <mat-form-field appearance="outline">
-          <mat-label>Tarifa</mat-label>
+          <mat-label>{{ 'Tarifa' | t }}</mat-label>
           <mat-select formControlName="idTariff">
-            <mat-option [value]="null">Tarifa vigente de la sede (automático)</mat-option>
+            <mat-option [value]="null">{{ 'Tarifa vigente de la sede (automático)' | t }}</mat-option>
             @for (tarifa of tarifasDelEquipo(); track tarifa.idTariff) {
               <mat-option [value]="tarifa.idTariff">
-                {{ tarifa.supplier || 'Sin proveedor' }} · S/ {{ tarifa.costPerKwh | number: '1.2-4' }} por kWh ({{ tarifa.initialEffectiveDate }} a {{ tarifa.endEffectiveDate }})
+                {{ tarifa.supplier || ('Sin proveedor' | t) }} · S/ {{ tarifa.costPerKwh | number: '1.2-4' }} {{ 'por kWh ({0} a {1})' | t: [tarifa.initialEffectiveDate, tarifa.endEffectiveDate] }}
               </mat-option>
             }
           </mat-select>
-          <mat-hint>Si la dejas en automático, se usa la tarifa vigente en la fecha del registro.</mat-hint>
+          <mat-hint>{{ 'Si la dejas en automático, se usa la tarifa vigente en la fecha del registro.' | t }}</mat-hint>
         </mat-form-field>
       }
 
       <mat-form-field appearance="outline">
-        <mat-label>Observación (opcional)</mat-label>
+        <mat-label>{{ 'Observación (opcional)' | t }}</mat-label>
         <textarea matInput formControlName="observationRecord" rows="2" maxlength="90"></textarea>
         <mat-hint align="end">{{ largo('observationRecord') }}/90</mat-hint>
       </mat-form-field>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/consumos">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/consumos">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar consumo') }}
+          {{ (guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar consumo')) | t }}
         </button>
       </div>
     </form>

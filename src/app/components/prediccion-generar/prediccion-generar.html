@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/predicciones">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a predicciones
+    {{ 'Volver a predicciones' | t }}
   </a>
 
   <p class="indicacion">
-    El sistema usa el historial de consumo del área o del equipo para estimar con regresión lineal cuántos kWh se consumirán en el periodo elegido (máximo 90 días). Luego, la IA (Gemini) analiza la tendencia y propone recomendaciones de ahorro.
+    {{ 'El sistema usa el historial de consumo del área o del equipo para estimar con regresión lineal cuántos kWh se consumirán en el periodo elegido (máximo 90 días). Luego, la IA (Gemini) analiza la tendencia y propone recomendaciones de ahorro.' | t }}
   </p>
 
   @if (error()) {
@@ -15,7 +15,7 @@
   <form [formGroup]="form" (ngSubmit)="generar()" novalidate>
     <div class="fila">
       <mat-form-field appearance="outline">
-        <mat-label>Área</mat-label>
+        <mat-label>{{ 'Área' | t }}</mat-label>
         <mat-select formControlName="idDepartment">
           @for (grupo of grupos(); track grupo.sede) {
             <mat-optgroup [label]="grupo.sede">
@@ -26,50 +26,50 @@
           }
         </mat-select>
         @if (form.get('idDepartment')?.hasError('required')) {
-          <mat-error>Elige el área.</mat-error>
+          <mat-error>{{ 'Elige el área.' | t }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Equipo (opcional)</mat-label>
+        <mat-label>{{ 'Equipo (opcional)' | t }}</mat-label>
         <mat-select formControlName="idEquipment">
-          <mat-option [value]="null">Toda el área</mat-option>
+          <mat-option [value]="null">{{ 'Toda el área' | t }}</mat-option>
           @for (equipo of equiposDelArea(); track equipo.idEquipment) {
             <mat-option [value]="equipo.idEquipment">{{ equipo.nameEquipment }}</mat-option>
           }
         </mat-select>
-        <mat-hint>"Toda el área" = Todos los equipos</mat-hint>
+        <mat-hint>{{ '"Toda el área" = Todos los equipos' | t }}</mat-hint>
       </mat-form-field>
     </div>
 
     <div class="fila">
       <mat-form-field appearance="outline">
-        <mat-label>Desde</mat-label>
+        <mat-label>{{ 'Desde' | t }}</mat-label>
         <input matInput class="cifra" type="date" formControlName="initialDatePrediction">
         @if (form.get('initialDatePrediction')?.hasError('required')) {
-          <mat-error>La fecha de inicio es obligatoria.</mat-error>
+          <mat-error>{{ 'La fecha de inicio es obligatoria.' | t }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Hasta</mat-label>
+        <mat-label>{{ 'Hasta' | t }}</mat-label>
         <input matInput class="cifra" type="date" formControlName="endDatePrediction">
         @if (form.get('endDatePrediction')?.hasError('required')) {
-          <mat-error>La fecha de fin es obligatoria.</mat-error>
+          <mat-error>{{ 'La fecha de fin es obligatoria.' | t }}</mat-error>
         }
       </mat-form-field>
     </div>
 
     @if (form.hasError('rangoInvalido')) {
-      <p class="aviso error">La fecha de fin no puede ser anterior a la fecha de inicio.</p>
+      <p class="aviso error">{{ 'La fecha de fin no puede ser anterior a la fecha de inicio.' | t }}</p>
     } @else if (form.hasError('rangoLargo')) {
-      <p class="aviso error">El periodo a predecir no puede superar los 90 días.</p>
+      <p class="aviso error">{{ 'El periodo a predecir no puede superar los 90 días.' | t }}</p>
     }
 
     <div class="botones">
-      <a mat-button class="cancelar" routerLink="/predicciones">Cancelar</a>
+      <a mat-button class="cancelar" routerLink="/predicciones">{{ 'Cancelar' | t }}</a>
       <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-        {{ guardando() ? 'Generando y analizando...' : 'Generar predicción' }}
+        {{ (guardando() ? 'Generando y analizando...' : 'Generar predicción') | t }}
       </button>
     </div>
   </form>

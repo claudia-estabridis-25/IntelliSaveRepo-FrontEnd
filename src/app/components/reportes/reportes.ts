@@ -11,6 +11,8 @@ import { ReportService } from '../../services/report.service';
 import { BranchService } from '../../services/branch.service';
 import { ConsumptionReport, ReportItem } from '../../models/report';
 import { Branch } from '../../models/branch';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 function fechaLocal(fecha: Date): string {
   const copia = new Date(fecha);
@@ -26,7 +28,7 @@ function rangoValido(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-reportes',
-  imports: [ReactiveFormsModule, NgTemplateOutlet, DatePipe, DecimalPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, NgTemplateOutlet, DatePipe, DecimalPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './reportes.html',
   styleUrl: './reportes.css'
 })
@@ -39,7 +41,12 @@ export class Reportes implements OnInit {
   error = signal('');
   hoy = fechaLocal(new Date());
 
-  constructor(private fb: FormBuilder, private reportService: ReportService, private branchService: BranchService) {
+  constructor(
+    private fb: FormBuilder,
+    private reportService: ReportService,
+    private branchService: BranchService,
+    private idiomaService: IdiomaService
+  ) {
     const inicioMes = new Date();
     inicioMes.setDate(1);
     this.form = this.fb.group({
@@ -74,7 +81,7 @@ export class Reportes implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
         this.reporte.set(null);
-        this.error.set(err.error?.message ?? 'No se pudo generar el reporte.');
+        this.error.set(err.error?.message ?? this.idiomaService.t('No se pudo generar el reporte.'));
       }
     });
   }
@@ -98,12 +105,12 @@ export class Reportes implements OnInit {
       },
       error: async (err: HttpErrorResponse) => {
         this.descargando.set('');
-        let mensaje = 'No se pudo descargar el reporte.';
+        let mensaje = this.idiomaService.t('No se pudo descargar el reporte.');
         if (err.error instanceof Blob) {
           try {
             mensaje = JSON.parse(await err.error.text()).message ?? mensaje;
           } catch {
-            mensaje = 'No se pudo descargar el reporte.';
+            mensaje = this.idiomaService.t('No se pudo descargar el reporte.');
           }
         }
         this.error.set(mensaje);

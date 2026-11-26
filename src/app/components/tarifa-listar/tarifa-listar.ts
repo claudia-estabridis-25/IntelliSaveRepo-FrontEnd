@@ -7,10 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { TariffService } from '../../services/tariff.service';
 import { LoginService } from '../../services/login.service';
 import { Tariff } from '../../models/tariff';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-tarifa-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink, DatePipe, DecimalPipe],
+  imports: [MatTableModule, MatButtonModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './tarifa-listar.html',
   styleUrl: './tarifa-listar.css'
 })
@@ -29,7 +31,11 @@ export class TarifaListar implements OnInit {
     )
   );
 
-  constructor(private tariffService: TariffService, private loginService: LoginService) {}
+  constructor(
+    private tariffService: TariffService,
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
+  ) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -40,7 +46,7 @@ export class TarifaListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de tarifas.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de tarifas.'));
         this.cargando.set(false);
       }
     });
@@ -54,7 +60,7 @@ export class TarifaListar implements OnInit {
   }
 
   eliminar(tarifa: Tariff): void {
-    if (!confirm(`¿Eliminar la tarifa de ${tarifa.nameBranch} (${tarifa.initialEffectiveDate} a ${tarifa.endEffectiveDate})?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la tarifa de {0} ({1} a {2})?', [tarifa.nameBranch, tarifa.initialEffectiveDate, tarifa.endEffectiveDate]))) {
       return;
     }
     this.mensaje.set('');
@@ -62,15 +68,15 @@ export class TarifaListar implements OnInit {
     this.tariffService.eliminar(tarifa.idTariff).subscribe({
       next: () => {
         this.tarifas.update(lista => lista.filter(t => t.idTariff !== tarifa.idTariff));
-        this.mensaje.set(`Se eliminó la tarifa de ${tarifa.nameBranch}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó la tarifa de {0}.', [tarifa.nameBranch]));
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 403) {
-          this.error.set('No tienes acceso para eliminar esta tarifa.');
+          this.error.set(this.idiomaService.t('No tienes acceso para eliminar esta tarifa.'));
         } else if (err.status === 409) {
-          this.error.set('No se puede eliminar la tarifa porque ya tiene consumos registrados con ella.');
+          this.error.set(this.idiomaService.t('No se puede eliminar la tarifa porque ya tiene consumos registrados con ella.'));
         } else {
-          this.error.set('No se pudo eliminar la tarifa.');
+          this.error.set(this.idiomaService.t('No se pudo eliminar la tarifa.'));
         }
       }
     });

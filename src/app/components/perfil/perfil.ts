@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { UsuarioService } from '../../services/usuario.service';
 import { PerfilUpdate, Usuario } from '../../models/usuario';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 function clavesValidas(grupo: AbstractControl): ValidationErrors | null {
   const actual = grupo.get('currentPassword')?.value;
@@ -29,7 +31,7 @@ function clavesValidas(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, TraducirPipe],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
@@ -61,7 +63,11 @@ export class Perfil implements OnInit {
     return datos ? [datos.nameDepartment, datos.nameBranch, datos.nameCompany].filter(parte => !!parte).join(' · ') : '';
   });
 
-  constructor(private fb: FormBuilder, private usuarioService: UsuarioService) {
+  constructor(
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService,
+    private idiomaService: IdiomaService
+  ) {
     this.form = this.fb.group({
       secondName: ['', Validators.maxLength(20)],
       telephoneUser: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
@@ -78,7 +84,7 @@ export class Perfil implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar tu perfil.');
+        this.error.set(this.idiomaService.t('No se pudo cargar tu perfil.'));
         this.cargando.set(false);
       }
     });
@@ -121,11 +127,11 @@ export class Perfil implements OnInit {
       next: actualizado => {
         this.guardando.set(false);
         this.mostrar(actualizado);
-        this.mensaje.set(cambiaClave ? 'Se guardaron tus datos y tu nueva contraseña.' : 'Se guardaron tus datos.');
+        this.mensaje.set(this.idiomaService.t(cambiaClave ? 'Se guardaron tus datos y tu nueva contraseña.' : 'Se guardaron tus datos.'));
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
-        this.error.set(err.error?.message ?? 'No se pudieron guardar los cambios.');
+        this.error.set(err.error?.message ?? this.idiomaService.t('No se pudieron guardar los cambios.'));
       }
     });
   }

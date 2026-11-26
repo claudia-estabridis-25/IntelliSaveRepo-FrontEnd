@@ -1,0 +1,209 @@
+<div class="comparar">
+  <header class="cabecera">
+    <div>
+      <p class="subtitulo">{{ esPlataforma() ? ('Todas las empresas' | t) : nombreEmpresa() }}</p>
+      <h1>{{ 'Comparar sedes' | t }}</h1>
+    </div>
+    @if (pestana() === 'consumo' && esPlataforma() && empresas().length > 0) {
+      <label class="control">
+        <span>{{ 'Empresa' | t }}</span>
+        <select (change)="cambiarEmpresa($event)">
+          @for (empresa of empresas(); track empresa.idCompany) {
+            <option [value]="empresa.idCompany" [selected]="empresa.idCompany === idEmpresa()">{{ empresa.comercialNamecompany }}</option>
+          }
+        </select>
+      </label>
+    }
+  </header>
+
+  <div class="pestanas" role="tablist" [attr.aria-label]="'Qué comparar' | t">
+    <button type="button" role="tab" id="tab-consumo" aria-controls="panel-consumo"
+      [attr.aria-selected]="pestana() === 'consumo'" [class.activa]="pestana() === 'consumo'"
+      (click)="cambiarPestana('consumo')">
+      {{ 'Consumo y costo' | t }}
+    </button>
+    <button type="button" role="tab" id="tab-emisiones" aria-controls="panel-emisiones"
+      [attr.aria-selected]="pestana() === 'emisiones'" [class.activa]="pestana() === 'emisiones'"
+      (click)="cambiarPestana('emisiones')">
+      {{ 'Emisiones de CO₂' | t }}
+    </button>
+  </div>
+
+  @if (pestana() === 'consumo') {
+    <!-- HU156: consumo y costo por sede -->
+    <section id="panel-consumo" role="tabpanel" aria-labelledby="tab-consumo" class="panel">
+      @if (cargandoPerfil() || cargandoConsumos()) {
+        <p class="estado">{{ 'Cargando el consumo por sede...' | t }}</p>
+      } @else if (errorConsumos()) {
+        <p class="aviso error">{{ errorConsumos() | t }}</p>
+      } @else if (consumos().length === 0) {
+        <p class="vacio">{{ (esPlataforma() ? 'Esta empresa aún no tiene sedes registradas.' : 'Tu empresa aún no tiene sedes registradas.') | t }}</p>
+      } @else {
+        <div class="resumen">
+          <div>
+            <p class="dato">{{ consumos().length }}</p>
+            <p class="etiqueta">{{ (consumos().length === 1 ? 'sede' : 'sedes') | t }}</p>
+          </div>
+          <div>
+            <p class="dato">{{ totalConsumo().kwh | number: '1.1-2' }}<span>kWh</span></p>
+            <p class="etiqueta">{{ 'consumo total' | t }}</p>
+          </div>
+          <div>
+            <p class="dato"><span class="moneda">S/</span>{{ totalConsumo().costo | number: '1.2-2' }}</p>
+            <p class="etiqueta">{{ 'costo total' | t }}</p>
+          </div>
+          <div>
+            <p class="dato">{{ totalConsumo().registros }}</p>
+            <p class="etiqueta">{{ 'registros de consumo' | t }}</p>
+          </div>
+        </div>
+
+        <div class="bloque">
+          <div class="titulo-con-control">
+            <h2>{{ 'Por sede' | t }}</h2>
+            <div class="segmentos" role="group" [attr.aria-label]="'Dato del gráfico' | t">
+              @for (opcion of metricasConsumo; track opcion[0]) {
+                <button type="button" [class.activa]="metricaConsumo() === opcion[0]"
+                  [attr.aria-pressed]="metricaConsumo() === opcion[0]" (click)="cambiarMetricaConsumo(opcion[0])">
+                  {{ opcion[1].etiqueta | t }}
+                </button>
+              }
+            </div>
+          </div>
+          @if (totalConsumo().registros === 0) {
+            <p class="vacio">{{ 'Ninguna sede tiene consumos registrados todavía.' | t }}</p>
+          } @else {
+            <div class="grafico" role="img" [attr.aria-label]="'Gráfico de barras: {0} por sede' | t: [nombreMetricaConsumo()]">
+              <canvas baseChart [data]="graficoConsumo()" [options]="opcionesConsumo()" type="bar"></canvas>
+            </div>
+            <p class="nota">{{ 'En ámbar, la sede con el valor más alto.' | t }}</p>
+          }
+        </div>
+
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>{{ 'Sede' | t }}</th>
+                <th class="derecha">{{ 'Registros' | t }}</th>
+                <th class="derecha">{{ 'Consumo total' | t }}</th>
+                <th class="derecha">{{ 'Costo total' | t }}</th>
+                <th class="barra-col">{{ 'Parte del consumo' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (sede of consumosOrdenados(); track sede.idBranch) {
+                <tr>
+                  <td>{{ sede.nameBranch }}</td>
+                  <td class="derecha cifra">{{ sede.totalRecords }}</td>
+                  <td class="derecha cifra">{{ sede.totalKwh | number: '1.2-2' }} kWh</td>
+                  <td class="derecha cifra">S/ {{ sede.totalCost | number: '1.2-2' }}</td>
+                  <td class="barra-col">
+                    <span class="barra"><span [style.width.%]="totalConsumo().kwh > 0 ? (sede.totalKwh / totalConsumo().kwh) * 100 : 0"></span></span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>{{ 'Total' | t }}</td>
+                <td class="derecha cifra">{{ totalConsumo().registros }}</td>
+                <td class="derecha cifra">{{ totalConsumo().kwh | number: '1.2-2' }} kWh</td>
+                <td class="derecha cifra">S/ {{ totalConsumo().costo | number: '1.2-2' }}</td>
+                <td class="barra-col"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      }
+    </section>
+  } @else {
+    <!-- HU154: emisiones de CO2 por sede -->
+    <section id="panel-emisiones" role="tabpanel" aria-labelledby="tab-emisiones" class="panel">
+      @if (cargandoEmisiones()) {
+        <p class="estado">{{ 'Cargando las emisiones por sede...' | t }}</p>
+      } @else if (errorEmisiones()) {
+        <p class="aviso error">{{ errorEmisiones() | t }}</p>
+      } @else if (emisiones().length === 0) {
+        <p class="vacio">{{ 'No hay sedes registradas.' | t }}</p>
+      } @else {
+        <div class="resumen">
+          <div>
+            <p class="dato">{{ emisiones().length }}</p>
+            <p class="etiqueta">{{ (emisiones().length === 1 ? 'sede' : 'sedes') | t }}</p>
+          </div>
+          <div>
+            <p class="dato">{{ totalEmision().co2 | number: '1.1-2' }}<span>kg CO₂</span></p>
+            <p class="etiqueta">{{ 'emisiones totales' | t }}</p>
+          </div>
+          <div>
+            <p class="dato">{{ totalEmision().kwh | number: '1.1-2' }}<span>kWh</span></p>
+            <p class="etiqueta">{{ 'consumo calculado' | t }}</p>
+          </div>
+          <div>
+            <p class="dato">{{ totalEmision().calculos }}</p>
+            <p class="etiqueta">{{ 'cálculos de huella' | t }}</p>
+          </div>
+        </div>
+
+        <div class="bloque">
+          <div class="titulo-con-control">
+            <h2>{{ 'Por sede' | t }}</h2>
+            <div class="segmentos" role="group" [attr.aria-label]="'Dato del gráfico' | t">
+              @for (opcion of metricasEmision; track opcion[0]) {
+                <button type="button" [class.activa]="metricaEmision() === opcion[0]"
+                  [attr.aria-pressed]="metricaEmision() === opcion[0]" (click)="cambiarMetricaEmision(opcion[0])">
+                  {{ opcion[1].etiqueta | t }}
+                </button>
+              }
+            </div>
+          </div>
+          @if (totalEmision().calculos === 0) {
+            <p class="vacio">{{ 'Todavía no se ha calculado la huella de carbono de ninguna sede.' | t }}</p>
+          } @else {
+            <div class="grafico" role="img" [attr.aria-label]="'Gráfico de barras: {0} por sede' | t: [nombreMetricaEmision()]">
+              <canvas baseChart [data]="graficoEmision()" [options]="opcionesEmision()" type="bar"></canvas>
+            </div>
+            <p class="nota">{{ 'En ámbar, la sede con el valor más alto. Las emisiones salen de los cálculos de huella de carbono registrados.' | t }}</p>
+          }
+        </div>
+
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>{{ 'Sede' | t }}</th>
+                <th class="derecha">{{ 'Cálculos' | t }}</th>
+                <th class="derecha">{{ 'Consumo total' | t }}</th>
+                <th class="derecha">{{ 'Emisiones de CO₂' | t }}</th>
+                <th class="barra-col">{{ 'Parte de las emisiones' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (sede of emisionesOrdenadas(); track sede.idBranch) {
+                <tr>
+                  <td>{{ sede.nameBranch }}</td>
+                  <td class="derecha cifra">{{ sede.totalCalculations }}</td>
+                  <td class="derecha cifra">{{ sede.totalKwh | number: '1.2-2' }} kWh</td>
+                  <td class="derecha cifra">{{ sede.totalCo2Emissions | number: '1.2-2' }} kg</td>
+                  <td class="barra-col">
+                    <span class="barra oscura"><span [style.width.%]="totalEmision().co2 > 0 ? (sede.totalCo2Emissions / totalEmision().co2) * 100 : 0"></span></span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>{{ 'Total' | t }}</td>
+                <td class="derecha cifra">{{ totalEmision().calculos }}</td>
+                <td class="derecha cifra">{{ totalEmision().kwh | number: '1.2-2' }} kWh</td>
+                <td class="derecha cifra">{{ totalEmision().co2 | number: '1.2-2' }} kg</td>
+                <td class="barra-col"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</div>

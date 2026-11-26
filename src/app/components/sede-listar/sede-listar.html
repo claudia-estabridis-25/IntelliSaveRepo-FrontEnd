@@ -1,12 +1,18 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ sedes().length }} {{ sedes().length === 1 ? 'sede registrada' : 'sedes registradas' }}
+      {{ (sedes().length === 1 ? '{0} sede registrada' : '{0} sedes registradas') | t: [sedes().length] }}
     </p>
-    <a mat-flat-button class="registrar" routerLink="/sedes/nueva">
-      <span class="material-symbols-outlined">add</span>
-      Registrar sede
-    </a>
+    <div class="acciones-encabezado">
+      <a mat-stroked-button class="secundario-boton" routerLink="/sedes/mapa">
+        <span class="material-symbols-outlined">map</span>
+        {{ 'Ver mapa' | t }}
+      </a>
+      <a mat-flat-button class="registrar" routerLink="/sedes/nueva">
+        <span class="material-symbols-outlined">add</span>
+        {{ 'Registrar sede' | t }}
+      </a>
+    </div>
   </div>
 
   @if (mensaje()) {
@@ -17,23 +23,23 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando sedes...</p>
+    <p class="estado">{{ 'Cargando sedes...' | t }}</p>
   } @else if (sedes().length === 0 && !error()) {
-    <p class="estado">No hay sedes registradas.</p>
+    <p class="estado">{{ 'No hay sedes registradas.' | t }}</p>
   } @else if (sedes().length > 0) {
     <table mat-table [dataSource]="sedes()" class="tabla">
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef>Sede</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Sede' | t }}</th>
         <td mat-cell *matCellDef="let sede" class="nombre">{{ sede.nameBranch }}</td>
       </ng-container>
 
       <ng-container matColumnDef="direccion">
-        <th mat-header-cell *matHeaderCellDef>Dirección</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Dirección' | t }}</th>
         <td mat-cell *matCellDef="let sede">{{ sede.addressBranch }}</td>
       </ng-container>
 
       <ng-container matColumnDef="empresa">
-        <th mat-header-cell *matHeaderCellDef>Empresa</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Empresa' | t }}</th>
         <td mat-cell *matCellDef="let sede">{{ nombreEmpresa(sede.idCompany) }}</td>
       </ng-container>
 
@@ -42,11 +48,11 @@
         <td mat-cell *matCellDef="let sede" class="acciones">
           <a mat-button class="editar" [routerLink]="['/sedes/editar', sede.idBranch]">
             <span class="material-symbols-outlined">edit</span>
-            Editar
+            {{ 'Editar' | t }}
           </a>
           <button mat-button type="button" class="eliminar" (click)="eliminar(sede)">
             <span class="material-symbols-outlined">delete</span>
-            Eliminar
+            {{ 'Eliminar' | t }}
           </button>
         </td>
       </ng-container>

@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/areas">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a áreas
+    {{ 'Volver a áreas' | t }}
   </a>
 
   <p class="indicacion">
-    {{ esEdicion ? 'Modifica los datos del área y guarda los cambios.' : 'Completa los datos del área nueva y elige la sede a la que pertenece.' }}
+    {{ (esEdicion ? 'Modifica los datos del área y guarda los cambios.' : 'Completa los datos del área nueva y elige la sede a la que pertenece.') | t }}
   </p>
 
   @if (error()) {
@@ -13,31 +13,31 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando área...</p>
+    <p class="estado">{{ 'Cargando área...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre del área</mat-label>
+          <mat-label>{{ 'Nombre del área' | t }}</mat-label>
           <input matInput formControlName="nameDepartment" maxlength="30">
           @if (form.get('nameDepartment')?.hasError('required')) {
-            <mat-error>El nombre del área es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre del área es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ form.get('nameDepartment')?.value?.length || 0 }}/30</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Jefe del área</mat-label>
+          <mat-label>{{ 'Jefe del área' | t }}</mat-label>
           <input matInput formControlName="nameBoss" maxlength="40">
           @if (form.get('nameBoss')?.hasError('required')) {
-            <mat-error>El nombre del jefe es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre del jefe es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ form.get('nameBoss')?.value?.length || 0 }}/40</mat-hint>
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Sede</mat-label>
+        <mat-label>{{ 'Sede' | t }}</mat-label>
         <mat-select formControlName="idBranch">
           @for (grupo of grupos(); track grupo.empresa) {
             <mat-optgroup [label]="grupo.empresa">
@@ -48,26 +48,26 @@
           }
         </mat-select>
         @if (form.get('idBranch')?.hasError('required')) {
-          <mat-error>Elige la sede del área.</mat-error>
+          <mat-error>{{ 'Elige la sede del área.' | t }}</mat-error>
         }
         @if (sedes().length === 0) {
-          <mat-hint>No hay sedes registradas. Registra una sede primero.</mat-hint>
+          <mat-hint>{{ 'No hay sedes registradas. Registra una sede primero.' | t }}</mat-hint>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Descripción</mat-label>
+        <mat-label>{{ 'Descripción' | t }}</mat-label>
         <textarea matInput formControlName="descriptionDepartment" rows="3" maxlength="90"></textarea>
         @if (form.get('descriptionDepartment')?.hasError('required')) {
-          <mat-error>La descripción es obligatoria.</mat-error>
+          <mat-error>{{ 'La descripción es obligatoria.' | t }}</mat-error>
         }
         <mat-hint align="end">{{ form.get('descriptionDepartment')?.value?.length || 0 }}/90</mat-hint>
       </mat-form-field>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/areas">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/areas">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar área') }}
+          {{ (guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar área')) | t }}
         </button>
       </div>
     </form>

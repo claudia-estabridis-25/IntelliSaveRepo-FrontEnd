@@ -28,6 +28,8 @@ import { ClimaListar } from './components/clima-listar/clima-listar';
 import { EquipoRegistrar } from './components/equipo-registrar/equipo-registrar';
 import { EquipoListar } from './components/equipo-listar/equipo-listar';
 import { Landing } from './components/landing/landing';
+import { SedeMapa } from './components/sede-mapa/sede-mapa';
+import { CompararSedes } from './components/comparar-sedes/comparar-sedes';
 import { PaginaInfo } from './components/pagina-info/pagina-info';
 
 const TODOS = ['ADMIN', 'SUPERVISOR', 'EMPLOYEE'];
@@ -52,6 +54,7 @@ export const routes: Routes = [
       { path: 'empresas/editar/:id', component: EmpresaRegistrar, data: { titulo: 'Editar empresa', roles: ['ADMIN_PLATAFORMA'] } },
       { path: 'sedes', component: SedeListar, data: { titulo: 'Sedes', roles: ['ADMIN'] } },
       { path: 'sedes/nueva', component: SedeRegistrar, data: { titulo: 'Registrar sede', roles: ['ADMIN'] } },
+      { path: 'sedes/mapa', component: SedeMapa, data: { titulo: 'Mapa de sedes', roles: ['ADMIN'] } },
       { path: 'sedes/editar/:id', component: SedeRegistrar, data: { titulo: 'Editar sede', roles: ['ADMIN'] } },
       { path: 'areas', component: AreaListar, data: { titulo: 'Áreas', roles: ['ADMIN'] } },
       { path: 'areas/nueva', component: AreaRegistrar, data: { titulo: 'Registrar área', roles: ['ADMIN'] } },
@@ -77,6 +80,7 @@ export const routes: Routes = [
       { path: 'huella/nueva', component: HuellaRegistrar, data: { titulo: 'Calcular huella de carbono', roles: GESTION } },
       { path: 'huella/editar/:id', component: HuellaRegistrar, data: { titulo: 'Recalcular huella de carbono', roles: GESTION } },
       { path: 'clima', component: ClimaListar, data: { titulo: 'Clima', roles: GESTION } },
+      { path: 'comparar-sedes', component: CompararSedes, data: { titulo: 'Comparar sedes', roles: GESTION } },
       { path: 'reportes', component: Reportes, data: { titulo: 'Reportes', roles: GESTION } },
       { path: 'perfil', component: Perfil, data: { titulo: 'Mi perfil', roles: TODOS } }
     ]

@@ -1,0 +1,174 @@
+.mapa-sedes {
+  max-width: 1100px;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #17705b;
+  text-decoration: none;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+.resumen {
+  margin: 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.material-symbols-outlined {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.aviso p {
+  margin: 0;
+}
+
+.aviso.error {
+  color: #a1231b;
+  border-color: #a1231b;
+}
+
+.aviso.alerta {
+  color: #0e2a2b;
+  border-color: #f2b53c;
+  background: #fdf5e1;
+}
+
+.aviso.alerta .material-symbols-outlined {
+  color: #b07a0c;
+}
+
+.aviso ul {
+  margin: 6px 0 0;
+  padding-left: 26px;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+.aviso li a {
+  margin-left: 8px;
+  color: #17705b;
+}
+
+.estado {
+  margin: 0;
+  padding: 0 0 16px;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.contenido {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #0e2a2b;
+}
+
+.contenido.con-lista {
+  grid-template-columns: 1fr 280px;
+}
+
+.mapa {
+  height: 520px;
+  border: 1px solid #ddd6c7;
+  border-radius: 6px;
+  z-index: 0;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  max-height: 520px;
+  overflow-y: auto;
+  list-style: none;
+  border-top: 1px solid #ddd6c7;
+}
+
+.lista li {
+  border-bottom: 1px solid #ddd6c7;
+}
+
+.lista button {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 8px;
+  text-align: left;
+  font: inherit;
+  color: #0e2a2b;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.lista button:hover,
+.lista button:focus-visible {
+  background: #f7f4ec;
+}
+
+.lista .material-symbols-outlined {
+  color: #17705b;
+}
+
+.lista .nombre {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lista .direccion {
+  display: block;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+:host ::ng-deep .popup-sede strong {
+  display: block;
+  font-size: 14px;
+  color: #0e2a2b;
+}
+
+:host ::ng-deep .popup-sede p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+:host ::ng-deep .popup-sede .popup-empresa {
+  font-size: 12px;
+  color: #17705b;
+}
+
+@media (max-width: 800px) {
+  .contenido.con-lista {
+    grid-template-columns: 1fr;
+  }
+
+  .mapa {
+    height: 380px;
+  }
+}

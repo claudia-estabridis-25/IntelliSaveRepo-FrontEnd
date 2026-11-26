@@ -12,10 +12,12 @@ import { CompanyService } from '../../services/company.service';
 import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
 import { Company } from '../../models/company';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-area-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './area-registrar.html',
   styleUrl: './area-registrar.css'
 })
@@ -43,7 +45,8 @@ export class AreaRegistrar implements OnInit {
     private router: Router,
     private departmentService: DepartmentService,
     private branchService: BranchService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       nameDepartment: ['', [Validators.required, Validators.maxLength(30)]],
@@ -56,7 +59,7 @@ export class AreaRegistrar implements OnInit {
   ngOnInit(): void {
     this.branchService.listar().subscribe({
       next: datos => this.sedes.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de sedes.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de sedes.'))
     });
     this.companyService.listar().subscribe({
       next: datos => this.empresas.set(datos)
@@ -81,7 +84,7 @@ export class AreaRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a esta área.' : 'No se encontró el área.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a esta área.' : 'No se encontró el área.'));
         this.cargando.set(false);
       }
     });
@@ -107,17 +110,17 @@ export class AreaRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardada => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
-        this.router.navigate(['/areas'], { state: { mensaje: `Se ${accion} el área ${guardada.nameDepartment}.` } });
+        const plantilla = this.esEdicion ? 'Se actualizó el área {0}.' : 'Se registró el área {0}.';
+        this.router.navigate(['/areas'], { state: { mensaje: this.idiomaService.t(plantilla, [guardada.nameDepartment]) } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para registrar áreas en esa sede.');
+          this.error.set(this.idiomaService.t('No tienes acceso para registrar áreas en esa sede.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar el área.');
+          this.error.set(this.idiomaService.t('No se pudo guardar el área.'));
         }
       }
     });

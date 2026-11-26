@@ -7,10 +7,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CompanyService } from '../../services/company.service';
 import { CompanyInsert } from '../../models/company';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-empresa-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, TraducirPipe],
   templateUrl: './empresa-registrar.html',
   styleUrl: './empresa-registrar.css'
 })
@@ -25,7 +27,8 @@ export class EmpresaRegistrar implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       rucCompany: ['', [Validators.required, Validators.pattern(/^[0-9]{11}$/)]],
@@ -61,7 +64,7 @@ export class EmpresaRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a esta empresa.' : 'No se encontró la empresa.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a esta empresa.' : 'No se encontró la empresa.'));
         this.cargando.set(false);
       }
     });
@@ -86,17 +89,17 @@ export class EmpresaRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardada => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
-        this.router.navigate(['/empresas'], { state: { mensaje: `Se ${accion} la empresa ${guardada.comercialNamecompany}.` } });
+        const plantilla = this.esEdicion ? 'Se actualizó la empresa {0}.' : 'Se registró la empresa {0}.';
+        this.router.navigate(['/empresas'], { state: { mensaje: this.idiomaService.t(plantilla, [guardada.comercialNamecompany]) } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para guardar esta empresa.');
+          this.error.set(this.idiomaService.t('No tienes acceso para guardar esta empresa.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar la empresa.');
+          this.error.set(this.idiomaService.t('No se pudo guardar la empresa.'));
         }
       }
     });

@@ -7,10 +7,12 @@ import { EquipmentService } from '../../services/equipment.service';
 import { DepartmentService } from '../../services/department.service';
 import { LoginService } from '../../services/login.service';
 import { Equipment } from '../../models/equipment';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-equipo-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink],
+  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './equipo-listar.html',
   styleUrl: './equipo-listar.css'
 })
@@ -26,7 +28,8 @@ export class EquipoListar implements OnInit {
   constructor(
     private equipmentService: EquipmentService,
     private departmentService: DepartmentService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
   ) {}
 
   ngOnInit(): void {
@@ -49,18 +52,18 @@ export class EquipoListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de equipos.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de equipos.'));
         this.cargando.set(false);
       }
     });
   }
 
   nombreArea(idDepartment: number): string {
-    return this.areas().get(idDepartment) ?? `Área ${idDepartment}`;
+    return this.areas().get(idDepartment) ?? this.idiomaService.t('Área {0}', [idDepartment]);
   }
 
   darDeBaja(equipo: Equipment): void {
-    if (!confirm(`¿Dar de baja el equipo ${equipo.nameEquipment}? Ya no se podrá registrar consumo en él.`)) {
+    if (!confirm(this.idiomaService.t('¿Dar de baja el equipo {0}? Ya no se podrá registrar consumo en él.', [equipo.nameEquipment]))) {
       return;
     }
     this.mensaje.set('');
@@ -68,14 +71,14 @@ export class EquipoListar implements OnInit {
     this.equipmentService.darDeBaja(equipo.idEquipment).subscribe({
       next: actualizado => {
         this.equipos.update(lista => lista.map(e => e.idEquipment === actualizado.idEquipment ? actualizado : e));
-        this.mensaje.set(`El equipo ${equipo.nameEquipment} quedó inactivo.`);
+        this.mensaje.set(this.idiomaService.t('El equipo {0} quedó inactivo.', [equipo.nameEquipment]));
       },
       error: (err: HttpErrorResponse) => this.error.set(this.mensajeError(err, 'No se pudo dar de baja el equipo.'))
     });
   }
 
   eliminar(equipo: Equipment): void {
-    if (!confirm(`¿Eliminar el equipo ${equipo.nameEquipment}?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar el equipo {0}?', [equipo.nameEquipment]))) {
       return;
     }
     this.mensaje.set('');
@@ -83,7 +86,7 @@ export class EquipoListar implements OnInit {
     this.equipmentService.eliminar(equipo.idEquipment).subscribe({
       next: () => {
         this.equipos.update(lista => lista.filter(e => e.idEquipment !== equipo.idEquipment));
-        this.mensaje.set(`Se eliminó el equipo ${equipo.nameEquipment}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó el equipo {0}.', [equipo.nameEquipment]));
       },
       error: (err: HttpErrorResponse) =>
         this.error.set(this.mensajeError(err, 'No se pudo eliminar el equipo. Revisa que no tenga consumos registrados; si los tiene, dalo de baja.'))
@@ -91,6 +94,6 @@ export class EquipoListar implements OnInit {
   }
 
   private mensajeError(err: HttpErrorResponse, porDefecto: string): string {
-    return err.status === 403 ? 'No tienes acceso a este equipo.' : porDefecto;
+    return this.idiomaService.t(err.status === 403 ? 'No tienes acceso a este equipo.' : porDefecto);
   }
 }

@@ -8,10 +8,12 @@ import { BranchService } from '../../services/branch.service';
 import { CompanyService } from '../../services/company.service';
 import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-area-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink],
+  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './area-listar.html',
   styleUrl: './area-listar.css'
 })
@@ -32,7 +34,8 @@ export class AreaListar implements OnInit {
   constructor(
     private departmentService: DepartmentService,
     private branchService: BranchService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private idiomaService: IdiomaService
   ) {}
 
   ngOnInit(): void {
@@ -54,14 +57,14 @@ export class AreaListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de áreas.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de áreas.'));
         this.cargando.set(false);
       }
     });
   }
 
   nombreSede(idBranch: number): string {
-    return this.sedes().get(idBranch)?.nameBranch ?? `Sede ${idBranch}`;
+    return this.sedes().get(idBranch)?.nameBranch ?? this.idiomaService.t('Sede {0}', [idBranch]);
   }
 
   nombreEmpresa(idBranch: number): string {
@@ -70,7 +73,7 @@ export class AreaListar implements OnInit {
   }
 
   eliminar(area: Department): void {
-    if (!confirm(`¿Eliminar el área ${area.nameDepartment}?`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar el área {0}?', [area.nameDepartment]))) {
       return;
     }
     this.mensaje.set('');
@@ -78,15 +81,15 @@ export class AreaListar implements OnInit {
     this.departmentService.eliminar(area.idDepartment).subscribe({
       next: () => {
         this.areas.update(lista => lista.filter(a => a.idDepartment !== area.idDepartment));
-        this.mensaje.set(`Se eliminó el área ${area.nameDepartment}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó el área {0}.', [area.nameDepartment]));
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 403) {
-          this.error.set('No tienes acceso para eliminar esta área.');
+          this.error.set(this.idiomaService.t('No tienes acceso para eliminar esta área.'));
         } else if (err.status === 409) {
-          this.error.set(`No se puede eliminar el área ${area.nameDepartment} porque tiene equipos o usuarios registrados.`);
+          this.error.set(this.idiomaService.t('No se puede eliminar el área {0} porque tiene equipos o usuarios registrados.', [area.nameDepartment]));
         } else {
-          this.error.set('No se pudo eliminar el área.');
+          this.error.set(this.idiomaService.t('No se pudo eliminar el área.'));
         }
       }
     });

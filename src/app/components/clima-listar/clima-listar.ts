@@ -9,6 +9,8 @@ import { ClimateRecordService } from '../../services/climate-record.service';
 import { BranchService } from '../../services/branch.service';
 import { LoginService } from '../../services/login.service';
 import { CompanyService } from '../../services/company.service';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 import { ClimateRecord } from '../../models/climate-record';
 import { Branch } from '../../models/branch';
 
@@ -34,7 +36,7 @@ const ICONOS_CONDICION: [string, string][] = [
 
 @Component({
   selector: 'app-clima-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, DatePipe, DecimalPipe],
+  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './clima-listar.html',
   styleUrl: './clima-listar.css'
 })
@@ -91,7 +93,8 @@ export class ClimaListar implements OnInit {
     private climateRecordService: ClimateRecordService,
     private branchService: BranchService,
     private loginService: LoginService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private idiomaService: IdiomaService
   ) {}
 
   ngOnInit(): void {
@@ -124,7 +127,7 @@ export class ClimaListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar el historial del clima.');
+        this.error.set(this.idiomaService.t('No se pudo cargar el historial del clima.'));
         this.cargando.set(false);
       }
     });
@@ -143,11 +146,11 @@ export class ClimaListar implements OnInit {
         this.consultando.set(false);
         // Si el backend actualizó el registro de esta hora, se reemplaza en vez de duplicarlo.
         this.registros.update(lista => [registro, ...lista.filter(r => r.idClimate !== registro.idClimate)]);
-        this.mensaje.set(`Clima actual de ${registro.nameBranch}: ${registro.temperature.toFixed(1)} °C, ${registro.climateCondition}.`);
+        this.mensaje.set(this.idiomaService.t('Clima actual de {0}: {1} °C, {2}.', [registro.nameBranch, registro.temperature.toFixed(1), this.idiomaService.t(registro.climateCondition)]));
       },
       error: (err: HttpErrorResponse) => {
         this.consultando.set(false);
-        this.error.set(err.error?.message ?? 'No se pudo consultar el clima de la sede.');
+        this.error.set(err.error?.message ?? this.idiomaService.t('No se pudo consultar el clima de la sede.'));
       }
     });
   }
@@ -159,15 +162,15 @@ export class ClimaListar implements OnInit {
     this.climateRecordService.actualizarTodas().subscribe({
       next: resultado => {
         this.consultando.set(false);
-        this.mensaje.set(`Se guardó el clima de ${resultado.savedRecords} de ${resultado.totalBranches} sedes.`);
+        this.mensaje.set(this.idiomaService.t('Se guardó el clima de {0} de {1} sedes.', [resultado.savedRecords, resultado.totalBranches]));
         if (resultado.errors.length > 0) {
-          this.error.set(`No se pudo actualizar: ${resultado.errors.join('; ')}`);
+          this.error.set(this.idiomaService.t('No se pudo actualizar: {0}', [resultado.errors.join('; ')]));
         }
         this.cargar();
       },
       error: (err: HttpErrorResponse) => {
         this.consultando.set(false);
-        this.error.set(err.status === 403 ? 'Solo el administrador de la plataforma puede actualizar todas las sedes.' : 'No se pudo actualizar el clima.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'Solo el administrador de la plataforma puede actualizar todas las sedes.' : 'No se pudo actualizar el clima.'));
       }
     });
   }

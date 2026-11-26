@@ -1,12 +1,12 @@
 <section class="listado">
   <div class="encabezado">
     <p class="resumen">
-      {{ equipos().length }} {{ equipos().length === 1 ? 'equipo registrado' : 'equipos registrados' }}
+      {{ (equipos().length === 1 ? '{0} equipo registrado' : '{0} equipos registrados') | t: [equipos().length] }}
     </p>
     @if (puedeGestionar) {
       <a mat-flat-button class="registrar" routerLink="/equipos/nuevo">
         <span class="material-symbols-outlined">add</span>
-        Registrar equipo
+        {{ 'Registrar equipo' | t }}
       </a>
     }
   </div>
@@ -19,31 +19,31 @@
   }
 
   @if (cargando()) {
-    <p class="estado-carga">Cargando equipos...</p>
+    <p class="estado-carga">{{ 'Cargando equipos...' | t }}</p>
   } @else if (equipos().length === 0 && !error()) {
-    <p class="estado-carga">No hay equipos registrados.</p>
+    <p class="estado-carga">{{ 'No hay equipos registrados.' | t }}</p>
   } @else if (equipos().length > 0) {
     <table mat-table [dataSource]="equipos()" class="tabla">
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef>Equipo</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Equipo' | t }}</th>
         <td mat-cell *matCellDef="let equipo" class="nombre">{{ equipo.nameEquipment }}</td>
       </ng-container>
 
       <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef>Categoría</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Categoría' | t }}</th>
         <td mat-cell *matCellDef="let equipo">{{ equipo.categoryEquipment }}</td>
       </ng-container>
 
       <ng-container matColumnDef="area">
-        <th mat-header-cell *matHeaderCellDef>Área</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Área' | t }}</th>
         <td mat-cell *matCellDef="let equipo">{{ nombreArea(equipo.idDepartment) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Estado' | t }}</th>
         <td mat-cell *matCellDef="let equipo">
           <span class="estado" [class.inactivo]="equipo.statusEquipment === 'Inactivo'">
-            {{ equipo.statusEquipment }}
+            {{ equipo.statusEquipment | t }}
           </span>
         </td>
       </ng-container>
@@ -53,17 +53,17 @@
         <td mat-cell *matCellDef="let equipo" class="acciones">
           <a mat-button class="editar" [routerLink]="['/equipos/editar', equipo.idEquipment]">
             <span class="material-symbols-outlined">edit</span>
-            Editar
+            {{ 'Editar' | t }}
           </a>
           @if (equipo.statusEquipment !== 'Inactivo') {
             <button mat-button type="button" class="baja" (click)="darDeBaja(equipo)">
               <span class="material-symbols-outlined">power_settings_new</span>
-              Dar de baja
+              {{ 'Dar de baja' | t }}
             </button>
           }
           <button mat-button type="button" class="eliminar" (click)="eliminar(equipo)">
             <span class="material-symbols-outlined">delete</span>
-            Eliminar
+            {{ 'Eliminar' | t }}
           </button>
         </td>
       </ng-container>

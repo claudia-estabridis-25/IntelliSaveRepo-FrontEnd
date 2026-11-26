@@ -12,10 +12,12 @@ import { DepartmentService } from '../../services/department.service';
 import { AlertInsert, ESTADOS_ALERTA, PRIORIDADES_ALERTA } from '../../models/alert';
 import { Equipment } from '../../models/equipment';
 import { Department } from '../../models/department';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-alerta-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './alerta-registrar.html',
   styleUrl: './alerta-registrar.css'
 })
@@ -46,7 +48,8 @@ export class AlertaRegistrar implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private equipmentService: EquipmentService,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       idEquipment: [null, Validators.required],
@@ -62,7 +65,7 @@ export class AlertaRegistrar implements OnInit {
   ngOnInit(): void {
     this.equipmentService.listar().subscribe({
       next: datos => this.equipos.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de equipos.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de equipos.'))
     });
     this.departmentService.listar().subscribe({ next: datos => this.areas.set(datos) });
 
@@ -85,7 +88,7 @@ export class AlertaRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a esta alerta.' : 'No se encontró la alerta.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a esta alerta.' : 'No se encontró la alerta.'));
         this.cargando.set(false);
       }
     });
@@ -115,17 +118,17 @@ export class AlertaRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardada => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
-        this.router.navigate(['/alertas'], { state: { mensaje: `Se ${accion} la alerta de ${guardada.nameEquipment}.` } });
+        const mensaje = this.esEdicion ? 'Se actualizó la alerta de {0}.' : 'Se registró la alerta de {0}.';
+        this.router.navigate(['/alertas'], { state: { mensaje: this.idiomaService.t(mensaje, [guardada.nameEquipment]) } });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para guardar alertas de ese equipo.');
+          this.error.set(this.idiomaService.t('No tienes acceso para guardar alertas de ese equipo.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar la alerta.');
+          this.error.set(this.idiomaService.t('No se pudo guardar la alerta.'));
         }
       }
     });

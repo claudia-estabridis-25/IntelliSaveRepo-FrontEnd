@@ -1,0 +1,279 @@
+.comparar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 1100px;
+  color: #0e2a2b;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #ddd6c7;
+}
+
+.subtitulo {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: #4f6b63;
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: #3d5a52;
+}
+
+.control select {
+  height: 38px;
+  min-width: 200px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 14px;
+  color: #0e2a2b;
+  background: #fffdf8;
+  border: 1px solid #c9c1ae;
+  border-radius: 6px;
+}
+
+/* Pestañas */
+
+.pestanas {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #ddd6c7;
+}
+
+.pestanas button {
+  margin-bottom: -1px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4f6b63;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.pestanas button:hover {
+  color: #0e2a2b;
+}
+
+.pestanas button.activa {
+  color: #0e2a2b;
+  border-bottom-color: #17705b;
+}
+
+.pestanas button:focus-visible,
+.segmentos button:focus-visible,
+.control select:focus-visible {
+  outline: 2px solid #17705b;
+  outline-offset: 2px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* Cifras principales */
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1px;
+  background: #ddd6c7;
+  border: 1px solid #ddd6c7;
+}
+
+.resumen > div {
+  padding: 14px 16px;
+  background: #fffdf8;
+}
+
+.dato {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.dato span {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.dato .moneda {
+  margin: 0 5px 0 0;
+}
+
+.etiqueta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #4f6b63;
+}
+
+/* Gráfico */
+
+.titulo-con-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.segmentos {
+  display: inline-flex;
+  border: 1px solid #c9c1ae;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmentos button {
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: #3d5a52;
+  background: #fffdf8;
+  border: 0;
+  border-left: 1px solid #c9c1ae;
+  cursor: pointer;
+}
+
+.segmentos button:first-child {
+  border-left: 0;
+}
+
+.segmentos button.activa {
+  color: #ffffff;
+  background: #0e2a2b;
+}
+
+.grafico {
+  position: relative;
+  height: 260px;
+  margin-top: 14px;
+}
+
+.estado,
+.vacio,
+.nota {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #4f6b63;
+}
+
+.nota {
+  font-size: 12px;
+  color: #5f7a72;
+}
+
+.aviso.error {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #a1231b;
+  border-left: 4px solid #a1231b;
+}
+
+/* Tabla */
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla th {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  color: #4f6b63;
+  border-bottom: 1px solid #0e2a2b;
+}
+
+.tabla td {
+  padding: 11px 8px;
+  border-bottom: 1px solid #e6dfcf;
+}
+
+.tabla tfoot td {
+  font-weight: 600;
+  border-top: 1px solid #0e2a2b;
+  border-bottom: 0;
+}
+
+.tabla th:first-child,
+.tabla td:first-child {
+  padding-left: 0;
+}
+
+.derecha {
+  text-align: right !important;
+}
+
+.cifra {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.barra-col {
+  width: 24%;
+}
+
+.barra {
+  display: block;
+  height: 8px;
+  background: #e6dfcf;
+}
+
+.barra span {
+  display: block;
+  height: 8px;
+  background: #17705b;
+}
+
+.barra.oscura span {
+  background: #0e2a2b;
+}
+
+@media (max-width: 700px) {
+  .barra-col {
+    display: none;
+  }
+
+  .dato {
+    font-size: 24px;
+  }
+}

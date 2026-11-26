@@ -1,0 +1,64 @@
+<section class="mapa-sedes">
+  <div class="encabezado">
+    <a class="volver" routerLink="/sedes">
+      <span class="material-symbols-outlined">arrow_back</span>
+      {{ 'Volver a sedes' | t }}
+    </a>
+    @if (!cargando() && !error()) {
+      <p class="resumen">
+        {{ (ubicadas().length === 1 ? '{0} sede ubicada en el mapa' : '{0} sedes ubicadas en el mapa') | t: [ubicadas().length] }}
+      </p>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="aviso error">{{ error() }}</p>
+  }
+
+  @if (sinUbicar().length > 0) {
+    <div class="aviso alerta">
+      <p>
+        <span class="material-symbols-outlined">location_off</span>
+        @if (sinUbicar().length === 1) {
+          {{ 'No se pudo ubicar 1 sede porque no tiene coordenadas registradas.' | t }}
+        } @else {
+          {{ 'No se pudieron ubicar {0} sedes porque no tienen coordenadas registradas.' | t: [sinUbicar().length] }}
+        }
+      </p>
+      <ul>
+        @for (sede of sinUbicar(); track sede.idBranch) {
+          <li>
+            {{ sede.nameBranch }}
+            <a [routerLink]="['/sedes/editar', sede.idBranch]">{{ 'Agregar ubicación' | t }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="estado">{{ 'Cargando sedes...' | t }}</p>
+  } @else if (sedes().length === 0 && !error()) {
+    <p class="estado">{{ 'No hay sedes registradas.' | t }}</p>
+  }
+
+  <div class="contenido" [class.con-lista]="ubicadas().length > 0">
+    <div #mapa class="mapa" role="application" [attr.aria-label]="'Mapa de las sedes' | t"></div>
+
+    @if (ubicadas().length > 0) {
+      <ul class="lista">
+        @for (sede of ubicadas(); track sede.idBranch) {
+          <li>
+            <button type="button" (click)="centrarEn(sede)">
+              <span class="material-symbols-outlined">location_on</span>
+              <span>
+                <span class="nombre">{{ sede.nameBranch }}</span>
+                <span class="direccion">{{ sede.addressBranch }}</span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>

@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/sedes">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a sedes
+    {{ 'Volver a sedes' | t }}
   </a>
 
   <p class="indicacion">
-    {{ esEdicion ? 'Modifica los datos de la sede y guarda los cambios.' : 'Completa los datos de la sede nueva. Las coordenadas sirven para traer el clima de la sede.' }}
+    {{ (esEdicion ? 'Modifica los datos de la sede y guarda los cambios.' : 'Completa los datos de la sede nueva. Las coordenadas sirven para traer el clima de la sede.') | t }}
   </p>
 
   @if (error()) {
@@ -13,80 +13,100 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando sede...</p>
+    <p class="estado">{{ 'Cargando sede...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre de la sede</mat-label>
+          <mat-label>{{ 'Nombre de la sede' | t }}</mat-label>
           <input matInput formControlName="nameBranch" maxlength="30">
           @if (form.get('nameBranch')?.hasError('required')) {
-            <mat-error>El nombre de la sede es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre de la sede es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('nameBranch') }}/30</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Empresa</mat-label>
+          <mat-label>{{ 'Empresa' | t }}</mat-label>
           <mat-select formControlName="idCompany">
             @for (empresa of empresas(); track empresa.idCompany) {
               <mat-option [value]="empresa.idCompany">{{ empresa.comercialNamecompany }}</mat-option>
             }
           </mat-select>
           @if (form.get('idCompany')?.hasError('required')) {
-            <mat-error>Elige la empresa de la sede.</mat-error>
+            <mat-error>{{ 'Elige la empresa de la sede.' | t }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Dirección</mat-label>
+        <mat-label>{{ 'Dirección' | t }}</mat-label>
         <input matInput formControlName="addressBranch" maxlength="60">
         @if (form.get('addressBranch')?.hasError('required')) {
-          <mat-error>La dirección es obligatoria.</mat-error>
+          <mat-error>{{ 'La dirección es obligatoria.' | t }}</mat-error>
         }
         <mat-hint align="end">{{ largo('addressBranch') }}/60</mat-hint>
       </mat-form-field>
 
+      <div class="ubicacion">
+        <button mat-stroked-button type="button" class="secundario-boton" (click)="buscarUbicacion()" [disabled]="buscando()">
+          <span class="material-symbols-outlined">{{ buscando() ? 'progress_activity' : 'travel_explore' }}</span>
+          {{ (buscando() ? 'Buscando...' : 'Buscar ubicación') | t }}
+        </button>
+        <p class="ayuda">{{ 'Busca la dirección en OpenStreetMap o haz clic en el mapa para marcar el punto. Puedes arrastrar el marcador para ajustarlo.' | t }}</p>
+      </div>
+
+      @if (errorUbicacion()) {
+        <p class="aviso error">{{ errorUbicacion() }}</p>
+      }
+      @if (ubicacionEncontrada()) {
+        <p class="aviso ok">
+          {{ 'Ubicación encontrada:' | t }} <span class="cifra">{{ form.get('latitudeBranch')?.value }}, {{ form.get('longitudeBranch')?.value }}</span>
+          <span class="encontrada">{{ ubicacionEncontrada() }}</span>
+        </p>
+      }
+
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Latitud</mat-label>
+          <mat-label>{{ 'Latitud' | t }}</mat-label>
           <input matInput class="cifra" type="number" step="any" formControlName="latitudeBranch" placeholder="-12.0911">
           @if (form.get('latitudeBranch')?.hasError('required')) {
-            <mat-error>La latitud es obligatoria.</mat-error>
+            <mat-error>{{ 'La latitud es obligatoria.' | t }}</mat-error>
           } @else if (form.get('latitudeBranch')?.hasError('min') || form.get('latitudeBranch')?.hasError('max')) {
-            <mat-error>La latitud debe estar entre -90 y 90.</mat-error>
+            <mat-error>{{ 'La latitud debe estar entre -90 y 90.' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Longitud</mat-label>
+          <mat-label>{{ 'Longitud' | t }}</mat-label>
           <input matInput class="cifra" type="number" step="any" formControlName="longitudeBranch" placeholder="-77.0282">
           @if (form.get('longitudeBranch')?.hasError('required')) {
-            <mat-error>La longitud es obligatoria.</mat-error>
+            <mat-error>{{ 'La longitud es obligatoria.' | t }}</mat-error>
           } @else if (form.get('longitudeBranch')?.hasError('min') || form.get('longitudeBranch')?.hasError('max')) {
-            <mat-error>La longitud debe estar entre -180 y 180.</mat-error>
+            <mat-error>{{ 'La longitud debe estar entre -180 y 180.' | t }}</mat-error>
           }
         </mat-form-field>
       </div>
 
+      <div #mapa class="mapa" role="application" [attr.aria-label]="'Mapa para ubicar la sede' | t"></div>
+
       @if (form.hasError('coordenadasCero') && form.get('longitudeBranch')?.touched) {
-        <p class="aviso error">Las coordenadas (0, 0) no son válidas. Indica la ubicación real de la sede.</p>
+        <p class="aviso error">{{ 'Las coordenadas (0, 0) no son válidas. Indica la ubicación real de la sede.' | t }}</p>
       }
 
       <mat-form-field appearance="outline">
-        <mat-label>Descripción</mat-label>
+        <mat-label>{{ 'Descripción' | t }}</mat-label>
         <textarea matInput formControlName="descriptionBranch" rows="3" maxlength="90"></textarea>
         @if (form.get('descriptionBranch')?.hasError('required')) {
-          <mat-error>La descripción es obligatoria.</mat-error>
+          <mat-error>{{ 'La descripción es obligatoria.' | t }}</mat-error>
         }
         <mat-hint align="end">{{ largo('descriptionBranch') }}/90</mat-hint>
       </mat-form-field>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/sedes">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/sedes">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar sede') }}
+          {{ (guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar sede')) | t }}
         </button>
       </div>
     </form>

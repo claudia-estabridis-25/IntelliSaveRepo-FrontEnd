@@ -1,11 +1,11 @@
 <section class="formulario">
   <a class="volver" routerLink="/empresas">
     <span class="material-symbols-outlined">arrow_back</span>
-    Volver a empresas
+    {{ 'Volver a empresas' | t }}
   </a>
 
   <p class="indicacion">
-    {{ esEdicion ? 'Modifica los datos de la empresa y guarda los cambios.' : 'Completa los datos de la empresa nueva. Todos los campos son obligatorios.' }}
+    {{ (esEdicion ? 'Modifica los datos de la empresa y guarda los cambios.' : 'Completa los datos de la empresa nueva. Todos los campos son obligatorios.') | t }}
   </p>
 
   @if (error()) {
@@ -13,28 +13,28 @@
   }
 
   @if (cargando()) {
-    <p class="estado">Cargando empresa...</p>
+    <p class="estado">{{ 'Cargando empresa...' | t }}</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-      <h2>Datos de la empresa</h2>
+      <h2>{{ 'Datos de la empresa' | t }}</h2>
 
       <div class="fila">
         <mat-form-field appearance="outline">
           <mat-label>RUC</mat-label>
           <input matInput class="cifra" formControlName="rucCompany" inputmode="numeric" maxlength="11">
           @if (form.get('rucCompany')?.hasError('required')) {
-            <mat-error>El RUC es obligatorio.</mat-error>
+            <mat-error>{{ 'El RUC es obligatorio.' | t }}</mat-error>
           } @else if (form.get('rucCompany')?.hasError('pattern')) {
-            <mat-error>El RUC debe tener 11 dígitos.</mat-error>
+            <mat-error>{{ 'El RUC debe tener 11 dígitos.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('rucCompany') }}/11</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Sector</mat-label>
-          <input matInput formControlName="sectorCompany" maxlength="20" placeholder="Retail, Educación, Salud...">
+          <mat-label>{{ 'Sector' | t }}</mat-label>
+          <input matInput formControlName="sectorCompany" maxlength="20" [placeholder]="'Retail, Educación, Salud...' | t">
           @if (form.get('sectorCompany')?.hasError('required')) {
-            <mat-error>El sector es obligatorio.</mat-error>
+            <mat-error>{{ 'El sector es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('sectorCompany') }}/20</mat-hint>
         </mat-form-field>
@@ -42,90 +42,90 @@
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Razón social</mat-label>
+          <mat-label>{{ 'Razón social' | t }}</mat-label>
           <input matInput formControlName="formalNameCompany" maxlength="40">
           @if (form.get('formalNameCompany')?.hasError('required')) {
-            <mat-error>La razón social es obligatoria.</mat-error>
+            <mat-error>{{ 'La razón social es obligatoria.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('formalNameCompany') }}/40</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Nombre comercial</mat-label>
+          <mat-label>{{ 'Nombre comercial' | t }}</mat-label>
           <input matInput formControlName="comercialNamecompany" maxlength="40">
           @if (form.get('comercialNamecompany')?.hasError('required')) {
-            <mat-error>El nombre comercial es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre comercial es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('comercialNamecompany') }}/40</mat-hint>
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Dirección</mat-label>
+        <mat-label>{{ 'Dirección' | t }}</mat-label>
         <input matInput formControlName="addressCompany" maxlength="60">
         @if (form.get('addressCompany')?.hasError('required')) {
-          <mat-error>La dirección es obligatoria.</mat-error>
+          <mat-error>{{ 'La dirección es obligatoria.' | t }}</mat-error>
         }
         <mat-hint align="end">{{ largo('addressCompany') }}/60</mat-hint>
       </mat-form-field>
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Teléfono</mat-label>
+          <mat-label>{{ 'Teléfono' | t }}</mat-label>
           <input matInput class="cifra" formControlName="phoneNumberCompany" inputmode="numeric" maxlength="9">
           @if (form.get('phoneNumberCompany')?.hasError('required')) {
-            <mat-error>El teléfono es obligatorio.</mat-error>
+            <mat-error>{{ 'El teléfono es obligatorio.' | t }}</mat-error>
           } @else if (form.get('phoneNumberCompany')?.hasError('pattern')) {
-            <mat-error>El teléfono debe tener entre 7 y 9 dígitos.</mat-error>
+            <mat-error>{{ 'El teléfono debe tener entre 7 y 9 dígitos.' | t }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Correo</mat-label>
+          <mat-label>{{ 'Correo' | t }}</mat-label>
           <input matInput type="email" formControlName="emailCompany" maxlength="50">
           @if (form.get('emailCompany')?.hasError('required')) {
-            <mat-error>El correo es obligatorio.</mat-error>
+            <mat-error>{{ 'El correo es obligatorio.' | t }}</mat-error>
           } @else if (form.get('emailCompany')?.hasError('email')) {
-            <mat-error>Ingresa un correo válido.</mat-error>
+            <mat-error>{{ 'Ingresa un correo válido.' | t }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Descripción</mat-label>
+        <mat-label>{{ 'Descripción' | t }}</mat-label>
         <textarea matInput formControlName="descriptionCompany" rows="3" maxlength="90"></textarea>
         @if (form.get('descriptionCompany')?.hasError('required')) {
-          <mat-error>La descripción es obligatoria.</mat-error>
+          <mat-error>{{ 'La descripción es obligatoria.' | t }}</mat-error>
         }
         <mat-hint align="end">{{ largo('descriptionCompany') }}/90</mat-hint>
       </mat-form-field>
 
-      <h2>Dueño</h2>
+      <h2>{{ 'Dueño' | t }}</h2>
 
       <div class="fila">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'Nombre' | t }}</mat-label>
           <input matInput formControlName="nameOwnerCompany" maxlength="16">
           @if (form.get('nameOwnerCompany')?.hasError('required')) {
-            <mat-error>El nombre del dueño es obligatorio.</mat-error>
+            <mat-error>{{ 'El nombre del dueño es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('nameOwnerCompany') }}/16</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Apellido</mat-label>
+          <mat-label>{{ 'Apellido' | t }}</mat-label>
           <input matInput formControlName="surnameOwnerCompany" maxlength="20">
           @if (form.get('surnameOwnerCompany')?.hasError('required')) {
-            <mat-error>El apellido del dueño es obligatorio.</mat-error>
+            <mat-error>{{ 'El apellido del dueño es obligatorio.' | t }}</mat-error>
           }
           <mat-hint align="end">{{ largo('surnameOwnerCompany') }}/20</mat-hint>
         </mat-form-field>
       </div>
 
       <div class="botones">
-        <a mat-button class="cancelar" routerLink="/empresas">Cancelar</a>
+        <a mat-button class="cancelar" routerLink="/empresas">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="guardar" type="submit" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar empresa') }}
+          {{ (guardando() ? 'Guardando...' : (esEdicion ? 'Guardar cambios' : 'Registrar empresa')) | t }}
         </button>
       </div>
     </form>

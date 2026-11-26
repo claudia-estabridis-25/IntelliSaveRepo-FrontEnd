@@ -6,10 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { CompanyService } from '../../services/company.service';
 import { LoginService } from '../../services/login.service';
 import { Company } from '../../models/company';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-empresa-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink],
+  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './empresa-listar.html',
   styleUrl: './empresa-listar.css'
 })
@@ -21,7 +23,11 @@ export class EmpresaListar implements OnInit {
   esAdmin = false;
   columnas: string[] = ['ruc', 'nombre', 'direccion', 'correo'];
 
-  constructor(private companyService: CompanyService, private loginService: LoginService) {}
+  constructor(
+    private companyService: CompanyService,
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
+  ) {}
 
   ngOnInit(): void {
     this.mensaje.set(history.state?.mensaje ?? '');
@@ -40,14 +46,14 @@ export class EmpresaListar implements OnInit {
         this.cargando.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar la lista de empresas.');
+        this.error.set(this.idiomaService.t('No se pudo cargar la lista de empresas.'));
         this.cargando.set(false);
       }
     });
   }
 
   eliminar(empresa: Company): void {
-    if (!confirm(`¿Eliminar la empresa ${empresa.comercialNamecompany}? También se eliminarán sus sedes, áreas, usuarios, equipos y consumos. Esta acción no se puede deshacer.`)) {
+    if (!confirm(this.idiomaService.t('¿Eliminar la empresa {0}? También se eliminarán sus sedes, áreas, usuarios, equipos y consumos. Esta acción no se puede deshacer.', [empresa.comercialNamecompany]))) {
       return;
     }
     this.mensaje.set('');
@@ -55,13 +61,15 @@ export class EmpresaListar implements OnInit {
     this.companyService.eliminar(empresa.idCompany).subscribe({
       next: () => {
         this.empresas.update(lista => lista.filter(e => e.idCompany !== empresa.idCompany));
-        this.mensaje.set(`Se eliminó la empresa ${empresa.comercialNamecompany}.`);
+        this.mensaje.set(this.idiomaService.t('Se eliminó la empresa {0}.', [empresa.comercialNamecompany]));
       },
       error: (err: HttpErrorResponse) => {
         this.error.set(
-          err.status === 403
-            ? 'No tienes acceso para eliminar esta empresa.'
-            : 'No se pudo eliminar la empresa.'
+          this.idiomaService.t(
+            err.status === 403
+              ? 'No tienes acceso para eliminar esta empresa.'
+              : 'No se pudo eliminar la empresa.'
+          )
         );
       }
     });

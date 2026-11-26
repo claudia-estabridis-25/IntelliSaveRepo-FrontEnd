@@ -4,10 +4,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { EscenaLogin } from '../escena-login/escena-login';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, EscenaLogin, RouterLink],
+  imports: [ReactiveFormsModule, EscenaLogin, RouterLink, TraducirPipe],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -23,7 +25,8 @@ export class Login implements OnInit {
     private fb: FormBuilder,
     private loginService: LoginService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       username: ['', [Validators.required, Validators.email]],
@@ -38,7 +41,7 @@ export class Login implements OnInit {
       return;
     }
     if (this.route.snapshot.queryParamMap.get('expirada')) {
-      this.mensajeInfo.set('Tu sesión expiró. Vuelve a iniciar sesión.');
+      this.mensajeInfo.set(this.idiomaService.t('Tu sesión expiró. Vuelve a iniciar sesión.'));
     }
   }
 
@@ -67,11 +70,11 @@ export class Login implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.cargando.set(false);
-        this.mensajeError.set(
+        this.mensajeError.set(this.idiomaService.t(
           error.status === 0
             ? 'No se pudo conectar con el servidor. Verifica que la API esté encendida.'
             : 'Correo o contraseña incorrectos.'
-        );
+        ));
         this.animarError();
       }
     });

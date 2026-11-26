@@ -15,10 +15,12 @@ import { ROLES, Usuario, UsuarioInsert } from '../../models/usuario';
 import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
 import { Company } from '../../models/company';
+import { IdiomaService } from '../../services/idioma.service';
+import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-usuario-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './usuario-registrar.html',
   styleUrl: './usuario-registrar.css'
 })
@@ -66,7 +68,8 @@ export class UsuarioRegistrar implements OnInit {
     private departmentService: DepartmentService,
     private branchService: BranchService,
     private companyService: CompanyService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private idiomaService: IdiomaService
   ) {
     this.form = this.fb.group({
       firstName: ['', [Validators.required, Validators.maxLength(20)]],
@@ -86,7 +89,7 @@ export class UsuarioRegistrar implements OnInit {
   ngOnInit(): void {
     this.departmentService.listar().subscribe({
       next: datos => this.areas.set(datos),
-      error: () => this.error.set('No se pudo cargar la lista de áreas.')
+      error: () => this.error.set(this.idiomaService.t('No se pudo cargar la lista de áreas.'))
     });
     this.branchService.listar().subscribe({ next: datos => this.sedes.set(datos) });
     this.companyService.listar().subscribe({ next: datos => this.empresas.set(datos) });
@@ -118,7 +121,7 @@ export class UsuarioRegistrar implements OnInit {
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.status === 403 ? 'No tienes acceso a este usuario.' : 'No se encontró el usuario.');
+        this.error.set(this.idiomaService.t(err.status === 403 ? 'No tienes acceso a este usuario.' : 'No se encontró el usuario.'));
         this.cargando.set(false);
       }
     });
@@ -153,19 +156,19 @@ export class UsuarioRegistrar implements OnInit {
 
     peticion.subscribe({
       next: guardado => {
-        const accion = this.esEdicion ? 'actualizó' : 'registró';
+        const plantilla = this.esEdicion ? 'Se actualizó al usuario {0}.' : 'Se registró al usuario {0}.';
         this.router.navigate(['/usuarios'], {
-          state: { mensaje: `Se ${accion} al usuario ${guardado.firstName} ${guardado.paternalSurname}.` }
+          state: { mensaje: this.idiomaService.t(plantilla, [`${guardado.firstName} ${guardado.paternalSurname}`]) }
         });
       },
       error: (err: HttpErrorResponse) => {
         this.guardando.set(false);
         if (err.status === 403) {
-          this.error.set('No tienes acceso para hacer este cambio. Solo el administrador de la plataforma puede dar o quitar el rol de administrador.');
+          this.error.set(this.idiomaService.t('No tienes acceso para hacer este cambio. Solo el administrador de la plataforma puede dar o quitar el rol de administrador.'));
         } else if (err.status === 400 || err.status === 404) {
-          this.error.set(err.error?.message ?? 'Revisa los datos del formulario.');
+          this.error.set(err.error?.message ?? this.idiomaService.t('Revisa los datos del formulario.'));
         } else {
-          this.error.set('No se pudo guardar el usuario.');
+          this.error.set(this.idiomaService.t('No se pudo guardar el usuario.'));
         }
       }
     });
