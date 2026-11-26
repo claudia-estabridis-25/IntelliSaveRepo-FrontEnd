@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Equipment, EquipmentInsert } from '../models/equipment';
+import { ReporteEquiposCategoria } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +35,9 @@ export class EquipmentService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+    reportePorCategoria(): Observable<ReporteEquiposCategoria[]> {
+    return this.http.get<ReporteEquiposCategoria[]>(`${this.url}/by-category`);
   }
 }

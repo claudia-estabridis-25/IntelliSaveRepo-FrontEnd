@@ -1,4 +1,26 @@
 <section class="listado">
+  @if (puedeGestionar) {
+    <mat-tab-group class="pestanas" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+      <mat-tab [label]="'Equipos' | t">
+        <div class="panel">
+          <ng-container *ngTemplateOutlet="lista" />
+        </div>
+      </mat-tab>
+
+      <mat-tab [label]="'Resumen por categoría' | t">
+        <ng-template matTabContent>
+          <div class="panel">
+            <app-equipo-estadisticas />
+          </div>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  } @else {
+    <ng-container *ngTemplateOutlet="lista" />
+  }
+</section>
+
+<ng-template #lista>
   <div class="encabezado">
     <p class="resumen">
       {{ (equipos().length === 1 ? '{0} equipo registrado' : '{0} equipos registrados') | t: [equipos().length] }}
@@ -72,4 +94,4 @@
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
   }
-</section>
+</ng-template>

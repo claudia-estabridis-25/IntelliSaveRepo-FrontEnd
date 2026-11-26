@@ -170,6 +170,8 @@ export const EN: Record<string, string> = {
   'El RUC debe tener 11 dígitos.': 'RUC must have 11 digits.',
   'Sector': 'Industry',
   'El sector es obligatorio.': 'Industry is required.',
+  'Elige el sector de la empresa.': 'Choose the company industry.',
+  'Antes estaba como "{0}". Elige el sector correcto de la lista.': 'It was saved as "{0}". Choose the right industry from the list.',
   'Retail, Educación, Salud...': 'Retail, Education, Healthcare...',
   'Razón social': 'Legal name',
   'La razón social es obligatoria.': 'Legal name is required.',

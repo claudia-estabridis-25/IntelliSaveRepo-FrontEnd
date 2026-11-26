@@ -79,11 +79,23 @@
         <h2>{{ 'Los 5 equipos que más consumen' | t }}</h2>
         <ng-container *ngTemplateOutlet="tabla; context: { items: datos.topEquipments, columna: 'Equipo' }"></ng-container>
       </section>
+
+      <section class="bloque">
+        <h2>{{ 'Por categoría de equipo' | t }}</h2>
+        <p class="aclaracion">{{ 'Incluye todas las sedes, en el mismo periodo.' | t }}</p>
+        @if (errorCategorias()) {
+          <p class="aviso error">{{ errorCategorias() }}</p>
+        } @else if (categorias().length === 0) {
+          <p class="estado">{{ 'No hay consumos registrados en ese periodo.' | t }}</p>
+        } @else {
+          <ng-container *ngTemplateOutlet="tabla; context: { items: categorias(), columna: 'Categoría', total: totalCategorias() }"></ng-container>
+        }
+      </section>
     }
   }
 </section>
 
-<ng-template #tabla let-items="items" let-columna="columna">
+<ng-template #tabla let-items="items" let-columna="columna" let-total="total">
   <table class="tabla-reporte">
     <thead>
       <tr>
@@ -103,7 +115,7 @@
               <span class="secundario">{{ item.detail }}</span>
             }
           </td>
-          <td class="barra-col"><span class="barra"><span [style.width.%]="parte(item)"></span></span></td>
+          <td class="barra-col"><span class="barra"><span [style.width.%]="parte(item, total ?? reporte()?.totalKwh ?? 0)"></span></span></td>
           <td class="derecha cifra">{{ item.totalKwh | number: '1.1-1' }}</td>
           <td class="derecha cifra">S/ {{ item.totalCost | number: '1.2-2' }}</td>
           <td class="derecha">{{ item.recordCount }}</td>

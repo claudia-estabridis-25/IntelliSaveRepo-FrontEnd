@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ConsumptionRecord, ConsumptionRecordInsert } from '../models/consumption-record';
-import { ConsumoElevado } from '../models/estadisticas';
+import { ConsumoCategoria, ConsumoElevado } from '../models/estadisticas';
 
 @Injectable({
   providedIn: 'root'
@@ -47,5 +47,12 @@ export class ConsumptionRecordService {
   // HU042: equipos con consumo elevado de un área (404 si el área no tiene consumos).
   consumoElevado(idDepartment: number): Observable<ConsumoElevado[]> {
     return this.http.get<ConsumoElevado[]>(`${this.url}/department/${idDepartment}/elevated-consumption`);
+  }
+
+    consumoPorCategoria(desde: string, hasta: string): Observable<ConsumoCategoria[]> {
+    const params = new HttpParams()
+      .set('desde', `${desde}T00:00:00`)
+      .set('hasta', `${hasta}T23:59:59`);
+    return this.http.get<ConsumoCategoria[]>(`${this.url}/by-category`, { params });
   }
 }

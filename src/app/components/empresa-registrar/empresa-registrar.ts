@@ -4,15 +4,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { CompanyService } from '../../services/company.service';
-import { CompanyInsert } from '../../models/company';
+import { CompanyInsert, SECTORES_EMPRESA } from '../../models/company';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
 
 @Component({
   selector: 'app-empresa-registrar',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, TraducirPipe],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TraducirPipe],
   templateUrl: './empresa-registrar.html',
   styleUrl: './empresa-registrar.css'
 })
@@ -22,6 +23,8 @@ export class EmpresaRegistrar implements OnInit {
   cargando = signal(false);
   guardando = signal(false);
   error = signal('');
+  sectores = SECTORES_EMPRESA;
+  sectorAnterior = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -61,6 +64,11 @@ export class EmpresaRegistrar implements OnInit {
     this.companyService.listarPorId(id).subscribe({
       next: empresa => {
         this.form.patchValue(empresa);
+        if (!this.sectores.includes(empresa.sectorCompany)) {
+          this.sectorAnterior.set(empresa.sectorCompany);
+          this.form.get('sectorCompany')?.setValue('');
+          this.form.get('sectorCompany')?.markAsTouched();
+        }
         this.cargando.set(false);
       },
       error: (err: HttpErrorResponse) => {

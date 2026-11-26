@@ -181,3 +181,9 @@ h2 {
     display: none;
   }
 }
+
+.aclaracion {
+  margin: -4px 0 10px;
+  font-size: 12px;
+  color: #4f6b63;
+}

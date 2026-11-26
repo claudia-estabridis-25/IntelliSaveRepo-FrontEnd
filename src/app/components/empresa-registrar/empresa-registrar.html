@@ -32,11 +32,17 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'Sector' | t }}</mat-label>
-          <input matInput formControlName="sectorCompany" maxlength="20" [placeholder]="'Retail, Educación, Salud...' | t">
+          <mat-select formControlName="sectorCompany">
+            @for (sector of sectores; track sector) {
+              <mat-option [value]="sector">{{ sector | t }}</mat-option>
+            }
+          </mat-select>
           @if (form.get('sectorCompany')?.hasError('required')) {
-            <mat-error>{{ 'El sector es obligatorio.' | t }}</mat-error>
+            <mat-error>{{ 'Elige el sector de la empresa.' | t }}</mat-error>
           }
-          <mat-hint align="end">{{ largo('sectorCompany') }}/20</mat-hint>
+          @if (sectorAnterior()) {
+            <mat-hint>{{ 'Antes estaba como "{0}". Elige el sector correcto de la lista.' | t: [sectorAnterior()] }}</mat-hint>
+          }
         </mat-form-field>
       </div>
 

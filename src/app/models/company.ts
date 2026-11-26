@@ -14,3 +14,21 @@ export interface CompanyInsert extends Company {
   surnameOwnerCompany: string;
   descriptionCompany: string;
 }
+
+export const SECTORES_EMPRESA = [
+  'Alimentos',
+  'Banca',
+  'Comercio',
+  'Construcción',
+  'Educación',
+  'Industria',
+  'Logística',
+  'Manufactura',
+  'Minería',
+  'Retail',
+  'Salud',
+  'Servicios',
+  'Tecnología',
+  'Turismo',
+  'Otros'
+];

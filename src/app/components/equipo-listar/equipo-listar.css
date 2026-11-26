@@ -105,3 +105,18 @@
   --mat-button-text-label-text-color: #0e2a2b;
   --mat-button-text-container-shape: 6px;
 }
+
+.pestanas {
+  --mat-tab-active-label-text-color: #0e2a2b;
+  --mat-tab-active-focus-label-text-color: #0e2a2b;
+  --mat-tab-active-hover-label-text-color: #0e2a2b;
+  --mat-tab-inactive-label-text-color: #4f6b63;
+  --mat-tab-active-indicator-color: #17705b;
+  --mat-tab-active-focus-indicator-color: #17705b;
+  --mat-tab-active-hover-indicator-color: #17705b;
+  --mat-tab-divider-color: #ddd6c7;
+}
+
+.panel {
+  padding-top: 20px;
+}
