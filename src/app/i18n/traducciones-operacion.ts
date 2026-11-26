@@ -204,5 +204,10 @@ export const EN_OPERACION: Record<string, string> = {
   'Plataforma de gestión inteligente de energía': 'Smart energy management platform',
   'Tu sesión expiró. Vuelve a iniciar sesión.': 'Your session expired. Please sign in again.',
   'No se pudo conectar con el servidor. Verifica que la API esté encendida.': 'Could not connect to the server. Check that the API is running.',
-  'Correo o contraseña incorrectos.': 'Incorrect email or password.'
+  'Correo o contraseña incorrectos.': 'Incorrect email or password.',
+  'Esta empresa no tiene sedes registradas.': 'This company has no registered branches.',
+  'Buscar por nombre': 'Search by name',
+  'Ninguna área coincide con los filtros.': 'No department matches the filters.',
+  'En mantenimiento': 'Under maintenance',
+  'Ningún equipo tiene ese estado.': 'No equipment has that status.'
 };
