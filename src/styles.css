@@ -14,3 +14,11 @@ body {
 *::after {
   box-sizing: border-box;
 }
+
+.mat-mdc-paginator.paginador {
+  background: transparent;
+  color: #4f6b63;
+  font-family: inherit;
+  border-top: 1px solid #ddd6c7;
+  margin-top: 4px;
+}

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,10 +19,11 @@ import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-consumo-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './consumo-listar.html',
   styleUrl: './consumo-listar.css'
 })
@@ -72,6 +74,8 @@ export class ConsumoListar implements OnInit {
 
   totalKwh = computed(() => this.filtrados().reduce((suma, registro) => suma + registro.kwhConsumption, 0));
   totalCosto = computed(() => this.filtrados().reduce((suma, registro) => suma + registro.costTotal, 0));
+
+  paginacion = new Paginacion(() => this.filtrados());
 
   constructor(
     private consumptionRecordService: ConsumptionRecordService,

@@ -2,6 +2,7 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,6 +12,7 @@ import { LoginService } from '../../services/login.service';
 import { CompanyService } from '../../services/company.service';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 import { ClimateRecord } from '../../models/climate-record';
 import { Branch } from '../../models/branch';
 
@@ -36,7 +38,7 @@ const ICONOS_CONDICION: [string, string][] = [
 
 @Component({
   selector: 'app-clima-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, DatePipe, DecimalPipe, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatSelectModule, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './clima-listar.html',
   styleUrl: './clima-listar.css'
 })
@@ -88,6 +90,8 @@ export class ClimaListar implements OnInit {
       })
       .sort((a, b) => a.empresa.localeCompare(b.empresa) || a.sede.nameBranch.localeCompare(b.sede.nameBranch));
   });
+
+  paginacion = new Paginacion(() => this.visibles());
 
   constructor(
     private climateRecordService: ClimateRecordService,

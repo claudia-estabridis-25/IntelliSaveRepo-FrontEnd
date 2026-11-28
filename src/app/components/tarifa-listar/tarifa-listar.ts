@@ -3,16 +3,18 @@ import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { TariffService } from '../../services/tariff.service';
 import { LoginService } from '../../services/login.service';
 import { Tariff } from '../../models/tariff';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-tarifa-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './tarifa-listar.html',
   styleUrl: './tarifa-listar.css'
 })
@@ -30,6 +32,8 @@ export class TarifaListar implements OnInit {
       a.nameBranch.localeCompare(b.nameBranch) || b.initialEffectiveDate.localeCompare(a.initialEffectiveDate)
     )
   );
+
+  paginacion = new Paginacion(() => this.ordenadas());
 
   constructor(
     private tariffService: TariffService,

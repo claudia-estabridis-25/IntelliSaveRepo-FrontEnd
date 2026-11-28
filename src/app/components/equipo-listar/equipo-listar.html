@@ -45,7 +45,7 @@
   } @else if (equipos().length === 0 && !error()) {
     <p class="estado-carga">{{ 'No hay equipos registrados.' | t }}</p>
   } @else if (equipos().length > 0) {
-    <table mat-table [dataSource]="equipos()" class="tabla">
+    <table mat-table [dataSource]="paginacion.filas()" class="tabla">
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef>{{ 'Equipo' | t }}</th>
         <td mat-cell *matCellDef="let equipo" class="nombre">{{ equipo.nameEquipment }}</td>
@@ -93,5 +93,6 @@
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
+    <mat-paginator class="paginador" [length]="paginacion.total()" [pageIndex]="paginacion.paginaActual()" [pageSize]="paginacion.tamano()" [pageSizeOptions]="paginacion.opciones" (page)="paginacion.cambiar($event)" showFirstLastButtons />
   }
 </ng-template>

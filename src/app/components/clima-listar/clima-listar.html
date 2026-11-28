@@ -80,7 +80,7 @@
   } @else if (filtrados().length === 0 && !error()) {
     <p class="estado">{{ 'Todavía no hay registros de clima.' | t }}</p>
   } @else if (filtrados().length > 0) {
-    <table mat-table [dataSource]="visibles()" class="tabla">
+    <table mat-table [dataSource]="paginacion.filas()" class="tabla">
       <ng-container matColumnDef="sede">
         <th mat-header-cell *matHeaderCellDef>{{ 'Sede' | t }}</th>
         <td mat-cell *matCellDef="let registro" class="nombre">{{ registro.nameBranch }}</td>
@@ -122,6 +122,7 @@
       <tr mat-header-row *matHeaderRowDef="columnas()"></tr>
       <tr mat-row *matRowDef="let fila; columns: columnas()"></tr>
     </table>
+    <mat-paginator class="paginador" [length]="paginacion.total()" [pageIndex]="paginacion.paginaActual()" [pageSize]="paginacion.tamano()" [pageSizeOptions]="paginacion.opciones" (page)="paginacion.cambiar($event)" showFirstLastButtons />
     @if (filtrados().length > limite) {
       <p class="estado">{{ 'Se muestran los {0} registros más recientes.' | t: [limite] }}</p>
     }

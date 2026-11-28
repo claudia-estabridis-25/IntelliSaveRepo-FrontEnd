@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { EquipmentService } from '../../services/equipment.service';
@@ -11,11 +12,12 @@ import { LoginService } from '../../services/login.service';
 import { Equipment } from '../../models/equipment';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 import { EquipoEstadisticas } from '../equipo-estadisticas/equipo-estadisticas';
 
 @Component({
   selector: 'app-equipo-listar',
-  imports: [MatTableModule, MatButtonModule, MatTabsModule, NgTemplateOutlet, RouterLink, TraducirPipe, EquipoEstadisticas],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatTabsModule, NgTemplateOutlet, RouterLink, TraducirPipe, EquipoEstadisticas],
   templateUrl: './equipo-listar.html',
   styleUrl: './equipo-listar.css'
 })
@@ -27,6 +29,8 @@ export class EquipoListar implements OnInit {
   error = signal('');
   puedeGestionar = false;
   columnas: string[] = ['nombre', 'categoria', 'area', 'estado'];
+
+  paginacion = new Paginacion(() => this.equipos());
 
   constructor(
     private equipmentService: EquipmentService,

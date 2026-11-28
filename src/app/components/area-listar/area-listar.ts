@@ -2,6 +2,7 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { DepartmentService } from '../../services/department.service';
 import { BranchService } from '../../services/branch.service';
@@ -10,10 +11,11 @@ import { Department } from '../../models/department';
 import { Branch } from '../../models/branch';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-area-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './area-listar.html',
   styleUrl: './area-listar.css'
 })
@@ -30,6 +32,8 @@ export class AreaListar implements OnInit {
       ? ['nombre', 'jefe', 'sede', 'empresa', 'descripcion', 'acciones']
       : ['nombre', 'jefe', 'sede', 'descripcion', 'acciones']
   );
+
+  paginacion = new Paginacion(() => this.areas());
 
   constructor(
     private departmentService: DepartmentService,
