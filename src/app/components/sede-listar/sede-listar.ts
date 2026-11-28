@@ -2,16 +2,18 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { BranchService } from '../../services/branch.service';
 import { CompanyService } from '../../services/company.service';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 import { Branch } from '../../models/branch';
 
 @Component({
   selector: 'app-sede-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './sede-listar.html',
   styleUrl: './sede-listar.css'
 })
@@ -27,6 +29,8 @@ export class SedeListar implements OnInit {
       ? ['nombre', 'direccion', 'empresa', 'acciones']
       : ['nombre', 'direccion', 'acciones']
   );
+
+  paginacion = new Paginacion(() => this.sedes());
 
   constructor(private branchService: BranchService, private companyService: CompanyService, private idiomaService: IdiomaService) {}
 

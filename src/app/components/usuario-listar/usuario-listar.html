@@ -38,7 +38,7 @@
   } @else if (filtrados().length === 0 && !error()) {
     <p class="estado">{{ (usuarios().length === 0 ? 'No hay usuarios registrados.' : 'Ningún usuario coincide con la búsqueda.') | t }}</p>
   } @else if (filtrados().length > 0) {
-    <table mat-table [dataSource]="filtrados()" class="tabla">
+    <table mat-table [dataSource]="paginacion.filas()" class="tabla">
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef>{{ 'Usuario' | t }}</th>
         <td mat-cell *matCellDef="let usuario">
@@ -109,5 +109,6 @@
       <tr mat-header-row *matHeaderRowDef="columnas()"></tr>
       <tr mat-row *matRowDef="let fila; columns: columnas()" [class.fila-inactiva]="!fila.statusUser"></tr>
     </table>
+    <mat-paginator class="paginador" [length]="paginacion.total()" [pageIndex]="paginacion.paginaActual()" [pageSize]="paginacion.tamano()" [pageSizeOptions]="paginacion.opciones" (page)="paginacion.cambiar($event)" showFirstLastButtons />
   }
 </section>

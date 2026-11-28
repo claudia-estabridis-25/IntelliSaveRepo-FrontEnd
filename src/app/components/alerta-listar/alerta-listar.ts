@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +16,7 @@ import { Alert, ESTADOS_ALERTA, PRIORIDADES_ALERTA } from '../../models/alert';
 import { Department } from '../../models/department';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 import { AlertaEstadisticas } from '../alerta-estadisticas/alerta-estadisticas';
 
 // Estados que siguen en el listado principal; "Atendida" y "Descartada" pasan al historial (HU144 CA02).
@@ -27,7 +29,7 @@ const TIPOS_ALERTA = ['Consumo excesivo', 'Pico anormal', 'Consumo elevado', 'Fa
 @Component({
   selector: 'app-alerta-listar',
   imports: [
-    MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatTabsModule,
+    MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatTabsModule,
     RouterLink, DatePipe, DecimalPipe, NgTemplateOutlet, TraducirPipe, AlertaEstadisticas],
   templateUrl: './alerta-listar.html',
   styleUrl: './alerta-listar.css'
@@ -84,6 +86,9 @@ export class AlertaListar implements OnInit {
   });
 
   areasOrdenadas = computed(() => [...this.areas()].sort((a, b) => a.nameDepartment.localeCompare(b.nameDepartment)));
+
+  paginacion = new Paginacion(() => this.filtradas());
+  paginacionHistorial = new Paginacion(() => this.historial());
 
   constructor(
     private alertService: AlertService,

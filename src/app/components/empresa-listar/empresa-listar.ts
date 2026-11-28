@@ -2,16 +2,18 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { CompanyService } from '../../services/company.service';
 import { LoginService } from '../../services/login.service';
 import { Company } from '../../models/company';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-empresa-listar',
-  imports: [MatTableModule, MatButtonModule, RouterLink, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, RouterLink, TraducirPipe],
   templateUrl: './empresa-listar.html',
   styleUrl: './empresa-listar.css'
 })
@@ -22,6 +24,8 @@ export class EmpresaListar implements OnInit {
   error = signal('');
   esAdmin = false;
   columnas: string[] = ['ruc', 'nombre', 'direccion', 'correo'];
+
+  paginacion = new Paginacion(() => this.empresas());
 
   constructor(
     private companyService: CompanyService,

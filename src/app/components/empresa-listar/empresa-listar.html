@@ -23,7 +23,7 @@
   } @else if (empresas().length === 0 && !error()) {
     <p class="estado">{{ 'No hay empresas registradas.' | t }}</p>
   } @else if (empresas().length > 0) {
-    <table mat-table [dataSource]="empresas()" class="tabla">
+    <table mat-table [dataSource]="paginacion.filas()" class="tabla">
       <ng-container matColumnDef="ruc">
         <th mat-header-cell *matHeaderCellDef>RUC</th>
         <td mat-cell *matCellDef="let empresa" class="cifra">{{ empresa.rucCompany }}</td>
@@ -61,5 +61,6 @@
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
+    <mat-paginator class="paginador" [length]="paginacion.total()" [pageIndex]="paginacion.paginaActual()" [pageSize]="paginacion.tamano()" [pageSizeOptions]="paginacion.opciones" (page)="paginacion.cambiar($event)" showFirstLastButtons />
   }
 </section>

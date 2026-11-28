@@ -85,7 +85,7 @@
   } @else if (filtradas().length === 0 && !error()) {
     <p class="estado">{{ (abiertas().length === 0 ? 'No hay alertas activas.' : 'Ninguna alerta coincide con los filtros.') | t }}</p>
   } @else if (filtradas().length > 0) {
-    <table mat-table [dataSource]="filtradas()" class="tabla">
+    <table mat-table [dataSource]="paginacion.filas()" class="tabla">
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef>{{ 'Detectada' | t }}</th>
         <td mat-cell *matCellDef="let alerta" class="cifra">{{ alerta.dateTimeAlert | date: 'dd/MM/yyyy HH:mm' }}</td>
@@ -157,6 +157,7 @@
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let fila; columns: columnas"></tr>
     </table>
+    <mat-paginator class="paginador" [length]="paginacion.total()" [pageIndex]="paginacion.paginaActual()" [pageSize]="paginacion.tamano()" [pageSizeOptions]="paginacion.opciones" (page)="paginacion.cambiar($event)" showFirstLastButtons />
   }
 </ng-template>
 
@@ -209,7 +210,8 @@
   } @else if (historial().length === 0 && !error()) {
     <p class="estado">{{ (hayFiltrosHistorial() ? 'Ninguna alerta cerrada coincide con los filtros.' : 'Todavía no hay alertas atendidas ni descartadas.') | t }}</p>
   } @else if (historial().length > 0) {
-    <ng-container *ngTemplateOutlet="tablaLectura; context: { $implicit: historial(), columnas: columnasHistorial }" />
+    <ng-container *ngTemplateOutlet="tablaLectura; context: { $implicit: paginacionHistorial.filas(), columnas: columnasHistorial }" />
+    <mat-paginator class="paginador" [length]="paginacionHistorial.total()" [pageIndex]="paginacionHistorial.paginaActual()" [pageSize]="paginacionHistorial.tamano()" [pageSizeOptions]="paginacionHistorial.opciones" (page)="paginacionHistorial.cambiar($event)" showFirstLastButtons />
   }
 </ng-template>
 

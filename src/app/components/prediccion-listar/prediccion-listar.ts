@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,10 +12,11 @@ import { LoginService } from '../../services/login.service';
 import { Prediction } from '../../models/prediction';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-prediccion-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatSelectModule, RouterLink, DatePipe, DecimalPipe, TraducirPipe],
   templateUrl: './prediccion-listar.html',
   styleUrl: './prediccion-listar.css'
 })
@@ -41,6 +43,8 @@ export class PrediccionListar implements OnInit {
   seleccionada = computed(() =>
     this.predicciones().find(prediccion => prediccion.idPrediction === this.abierta()) ?? null
   );
+
+  paginacion = new Paginacion(() => this.filtradas());
 
   constructor(
     private predictionService: PredictionService,

@@ -2,6 +2,7 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,10 +12,11 @@ import { LoginService } from '../../services/login.service';
 import { ROLES, Usuario } from '../../models/usuario';
 import { IdiomaService } from '../../services/idioma.service';
 import { TraducirPipe } from '../../pipes/traducir.pipe';
+import { Paginacion } from '../../utils/paginacion';
 
 @Component({
   selector: 'app-usuario-listar',
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, RouterLink, TraducirPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, RouterLink, TraducirPipe],
   templateUrl: './usuario-listar.html',
   styleUrl: './usuario-listar.css'
 })
@@ -43,6 +45,8 @@ export class UsuarioListar implements OnInit {
       (!texto || `${this.nombreCompleto(usuario)} ${usuario.emailUser} ${usuario.dniUser}`.toLowerCase().includes(texto))
     );
   });
+
+  paginacion = new Paginacion(() => this.filtrados());
 
   constructor(
     private usuarioService: UsuarioService,

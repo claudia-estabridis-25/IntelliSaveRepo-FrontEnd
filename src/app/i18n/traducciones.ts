@@ -467,5 +467,13 @@ export const EN: Record<string, string> = {
   'No se pudieron guardar los cambios.': 'The changes could not be saved.',
 
   // Página pendiente (HU162)
-  'Esta pantalla se implementa en la {0}.': 'This screen will be implemented in {0}.'
+  'Esta pantalla se implementa en la {0}.': 'This screen will be implemented in {0}.',
+
+  'Filas por página': 'Rows per page',
+  'Página siguiente': 'Next page',
+  'Página anterior': 'Previous page',
+  'Primera página': 'First page',
+  'Última página': 'Last page',
+  '0 de {0}': '0 of {0}',
+  '{0} – {1} de {2}': '{0} – {1} of {2}',
 };
